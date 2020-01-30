@@ -45,6 +45,7 @@ public class Listener extends ListenerAdapter {
         taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
         taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager),5);
         taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
+        taskScheduler.runOneTime("UpdateAvatar",new UpdateAvatar(event.getJDA()));
 
         LOGGER.info("Configuration done !");
 

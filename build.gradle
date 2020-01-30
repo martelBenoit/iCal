@@ -11,6 +11,11 @@ version '1.5.1'
 
 description = "ICal discord bot"
 
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }

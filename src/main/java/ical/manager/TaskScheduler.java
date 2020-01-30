@@ -45,10 +45,10 @@ public class TaskScheduler {
     public void runAtMidnight(String name, Runnable runnable){
 
         long delayTime;
-        final long initialDelay = LocalDateTime.now().until(LocalDate.now().plusDays(1).atTime(0, 0,5), ChronoUnit.MINUTES);
+        final long initialDelay = LocalDateTime.now().until(LocalDate.now().plusDays(1).atTime(0, 1), ChronoUnit.MINUTES);
 
         if (initialDelay > TimeUnit.DAYS.toMinutes(1)) {
-            delayTime = LocalDateTime.now().until(LocalDate.now().atTime(0, 0, 5), ChronoUnit.MINUTES);
+            delayTime = LocalDateTime.now().until(LocalDate.now().atTime(0, 1), ChronoUnit.MINUTES);
         } else {
             delayTime = initialDelay;
         }
@@ -61,6 +61,16 @@ public class TaskScheduler {
 
 
         tasks.put(name,future);
+
+    }
+
+    public void runOneTime(String name, Runnable runnable){
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        LOGGER.info("Task '" + name + "' starting");
+        scheduler.execute(runnable);
+        LOGGER.info("Task '" + name + "' end");
+
 
     }
 
