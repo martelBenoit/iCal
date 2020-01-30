@@ -1,5 +1,6 @@
 package ical.database.entity;
 
+import javax.annotation.Nullable;
 
 public class MovedLesson {
 
@@ -8,13 +9,14 @@ public class MovedLesson {
     private Lesson previousLesson;
     private Lesson actualLesson;
 
-    public MovedLesson(int id, Lesson previousLesson, Lesson actualLesson) {
+    public MovedLesson(int id, @Nullable Lesson previousLesson, @Nullable Lesson actualLesson) {
         this.id = id;
         this.previousLesson = previousLesson;
         this.actualLesson = actualLesson;
     }
 
-    public MovedLesson(Lesson previousLesson, Lesson actualLesson) {
+    public MovedLesson(@Nullable Lesson previousLesson, @Nullable Lesson actualLesson) {
+        this.id = -1;
         this.previousLesson = previousLesson;
         this.actualLesson = actualLesson;
     }
@@ -27,7 +29,7 @@ public class MovedLesson {
         this.id = id;
     }
 
-
+    @Nullable
     public Lesson getPreviousLesson() {
         return previousLesson;
     }
@@ -36,6 +38,7 @@ public class MovedLesson {
         this.previousLesson = previousLesson;
     }
 
+    @Nullable
     public Lesson getActualLesson() {
         return actualLesson;
     }

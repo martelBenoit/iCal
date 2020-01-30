@@ -3,6 +3,8 @@ package ical.database.dao;
 import ical.database.entity.MovedLesson;
 import ical.util.ModificationType;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -12,8 +14,9 @@ public class MovedLessonDAO extends DAO<MovedLesson> {
         super(conn);
     }
 
+    @Nullable
     @Override
-    public MovedLesson create(MovedLesson obj) {
+    public MovedLesson create(@Nonnull MovedLesson obj) {
 
         MovedLesson movedLesson = null;
         ModificationType type = null;
@@ -78,17 +81,18 @@ public class MovedLessonDAO extends DAO<MovedLesson> {
     }
 
     @Override
-    public boolean delete(MovedLesson obj) {
+    public boolean delete(@Nonnull MovedLesson obj) {
         return false;
     }
 
     @Override
-    public boolean update(MovedLesson obj) {
+    public boolean update(@Nonnull MovedLesson obj) {
         return false;
     }
 
+    @Nonnull
     @Override
     public ArrayList<MovedLesson> findAll() {
-        return null;
+        return new ArrayList<>();
     }
 }

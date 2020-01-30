@@ -2,6 +2,8 @@ package ical.core.runnable;
 
 import ical.core.Schedule;
 import ical.manager.ScheduleManager;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.fortuna.ical4j.data.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +18,13 @@ public class UpdateSchedule implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateSchedule.class);
 
+    private JDA jda;
 
-    public UpdateSchedule(ScheduleManager scheduleManager){
+
+    public UpdateSchedule(ScheduleManager scheduleManager, JDA jda){
+
         this.scheduleManager = scheduleManager;
+        this.jda = jda;
     }
 
     @Override
@@ -30,8 +36,10 @@ public class UpdateSchedule implements Runnable {
                 schedule.updateLessons();
             }
             LOGGER.info("Schedule update");
+            jda.getPresence().setPresence(OnlineStatus.ONLINE,true);
         } catch (ParseException | IOException | ParserException e) {
             LOGGER.error("Error when updating the schedule");
+            jda.getPresence().setPresence(OnlineStatus.OFFLINE,true);
             e.printStackTrace();
         }
     }

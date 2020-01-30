@@ -1,28 +1,27 @@
 package ical.database.entity;
 
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
+
 public class EventChange_Lesson {
 
-    private OEventChange eventChange;
-    private MovedLesson movedLesson;
+    private final OEventChange eventChange;
+    private final MovedLesson movedLesson;
 
-    public EventChange_Lesson(OEventChange eventChange, MovedLesson movedLesson) {
+    public EventChange_Lesson(@Nonnull OEventChange eventChange, @Nonnull MovedLesson movedLesson) {
         this.eventChange = eventChange;
         this.movedLesson = movedLesson;
     }
 
+    @NotNull
     public OEventChange getEventChange() {
         return eventChange;
     }
 
-    public void setEventChange(OEventChange eventChange) {
-        this.eventChange = eventChange;
-    }
-
+    @NotNull
     public MovedLesson getMovedLesson() {
         return movedLesson;
     }
 
-    public void setMovedLesson(MovedLesson movedLesson) {
-        this.movedLesson = movedLesson;
-    }
 }

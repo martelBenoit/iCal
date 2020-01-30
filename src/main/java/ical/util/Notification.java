@@ -1,5 +1,6 @@
 package ical.util;
 
+import ical.database.dao.EventChangeDAO;
 import ical.database.dao.EventChange_LessonDAO;
 import ical.database.dao.MovedLessonDAO;
 import ical.database.entity.EventChange_Lesson;
@@ -58,7 +59,8 @@ public class Notification {
 
     public static MessageEmbed prepareNotificationModificationsLessons(OEventChange eventChange, List<MovedLesson> movedLessons, TemporalAccessor time){
 
-        OEventChange evtChange = (OEventChange) DAOFactory.getEventChange().create(eventChange);
+        EventChangeDAO evtChangeDAO = (EventChangeDAO) DAOFactory.getEventChange();
+        OEventChange evtChange = evtChangeDAO.create(eventChange);
 
         ModificationType typeEvent = eventChange.getType();
 

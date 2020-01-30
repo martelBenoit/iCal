@@ -3,24 +3,26 @@ package ical.database.entity;
 import ical.database.DAOFactory;
 import ical.database.dao.ProfessorDAO;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 
 public class Professor {
 
     private int id;
 
-    private String name;
+    private final String name;
 
-    private String url;
+    private final String url;
 
 
-
-    public Professor(int id, String name, String url){
+    public Professor(int id, @Nonnull String name, @Nonnull String url){
         this.id = id;
         this.name = name;
         this.url = url;
     }
 
-    public Professor(String name){
+    public Professor(@Nonnull String name){
         this.name = name;
 
         this.id = -1;
@@ -38,6 +40,7 @@ public class Professor {
         return this.id;
     }
 
+
     public String getName() {
         return name;
     }
@@ -48,14 +51,6 @@ public class Professor {
 
     public void setId(int id){
         this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     @Override

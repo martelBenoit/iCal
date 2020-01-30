@@ -1,7 +1,10 @@
 package ical.database.dao;
 
 import ical.database.entity.OGuild;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -11,8 +14,9 @@ public class GuildDAO extends DAO<OGuild> {
         super(conn);
     }
 
+    @Nullable
     @Override
-    public OGuild create(OGuild obj) {
+    public OGuild create(@Nonnull OGuild obj) {
 
         OGuild guild = null;
 
@@ -34,7 +38,7 @@ public class GuildDAO extends DAO<OGuild> {
     }
 
     @Override
-    public boolean delete(OGuild obj) {
+    public boolean delete(@Nonnull OGuild obj) {
         boolean res = false;
 
         try{
@@ -52,7 +56,7 @@ public class GuildDAO extends DAO<OGuild> {
     }
 
     @Override
-    public boolean update(OGuild obj) {
+    public boolean update(@Nonnull OGuild obj) {
 
         int res = -1;
 
@@ -75,7 +79,8 @@ public class GuildDAO extends DAO<OGuild> {
         return res==1;
     }
 
-    public OGuild find(String idGuild){
+    @Nullable
+    public OGuild find(@Nonnull String idGuild){
         ResultSet result;
         OGuild guild = null;
 
@@ -94,11 +99,13 @@ public class GuildDAO extends DAO<OGuild> {
                         result.getBoolean(5));
         } catch (SQLException e){
             LOGGER.error("Error while searching the guild : "+idGuild,e);
+            guild = null;
         }
 
         return guild;
     }
 
+    @NotNull
     @Override
     public ArrayList<OGuild> findAll() {
 

@@ -25,26 +25,26 @@ public class DAOFactory {
 
     @NotNull
     @Contract(" -> new")
-    public static DAO getMovedLessonDAO(){
+    public static DAO<?> getMovedLessonDAO(){
         return new MovedLessonDAO(conn);
     }
 
     @NotNull
     @Contract(" -> new")
-    public static DAO getLessonDAO(){
+    public static DAO<?> getLessonDAO(){
         return new LessonDAO(conn);
     }
 
 
     @NotNull
     @Contract(" -> new")
-    public static DAO getEventChange(){
+    public static DAO<?> getEventChange(){
         return new EventChangeDAO(conn);
     }
 
     @NotNull
     @Contract(" -> new")
-    public static DAO getEventChange_Lesson(){
+    public static DAO<?> getEventChange_Lesson(){
         return new EventChange_LessonDAO(conn);
     }
 

@@ -32,22 +32,32 @@ public class Listener extends ListenerAdapter {
     private final CommandManager manager = new CommandManager(scheduleManager);
     private final TaskScheduler taskScheduler = new TaskScheduler();
 
+    private final Object waiter = new Object();
+
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
-        LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());
 
-        ArrayList<OGuild> guilds = (ArrayList<OGuild>) DAOFactory.getGuildDAO().findAll();
+        taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
+        taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager,event.getJDA()),5);
+        taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
+
+        taskScheduler.runOneTime("UpdateAvatar",new UpdateAvatar(event.getJDA(),waiter));
+        synchronized (waiter){
+            try{
+                waiter.wait();
+            }catch (InterruptedException ignored){ }
+
+        }
+
+        GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+        ArrayList<OGuild> guilds = guildDAO.findAll();
         for(OGuild guild : guilds){
             scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(guild.getUrlSchedule()));
         }
 
-        taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
-        taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager),5);
-        taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
-        taskScheduler.runOneTime("UpdateAvatar",new UpdateAvatar(event.getJDA()));
-
         LOGGER.info("Configuration done !");
+        LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());
 
     }
 
@@ -80,12 +90,13 @@ public class Listener extends ListenerAdapter {
     @Override
     public void onGuildJoin(@Nonnull GuildJoinEvent event) {
 
-        ArrayList<OGuild> guilds = (ArrayList<OGuild>) DAOFactory.getGuildDAO().findAll();
+        GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+        ArrayList<OGuild> guilds = guildDAO.findAll();
+
         OGuild guild = new OGuild(event.getGuild().getId());
 
 
         if(!guilds.contains(guild)){
-            GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
             if(guildDAO.create(guild) != null){
                 scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(null));
                 LOGGER.info("Bot joined a new guild : "+event.getGuild().getName()+", id = "+event.getGuild().getId());

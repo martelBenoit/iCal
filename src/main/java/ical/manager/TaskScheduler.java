@@ -69,7 +69,7 @@ public class TaskScheduler {
 
         LOGGER.info("Task '" + name + "' starting");
         scheduler.execute(runnable);
-        LOGGER.info("Task '" + name + "' end");
+
 
 
     }

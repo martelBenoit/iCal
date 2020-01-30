@@ -2,6 +2,8 @@ package ical.database.dao;
 
 import ical.database.entity.OEventChange;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,8 +16,9 @@ public class EventChangeDAO extends DAO<OEventChange> {
         super(conn);
     }
 
+    @Nullable
     @Override
-    public OEventChange create(OEventChange obj) {
+    public OEventChange create(@Nonnull OEventChange obj) {
 
         OEventChange eventChange = null;
         try{
@@ -37,17 +40,18 @@ public class EventChangeDAO extends DAO<OEventChange> {
     }
 
     @Override
-    public boolean delete(OEventChange obj) {
+    public boolean delete(@Nonnull OEventChange obj) {
         return false;
     }
 
     @Override
-    public boolean update(OEventChange obj) {
+    public boolean update(@Nonnull OEventChange obj) {
         return false;
     }
 
+    @Nonnull
     @Override
     public ArrayList<OEventChange> findAll() {
-        return null;
+        return new ArrayList<>();
     }
 }

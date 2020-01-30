@@ -1,7 +1,7 @@
 package ical.database.entity;
 
-import org.jetbrains.annotations.NotNull;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -16,7 +16,7 @@ public class OGuild {
     /**
      * the id of the guild
      */
-    private String idGuild;
+    private final String idGuild;
 
     /**
      * the id of the default channel
@@ -39,20 +39,21 @@ public class OGuild {
      *
      * @param idGuild the id of the guild
      */
-    public OGuild(String idGuild) {
+    public OGuild(@Nonnull String idGuild) {
         this.idGuild = idGuild;
     }
 
     /**
      * Contructor.
      * Allow to create an object with the id of the guild, id of the channel and the url of the schedule.
+     *
      * @param idGuild the id of the guild
      * @param idChannel the id of the channel
      * @param urlSchedule the url of the schedule
-     * @param modifNotif
-     * @param lessonNotif
+     * @param modifNotif the boolean which indicates whether lessons modifications notifications are active or not
+     * @param lessonNotif the boolean which indicates whether lesson notifications are active or not
      */
-    public OGuild(String idGuild, String idChannel, String urlSchedule, boolean modifNotif, boolean lessonNotif) {
+    public OGuild(@Nonnull String idGuild, String idChannel, String urlSchedule, boolean modifNotif, boolean lessonNotif) {
         this.idGuild = idGuild;
         this.idChannel = idChannel;
         this.urlSchedule = urlSchedule;
@@ -64,23 +65,16 @@ public class OGuild {
      * Get the guild id.
      * @return the guild id
      */
-    @NotNull
+    @Nonnull
     public String getIdGuild() {
         return idGuild;
-    }
-
-    /**
-     * Set the guild id.
-     * @param idGuild the guild id
-     */
-    public void setIdGuild(@NotNull String idGuild) {
-        this.idGuild = idGuild;
     }
 
     /**
      * Get the default channel id.
      * @return the default channel id
      */
+    @Nullable
     public String getIdChannel() {
         return idChannel;
     }
@@ -89,7 +83,7 @@ public class OGuild {
      * Set the default channel id.
      * @param idChannel the default channel id
      */
-    public void setIdChannel(@NotNull String idChannel) {
+    public void setIdChannel(@Nonnull String idChannel) {
         this.idChannel = idChannel;
     }
 
@@ -97,30 +91,52 @@ public class OGuild {
      * Get the schedule url.
      * @return the schedule url
      */
+    @Nullable
     public String getUrlSchedule() {
         return urlSchedule;
     }
 
     /**
      * Set the schedule url.
+     *
      * @param urlSchedule the schedule url
      */
-    public void setUrlSchedule(@NotNull String urlSchedule) {
+    public void setUrlSchedule(@Nonnull String urlSchedule) {
         this.urlSchedule = urlSchedule;
     }
 
+    /**
+     * Get the value of boolean modification lesson notifications.
+     *
+     * @return true if lesson notifications are active
+     */
     public boolean modifNotifisEnabled(){
         return this.modifNotif;
     }
 
+    /**
+     * Set the value of boolean modification lesson notifications.
+     *
+     * @param enable true to enable notifications
+     */
     public void setModifNotif(boolean enable){
         this.modifNotif = enable;
     }
 
+    /**
+     * Get the value of boolean lesson notifications.
+     *
+     * @return true if lesson notifications are active
+     */
     public boolean lessonNotifisEnabled(){
         return this.lessonNotif;
     }
 
+    /**
+     * Set the value of boolean lesson notifications.
+     *
+     * @param enable true to enable notifications
+     */
     public void setLessonNotif(boolean enable){
         this.lessonNotif = enable;
     }

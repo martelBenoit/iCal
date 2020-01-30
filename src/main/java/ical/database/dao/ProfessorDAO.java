@@ -2,6 +2,8 @@ package ical.database.dao;
 
 import ical.database.entity.Professor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -12,7 +14,8 @@ public class ProfessorDAO extends DAO<Professor>{
         super(conn);
     }
 
-    public Professor create(Professor obj) {
+    @Nullable
+    public Professor create(@Nonnull Professor obj) {
 
         Professor professor = null;
 
@@ -44,15 +47,16 @@ public class ProfessorDAO extends DAO<Professor>{
     }
 
     @Override
-    public boolean delete(Professor obj) {
+    public boolean delete(@Nonnull Professor obj) {
         return false;
     }
 
     @Override
-    public boolean update(Professor obj) {
+    public boolean update(@Nonnull Professor obj) {
         return false;
     }
 
+    @Nonnull
     @Override
     public ArrayList<Professor> findAll() {
 
@@ -77,7 +81,8 @@ public class ProfessorDAO extends DAO<Professor>{
         return professors;
     }
 
-    public Professor find(String name){
+    @Nullable
+    public Professor find(@Nonnull String name){
         ResultSet results;
 
         Professor professor = null;

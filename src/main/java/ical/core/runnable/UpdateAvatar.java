@@ -19,8 +19,16 @@ public class UpdateAvatar implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateAvatar.class);
 
+    private final Object waiter;
+
     public UpdateAvatar(JDA jda){
         this.jda = jda;
+        this.waiter = null;
+    }
+
+    public UpdateAvatar(JDA jda, Object waiter){
+        this.jda = jda;
+        this.waiter = waiter;
     }
 
     @Override
@@ -37,6 +45,11 @@ public class UpdateAvatar implements Runnable {
                     v -> LOGGER.info("Success !"),
                     t -> LOGGER.info("Error")
             );
+
+            if(waiter != null)
+                synchronized (waiter){
+                    waiter.notify();
+                };
 
         } catch (Exception e) {
             e.printStackTrace();

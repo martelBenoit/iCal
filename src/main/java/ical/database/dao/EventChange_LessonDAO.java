@@ -2,6 +2,8 @@ package ical.database.dao;
 
 import ical.database.entity.EventChange_Lesson;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -11,8 +13,9 @@ public class EventChange_LessonDAO extends DAO<EventChange_Lesson> {
         super(conn);
     }
 
+    @Nullable
     @Override
-    public EventChange_Lesson create(EventChange_Lesson obj) {
+    public EventChange_Lesson create(@Nonnull EventChange_Lesson obj) {
 
         EventChange_Lesson eventChangeLesson = null;
 
@@ -36,17 +39,18 @@ public class EventChange_LessonDAO extends DAO<EventChange_Lesson> {
     }
 
     @Override
-    public boolean delete(EventChange_Lesson obj) {
+    public boolean delete(@Nonnull EventChange_Lesson obj) {
         return false;
     }
 
     @Override
-    public boolean update(EventChange_Lesson obj) {
+    public boolean update(@Nonnull EventChange_Lesson obj) {
         return false;
     }
 
+    @Nonnull
     @Override
     public ArrayList<EventChange_Lesson> findAll() {
-        return null;
+        return new ArrayList<>();
     }
 }

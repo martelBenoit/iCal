@@ -4,18 +4,21 @@ import ical.database.DAOFactory;
 import ical.database.entity.Lesson;
 import ical.database.entity.Professor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class LessonDAO extends DAO<Lesson> {
 
-    public LessonDAO(Connection conn) {
+    public LessonDAO(@Nonnull Connection conn) {
         super(conn);
     }
 
+    @Nullable
     @Override
-    public Lesson create(Lesson obj) {
+    public Lesson create(@Nonnull Lesson obj) {
 
         Lesson res = null;
 
@@ -59,17 +62,18 @@ public class LessonDAO extends DAO<Lesson> {
 
 
     @Override
-    public boolean delete(Lesson obj) {
+    public boolean delete(@Nonnull Lesson obj) {
         return false;
     }
 
     @Override
-    public boolean update(Lesson obj) {
+    public boolean update(@Nonnull Lesson obj) {
         return false;
     }
 
+    @Nonnull
     @Override
     public ArrayList<Lesson> findAll() {
-        return null;
+        return new ArrayList<>();
     }
 }
