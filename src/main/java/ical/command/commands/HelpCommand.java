@@ -57,6 +57,6 @@ public class HelpCommand implements ICommand {
     @Override
     public String getHelp() {
         return "Affiche la liste des commandes disponibles d'ICal\n" +
-                "Utilisation : `!help [commande]`";
+                "Utilisation : `"+Config.get("prefix")+"help [commande]`";
     }
 }

@@ -19,6 +19,8 @@ public class TodayLessonsCommand extends AbtractScheduleCommand {
     public void handle(CommandContext ctx) {
 
         final ArrayList<Lesson> lessons = scheduleManager.getSchedule(ctx.getGuild().getId()).getLessons(0);
+
+        //scheduleManager.getSchedule(ctx.getGuild().getId()).getNextLessons().get(0).setDate();
         if (lessons.size() > 0) {
             final EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Les cours pr\u00e9vus dans la journ\u00e9e : ", null);

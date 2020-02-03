@@ -15,35 +15,34 @@ public class LessonNotifCommand implements ICommand {
             if(ctx.getArgs().size() == 1){
                 String enable = ctx.getArgs().get(0);
 
-                if(enable.equalsIgnoreCase("true")){
-                    GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
-                    OGuild guild = guildDAO.find(ctx.getGuild().getId());
+                GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+                OGuild guild = guildDAO.find(ctx.getGuild().getId());
 
-                    guild.setLessonNotif(true);
-                    if(guildDAO.update(guild))
-                        ctx.getChannel().sendMessage("✅ Notification des cours activée !").queue();
-                    else
-                        ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
+                if(guild != null) {
 
+                    if (enable.equalsIgnoreCase("true")) {
+
+                        guild.setLessonNotif(true);
+                        if (guildDAO.update(guild))
+                            ctx.getChannel().sendMessage("✅ Notification des cours activée !").queue();
+                        else
+                            ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
+
+                    } else if (enable.equalsIgnoreCase("false")) {
+
+                        guild.setLessonNotif(false);
+                        if (guildDAO.update(guild))
+                            ctx.getChannel().sendMessage("✅ Notification des cours désactivée !").queue();
+                        else
+                            ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
+                    } else
+                        ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
                 }
-                else if(enable.equalsIgnoreCase("false")){
-                    GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
-                    OGuild guild = guildDAO.find(ctx.getGuild().getId());
-
-                    guild.setLessonNotif(false);
-                    if(guildDAO.update(guild))
-                        ctx.getChannel().sendMessage("✅ Notification des cours désactivée !").queue();
-                    else
-                        ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
-                }
-                else
-                    ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
-
             }
             else
                 ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
         else
-            ctx.getChannel().sendMessage("❌ Petit coquin tu es pas autorisé à exécuter cette commande").queue();
+            ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
 
 
     }

@@ -10,16 +10,40 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
+/**
+ * Class TaskScheduler.<br>
+ * Class used to generate tasks to be executed periodically.<br>
+ * All the tasks created are stored in a Map.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ */
 public class TaskScheduler {
 
+    /**
+     * the logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskScheduler.class);
 
+    /**
+     * the map of the tasks created
+     */
     private final Map<String, ScheduledFuture> tasks;
 
+    /**
+     * Constructor.
+     * <br> Initialize the HashMap.
+     */
     public TaskScheduler(){
         tasks = new HashMap<>();
     }
 
+    /**
+     * Create a task that starts every minute.
+     *
+     * @param name the name of the task
+     * @param runnable the runnable object to launch
+     */
     public void runMinutely(String name, Runnable runnable){
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -29,6 +53,13 @@ public class TaskScheduler {
     }
 
 
+    /**
+     * Create a task that starts every x minute(s).
+     *
+     * @param name the name of the task
+     * @param runnable the runnable object to launch
+     * @param period the period in minutes
+     */
     public void runPeriod(String name, Runnable runnable, int period){
 
         if(period > 0 && period < 60){
@@ -42,16 +73,21 @@ public class TaskScheduler {
             LOGGER.error("Invalid period");
     }
 
+    /**
+     * Create a task that starts at midnight every day.
+     *
+     * @param name the name of the task
+     * @param runnable the runnable object to launch
+     */
     public void runAtMidnight(String name, Runnable runnable){
 
         long delayTime;
-        final long initialDelay = LocalDateTime.now().until(LocalDate.now().plusDays(1).atTime(0, 1), ChronoUnit.MINUTES);
+        final long initialDelay = LocalDateTime.now().until(LocalDate.now().plusDays(1).atTime(0, 2), ChronoUnit.MINUTES);
 
-        if (initialDelay > TimeUnit.DAYS.toMinutes(1)) {
+        if (initialDelay > TimeUnit.DAYS.toMinutes(1))
             delayTime = LocalDateTime.now().until(LocalDate.now().atTime(0, 1), ChronoUnit.MINUTES);
-        } else {
+        else
             delayTime = initialDelay;
-        }
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -59,21 +95,22 @@ public class TaskScheduler {
 
         ScheduledFuture future = scheduler.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
 
-
         tasks.put(name,future);
 
     }
 
+    /**
+     * Create a task that starts only one time.
+     *
+     * @param name the name of the task
+     * @param runnable the runnable object to launch
+     */
     public void runOneTime(String name, Runnable runnable){
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         LOGGER.info("Task '" + name + "' starting");
         scheduler.execute(runnable);
 
-
-
     }
-
-
 
 }

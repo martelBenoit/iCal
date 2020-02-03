@@ -49,7 +49,7 @@ public class UpdateAvatar implements Runnable {
             if(waiter != null)
                 synchronized (waiter){
                     waiter.notify();
-                };
+                }
 
         } catch (Exception e) {
             e.printStackTrace();

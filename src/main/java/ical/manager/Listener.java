@@ -98,8 +98,10 @@ public class Listener extends ListenerAdapter {
 
         if(!guilds.contains(guild)){
             if(guildDAO.create(guild) != null){
-                scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(null));
-                LOGGER.info("Bot joined a new guild : "+event.getGuild().getName()+", id = "+event.getGuild().getId());
+                if(scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(null)))
+                    LOGGER.info("Bot joined a new guild : "+event.getGuild().getName()+", id = "+event.getGuild().getId());
+                else
+                    LOGGER.error("Bot joined a new guild but the schedule object was not added to the schedule manager : " + event.getGuild().getName());
             }
             else
                 LOGGER.error("Bot joined a new guild without registered it : "+event.getGuild().getName()+", id = "+event.getGuild().getId());
@@ -115,7 +117,10 @@ public class Listener extends ListenerAdapter {
 
         GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
         boolean resDB = guildDAO.delete(guild);
-        scheduleManager.removeSchedule(guild.getIdGuild());
+        if(scheduleManager.removeSchedule(guild.getIdGuild()))
+            LOGGER.info("Schedule remove from the schedule manager");
+        else
+            LOGGER.error("Schedule not remove from the schedule manager");
 
         if(resDB){
             LOGGER.info("Bot left a guild : "+event.getGuild().getName()+", id = "+event.getGuild().getId());

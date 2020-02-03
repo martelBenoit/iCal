@@ -11,12 +11,16 @@ import ical.database.entity.MovedLesson;
 import ical.database.entity.OEventChange;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.List;
 
 public class Notification {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Notification.class);
 
     public static MessageEmbed prepareNotificationNextLessons(List<Lesson> lessons){
 
@@ -77,24 +81,30 @@ public class Notification {
             if(typeEvent == ModificationType.MOVE){
 
                 for (MovedLesson movedLesson : movedLessons){
-                    Lesson prevLesson = lessonDAO.create(movedLesson.getPreviousLesson());
-                    Lesson actLesson = lessonDAO.create(movedLesson.getActualLesson());
-                    movedLesson.setPreviousLesson(prevLesson);
-                    movedLesson.setActualLesson(actLesson);
-                    MovedLesson movedLessonCreated = movedLessonDAO.create(movedLesson);
-                    eventChangeLessonDAO.create(new EventChange_Lesson(evtChange,movedLessonCreated));
+                    if(movedLesson.getPreviousLesson() != null && movedLesson.getActualLesson() != null){
+                        Lesson prevLesson = lessonDAO.create(movedLesson.getPreviousLesson());
+                        Lesson actLesson = lessonDAO.create(movedLesson.getActualLesson());
+                        movedLesson.setPreviousLesson(prevLesson);
+                        movedLesson.setActualLesson(actLesson);
+                        MovedLesson movedLessonCreated = movedLessonDAO.create(movedLesson);
+                        if(movedLessonCreated != null)
+                            eventChangeLessonDAO.create(new EventChange_Lesson(evtChange,movedLessonCreated));
+                        else
+                            LOGGER.error("Error movedLessonCreated is null");
+                    }
+                    else
+                        LOGGER.error("To create an moved event change lesson you should insert a prevLesson and a actLesson not null ");
+
                 }
 
             }
             else if(typeEvent == ModificationType.ADD){
-                System.out.println("boucle add");
+
                 for (MovedLesson movedLesson : movedLessons){
 
                     Lesson actLesson = lessonDAO.create(movedLesson.getActualLesson());
                     movedLesson.setActualLesson(actLesson);
-                    System.out.println("lesson updated : "+actLesson);
                     MovedLesson movedLessonCreated = movedLessonDAO.create(movedLesson);
-                    System.out.println("movedLesson created : "+movedLessonCreated);
                     eventChangeLessonDAO.create(new EventChange_Lesson(evtChange,movedLessonCreated));
                 }
 

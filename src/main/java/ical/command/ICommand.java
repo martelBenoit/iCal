@@ -32,8 +32,5 @@ public interface ICommand {
      */
     String getHelp();
 
-    default List<String> getAliases(){
-        return List.of();
-    }
 
 }

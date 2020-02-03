@@ -47,7 +47,7 @@ public class URLScheduleCommand extends AbtractScheduleCommand {
             else
                 ctx.getChannel().sendMessage("❌ Tu dois renseigner un lien avec cette commande").queue();
         else
-            ctx.getChannel().sendMessage("❌ Petit coquin tu es pas autorisé à exécuter cette commande").queue();
+            ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
     }
 
     @Override

@@ -67,8 +67,4 @@ public class NextLessonCommand extends AbtractScheduleCommand {
         return "Affiche le/les prochain(s) cours (si plusieurs en même temps)";
     }
 
-    @Override
-    public List<String> getAliases(){
-        return null;
-    }
 }

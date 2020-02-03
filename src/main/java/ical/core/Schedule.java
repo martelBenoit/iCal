@@ -37,9 +37,11 @@ public class Schedule {
 
     private final SimpleDateFormat dateFormat;
 
-    private boolean alreadyBeenNotified = false;
+    private boolean alreadyBeenNotified;
 
     public Schedule(String url){
+
+        this.alreadyBeenNotified = false;
 
         dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -61,7 +63,7 @@ public class Schedule {
 
     public void updateLessons() throws IOException, ParserException, ParseException {
 
-        // On vérfie que l'url n'est pas nul
+        // On vérfie que l'url n'est pas null
         if(this.url != null){
             this.previousLessons = this.lessons;
 
@@ -169,10 +171,6 @@ public class Schedule {
 
     }
 
-    public ArrayList<Lesson> getLessons(){
-        return this.lessons;
-    }
-
     public ArrayList<Lesson> getLessons(final int toDayNumber) {
         final Date dateToCompare = Tools.addDaysToTodayDate(toDayNumber);
         final ArrayList<Lesson> lessonsDays = new ArrayList<>();
@@ -213,19 +211,10 @@ public class Schedule {
 
     }
 
-    public ArrayList<Lesson> getPreviousLessons(){
-        return this.previousLessons;
-    }
-
 
     public TemporalAccessor getCreationDate(){
         return this.creationDate;
     }
-
-    public URL getUrl(){
-        return this.url;
-    }
-
 
     public boolean hasAlreadyBeenNotified(){
         return alreadyBeenNotified;

@@ -38,7 +38,7 @@ public class CheckSchedule implements Runnable {
             GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
             OGuild guild = guildDAO.find(idGuild);
 
-            // On vérifie que l'on a bien récupéré l'objet de la base de donnée
+            // On vérifie que l'on a bien récupéré l'objet de la base de données
             if (guild != null) {
 
                 String idChannel = guild.getIdChannel();
@@ -51,14 +51,15 @@ public class CheckSchedule implements Runnable {
 
                         // PARTIE NOTIFICATION PROCHAIN COURS
                         if (guild.lessonNotifisEnabled()) {
-                            if (nextLessons.get(0).timeRemainingInSeconds() <= 900)
+                            if (nextLessons.get(0).timeRemainingInSeconds() <= 900){
                                 if (!schedule.hasAlreadyBeenNotified()) {
                                     channel.sendTyping().queue();
                                     schedule.setNotified(true);
                                     MessageEmbed message = Notification.prepareNotificationNextLessons(nextLessons);
                                     channel.sendMessage(message).queue();
-                                } else
-                                    schedule.setNotified(false);
+                                }
+                            }
+
                             else
                                 schedule.setNotified(false);
                         }

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
 public class Lesson implements Comparable<Lesson>{
@@ -44,6 +45,12 @@ public class Lesson implements Comparable<Lesson>{
         this.professor = professor;
         this.room = room;
     }
+
+    /*public void setDate(){
+        java.util.Calendar c = new GregorianCalendar();
+        c.add(java.util.Calendar.MINUTE,5);
+        this.startDate = c.getTime();
+    }*/
 
     public String getUID(){
         return this.UID;
