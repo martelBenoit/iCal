@@ -46,22 +46,26 @@ public class Schedule {
         dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+
+
         if(url != null && !url.equals("")){
+
             try{
                 this.url = new URL(url);
                 Calendar calendar = new CalendarBuilder().build(this.url.openStream());
                 fillSchedule(calendar);
                 creationDate = Instant.ofEpochMilli(System.currentTimeMillis());
                 this.previousLessons = this.lessons;
-            } catch (ParseException | ParserException | IOException exception){
+            } catch (ParseException | IOException exception){
                 LOGGER.error(exception.getMessage(),exception);
-
+            } catch (ParserException parser){
+                LOGGER.error("Parser error : "+parser.getMessage());
             }
         }
 
     }
 
-    public void updateLessons() throws IOException, ParserException, ParseException {
+    public void updateLessons() throws IOException, ParseException, ParserException {
 
         // On vérfie que l'url n'est pas null
         if(this.url != null){
@@ -70,7 +74,9 @@ public class Schedule {
             Calendar calendar = new CalendarBuilder().build(this.url.openStream());
             fillSchedule(calendar);
             creationDate = Instant.ofEpochMilli(System.currentTimeMillis());
+
         }
+
 
     }
 
@@ -110,7 +116,8 @@ public class Schedule {
             description = "";
             for(int i = 0; i < decompose.length-1; i++)
                 if(i != decompose.length-2)
-                    description = description.concat(decompose[i]+", ");
+                    if(!decompose[i].equals(""))
+                        description = description.concat(decompose[i]+", ");
                 else
                     description = description.concat(decompose[i].replaceAll("\\.",""));
 

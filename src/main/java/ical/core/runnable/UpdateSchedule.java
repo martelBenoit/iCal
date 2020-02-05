@@ -30,17 +30,20 @@ public class UpdateSchedule implements Runnable {
     @Override
     public void run() {
 
-        try{
+        try {
             for (Map.Entry<String, Schedule> e : this.scheduleManager.getSchedules().entrySet()) {
                 Schedule schedule = e.getValue();
                 schedule.updateLessons();
             }
             LOGGER.info("Schedule update");
-            jda.getPresence().setPresence(OnlineStatus.ONLINE,true);
-        } catch (ParseException | IOException | ParserException e) {
+            jda.getPresence().setPresence(OnlineStatus.ONLINE, true);
+        } catch (ParseException | IOException e) {
             LOGGER.error("Error when updating the schedule");
-            jda.getPresence().setPresence(OnlineStatus.OFFLINE,true);
+            jda.getPresence().setPresence(OnlineStatus.IDLE, true);
             e.printStackTrace();
+        } catch (ParserException parser) {
+            LOGGER.error("Parser error : " + parser.getMessage());
+            jda.getPresence().setPresence(OnlineStatus.IDLE, true);
         }
     }
 }

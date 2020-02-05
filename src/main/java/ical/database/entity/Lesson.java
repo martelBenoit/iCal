@@ -124,8 +124,8 @@ public class Lesson implements Comparable<Lesson>{
         if(lesson.getUID().equals(this.UID))
             if (lesson.getStartDate().equals(this.startDate))
                 if(lesson.getEndDate().equals(this.endDate))
-                    if(lesson.getName().equals(this.name))
-                        return (lesson.getDescription().equals(this.description));
+                    return (lesson.getName().equals(this.name));
+
 
         return false;
 

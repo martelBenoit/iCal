@@ -28,8 +28,14 @@ public class OGuild {
      */
     private String urlSchedule;
 
+    /**
+     * the modification notification
+     */
     private boolean modifNotif;
 
+    /**
+     * the lesson notification
+     */
     private boolean lessonNotif;
 
     /**
