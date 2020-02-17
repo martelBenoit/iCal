@@ -1,7 +1,7 @@
 package ical.command.commands.schedule;
 
 import ical.command.CommandContext;
-import ical.command.commands.AbtractScheduleCommand;
+import ical.command.commands.AbstractScheduleCommand;
 import ical.database.entity.Lesson;
 import ical.manager.ScheduleManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class TodayLessonsCommand extends AbtractScheduleCommand {
+public class TodayLessonsCommand extends AbstractScheduleCommand {
 
     public TodayLessonsCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);

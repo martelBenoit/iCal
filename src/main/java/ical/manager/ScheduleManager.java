@@ -1,5 +1,6 @@
 package ical.manager;
 
+import ical.core.RoomSchedule;
 import ical.core.Schedule;
 
 import java.util.HashMap;
@@ -13,6 +14,8 @@ import java.util.HashMap;
  */
 public class ScheduleManager {
 
+    private RoomSchedule roomSchedule;
+
     /**
      * Each schedule has a id guild represented by this HashMap.
      */
@@ -23,7 +26,9 @@ public class ScheduleManager {
      * <br>Initializes the HashMap.
      */
     public ScheduleManager(){
+
         this.schedules = new HashMap<>();
+        this.roomSchedule = new RoomSchedule();
     }
 
     /**
@@ -68,6 +73,10 @@ public class ScheduleManager {
         int ret = this.schedules.size();
         this.schedules.remove(idGuild);
         return this.schedules.size()==ret-1;
+    }
+
+    public RoomSchedule getRoomSchedule(){
+        return roomSchedule;
     }
 
 }

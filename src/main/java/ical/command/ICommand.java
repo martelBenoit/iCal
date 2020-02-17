@@ -1,7 +1,5 @@
 package ical.command;
 
-import java.util.List;
-
 /**
  * ICommand interface.
  *

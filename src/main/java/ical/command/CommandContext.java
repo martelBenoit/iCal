@@ -16,7 +16,14 @@ import java.util.List;
  */
 public class CommandContext implements ICommandContext {
 
+    /**
+     * the guild message received event
+     */
     private final GuildMessageReceivedEvent event;
+
+    /**
+     * the argument list
+     */
     private final List<String> args;
 
     /**
@@ -30,11 +37,21 @@ public class CommandContext implements ICommandContext {
         this.args = args;
     }
 
+    /**
+     * Find the guild from which the event originates
+     *
+     * @return the guild
+     */
     @Override
     public Guild getGuild() {
         return this.getEvent().getGuild();
     }
 
+    /**
+     * Get the event.
+     *
+     * @return the event
+     */
     @Override
     public GuildMessageReceivedEvent getEvent() {
         return this.event;
@@ -42,6 +59,7 @@ public class CommandContext implements ICommandContext {
 
     /**
      * Get the list of arguments of the command
+     *
      * @return the command arguments list
      */
     public List<String> getArgs() {

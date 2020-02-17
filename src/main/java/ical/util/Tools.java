@@ -1,5 +1,8 @@
 package ical.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Date;
 import java.util.Calendar;
 
@@ -11,6 +14,8 @@ import java.util.Calendar;
  * @version 1.0
  */
 public class Tools {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Tools.class);
 
     /**
      * Retrieves the date resulting from the addition between today's date and the number of days passed in parameter.
@@ -41,6 +46,22 @@ public class Tools {
         cal.set(java.util.Calendar.MILLISECOND, 0);
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
         return cal.getTime();
+    }
+
+    public static int getNumberFromAString(String number){
+
+        if(number == null)
+            return -1;
+
+        int ret = -1;
+
+        try{
+            ret = Integer.parseInt(number);
+        }catch (NumberFormatException e){
+            LOGGER.error(number + "is not a number");
+        }
+
+        return ret;
     }
 
 }

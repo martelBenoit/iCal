@@ -28,6 +28,7 @@ public class CommandManager {
         addCommand(new InfoCommand(scheduleManager));
         addCommand(new ModifNotifCommand());
         addCommand(new LessonNotifCommand());
+        addCommand(new RoomCommand(scheduleManager));
 
     }
 

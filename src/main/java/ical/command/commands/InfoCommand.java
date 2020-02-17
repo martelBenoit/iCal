@@ -6,7 +6,7 @@ import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
 import ical.manager.ScheduleManager;
 
-public class InfoCommand extends AbtractScheduleCommand {
+public class InfoCommand extends AbstractScheduleCommand {
 
     public InfoCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);

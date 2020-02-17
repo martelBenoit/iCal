@@ -57,6 +57,7 @@ public class CheckSchedule implements Runnable {
                                     schedule.setNotified(true);
                                     MessageEmbed message = Notification.prepareNotificationNextLessons(nextLessons);
                                     channel.sendMessage(message).queue();
+
                                 }
                             }
 
@@ -73,10 +74,14 @@ public class CheckSchedule implements Runnable {
 
                             List<MovedLesson> movedLessons = schedule.getMovedLessons();
 
+
                             if (!movedLessons.isEmpty()) {
 
                                 OEventChange eventChange = new OEventChange(UUID.randomUUID().toString(), new Date(), ModificationType.MOVE);
                                 MessageEmbed me = Notification.prepareNotificationModificationsLessons(eventChange, movedLessons, schedule.getCreationDate());
+                                if(channel.getId().equals("666745599059689517")){
+                                    channel.sendMessage(Objects.requireNonNull(jda.getRoleById("619629144258379787")).getAsMention()).queue();
+                                }
                                 channel.sendMessage(me).queue();
 
                             }

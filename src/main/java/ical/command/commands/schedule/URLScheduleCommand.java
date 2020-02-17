@@ -1,7 +1,7 @@
 package ical.command.commands.schedule;
 
 import ical.command.CommandContext;
-import ical.command.commands.AbtractScheduleCommand;
+import ical.command.commands.AbstractScheduleCommand;
 import ical.manager.ScheduleManager;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
@@ -10,7 +10,7 @@ import ical.database.entity.OGuild;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class URLScheduleCommand extends AbtractScheduleCommand {
+public class URLScheduleCommand extends AbstractScheduleCommand {
 
     public URLScheduleCommand(ScheduleManager manager) {
         super(manager);

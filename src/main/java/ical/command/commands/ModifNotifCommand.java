@@ -9,13 +9,18 @@ import ical.database.entity.OGuild;
 /**
  * ModifNotif class.
  * <br> Implement ICommand.
- * <br> Gère la commande qui permet d'activer ou désactiver les
+ * <br> Manages the command which enables or disables notifications of schedule
  *
  * @author Benoît Martel
  * @version 1.0
  */
 public class ModifNotifCommand implements ICommand {
 
+    /**
+     * Used to process the modifNotif command.
+     *
+     * @param ctx the command context
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -48,8 +53,6 @@ public class ModifNotifCommand implements ICommand {
                         ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
                 }
 
-
-
             }
             else
                 ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
@@ -57,11 +60,21 @@ public class ModifNotifCommand implements ICommand {
             ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
     }
 
+    /**
+     * Get the name of modifNotif command.
+     *
+     * @return "modifNotif"
+     */
     @Override
     public String getName() {
         return "modifNotif";
     }
 
+    /**
+     * Get the help of the modifNotif command.
+     *
+     * @return the help of the modifNotif command
+     */
     @Override
     public String getHelp() {
         return "Permet d'activer/désactiver les notifications de modification de cours\n" +

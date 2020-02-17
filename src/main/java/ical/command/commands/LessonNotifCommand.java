@@ -6,6 +6,14 @@ import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
 
+/**
+ * LessonNotif class.
+ * <br> Implement ICommand.
+ * <br> Manages the command which enables or disables notifications of lesson
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ */
 public class LessonNotifCommand implements ICommand {
 
     @Override
@@ -47,11 +55,21 @@ public class LessonNotifCommand implements ICommand {
 
     }
 
+    /**
+     * Get the name of lessonNotif command.
+     *
+     * @return "lessonNotif"
+     */
     @Override
     public String getName() {
         return "lessonNotif";
     }
 
+    /**
+     * Get the help of the lessonNotif command.
+     *
+     * @return the help of the lessonNotif command
+     */
     @Override
     public String getHelp() {
         return "Permet d'activer/désactiver les notifications pour le prochain cours qui arrive\n" +

@@ -35,6 +35,7 @@ public class UpdateSchedule implements Runnable {
                 Schedule schedule = e.getValue();
                 schedule.updateLessons();
             }
+            this.scheduleManager.getRoomSchedule().updateLessons();
             LOGGER.info("Schedule update");
             jda.getPresence().setPresence(OnlineStatus.ONLINE, true);
         } catch (ParseException | IOException e) {
@@ -45,5 +46,7 @@ public class UpdateSchedule implements Runnable {
             LOGGER.error("Parser error : " + parser.getMessage());
             jda.getPresence().setPresence(OnlineStatus.IDLE, true);
         }
+
+
     }
 }

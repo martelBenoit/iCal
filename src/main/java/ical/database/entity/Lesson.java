@@ -163,7 +163,6 @@ public class Lesson implements Comparable<Lesson>{
     @Override
     public String toString() {
         return "Lesson[ name=" + this.name + ", startDate=" + this.startDate + ", endDate=" + this.endDate +
-                ", description=" + this.endDate + ", nameProfessor=" + this.professor.getName() +
                 ", room=" + this.room + " ]";
     }
 
