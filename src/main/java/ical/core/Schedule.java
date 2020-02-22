@@ -50,9 +50,6 @@ public class Schedule extends AbstractSchedule {
         if(this.watch_up <= 0)
             this.watch_up = -1;
 
-        LOGGER.info(String.valueOf(this.watch_up));
-
-
     }
 
     public void updateLessons() throws IOException, ParseException, ParserException {

@@ -34,10 +34,8 @@ public abstract class AbstractSchedule {
 
     public AbstractSchedule(){
 
-
         dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
 
     }
 
@@ -69,7 +67,7 @@ public abstract class AbstractSchedule {
 
 
                 // On récupère les groupes
-                description = "";
+               /* description = "";
                 for (int i = 0; i < decompose.length - 1; i++)
                     if (i != decompose.length - 2)
                         if (!decompose[i].equals(""))
@@ -78,7 +76,7 @@ public abstract class AbstractSchedule {
                             description = description.concat(decompose[i].replaceAll("\\.", ""));
 
                 description = description.concat("\n" + decompose[decompose.length - 1]);
-
+*/
 
 
                 ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
@@ -91,13 +89,11 @@ public abstract class AbstractSchedule {
                 if (professor != null)
                     this.lessons.add(new Lesson(uid, name, dtstart, dtend, description, professor, room));
                 else
-                    LOGGER.info("Lesson not added");
+                    LOGGER.info("Lesson not added, error with the professor ");
             }
-            else{
-
+            else
                 this.lessons.add(new Lesson(uid,name,dtstart,dtend,description,null,room));
-                LOGGER.info("Lesson added with no description : "+name);
-            }
+
         }
 
         Collections.sort(this.lessons);

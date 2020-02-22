@@ -56,6 +56,8 @@ public class Listener extends ListenerAdapter {
             scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(guild.getUrlSchedule()));
         }
 
+        LOGGER.info("Watch up configuration : "+Config.get("WATCH_UP")+" day(s)");
+
         LOGGER.info("Configuration done !");
         LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());
 
