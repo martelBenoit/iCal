@@ -4,6 +4,7 @@ import ical.command.CommandContext;
 import ical.command.commands.AbstractScheduleCommand;
 import ical.database.entity.Lesson;
 import ical.manager.ScheduleManager;
+import ical.util.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -63,7 +64,8 @@ public class NextLessonCommand extends AbstractScheduleCommand {
 
     @Override
     public String getHelp() {
-        return "Affiche le/les prochain(s) cours (si plusieurs en même temps)";
+        return "Affiche le/les prochain(s) cours (si plusieurs en même temps).\n"+
+                "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
 
 }

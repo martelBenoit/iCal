@@ -73,6 +73,6 @@ public class LessonNotifCommand implements ICommand {
     @Override
     public String getHelp() {
         return "Permet d'activer/désactiver les notifications pour le prochain cours qui arrive\n" +
-                "Utilisation : `"+getName()+" [true/false]`";
+                "Utilisation : `"+getName()+" {true/false}`";
     }
 }

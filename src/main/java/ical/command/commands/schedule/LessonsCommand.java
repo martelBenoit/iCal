@@ -46,7 +46,7 @@ public class LessonsCommand extends AbstractScheduleCommand {
 
     @Override
     public String getHelp() {
-        return "Affiche les cours qui auront lieu dans {nombre} jour(s) par rapport à aujourd'hui\n" +
-                "Utilisation : `"+ Config.get("prefix")+getName()+"[nombre]`";
+        return "Affiche les cours qui auront lieu dans {nombre} jour(s) par rapport à aujourd'hui.\n" +
+                "Utilisation : `"+ Config.get("prefix")+getName()+" {nombre}`";
     }
 }

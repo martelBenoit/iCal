@@ -4,6 +4,7 @@ import ical.command.CommandContext;
 import ical.command.commands.AbstractScheduleCommand;
 import ical.database.entity.Lesson;
 import ical.manager.ScheduleManager;
+import ical.util.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
@@ -44,7 +45,8 @@ public class TodayLessonsCommand extends AbstractScheduleCommand {
 
     @Override
     public String getHelp() {
-        return "Indique les cours qui se déroule aujourd'hui";
+        return "Indique les cours qui se déroule aujourd'hui.\n"+
+                "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
 
 }

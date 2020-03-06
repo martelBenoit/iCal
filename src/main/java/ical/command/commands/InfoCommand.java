@@ -5,6 +5,7 @@ import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
 import ical.manager.ScheduleManager;
+import ical.util.Config;
 
 public class InfoCommand extends AbstractScheduleCommand {
 
@@ -74,6 +75,7 @@ public class InfoCommand extends AbstractScheduleCommand {
 
     @Override
     public String getHelp() {
-        return "Affiche l'état actuel de la configuration du bot sur le serveur";
+        return "Affiche l'état actuel de la configuration du bot sur le serveur.\n"+
+                "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
 }

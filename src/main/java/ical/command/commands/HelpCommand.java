@@ -29,15 +29,26 @@ public class HelpCommand implements ICommand {
 
             builder.append("__**Liste des commandes du bot ICal**__\n\n");
 
-            manager.getCommands().stream().map(ICommand::getName).forEach(
+            for(ICommand command : manager.getCommands()){
+                if(!command.getName().equalsIgnoreCase("help")){
+                    builder.append('`').append(command.getName()).append("`\n");
+                    builder.append(command.getHelp());
+                    builder.append("\n\n");
+                }
+
+            }
+
+           /* manager.getCommands().stream().map(ICommand::getName).forEach(
                     it -> builder.append('`').append(Config.get("prefix")).append(it).append("`\n")
 
-            );
+            );*/
 
-            channel.sendMessage(builder.toString()).queue();
+           ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(builder.toString()).queue());
+
+            //channel.sendMessage(builder.toString()).queue();
             return;
         }
-
+/*
         String search = args.get(0);
         ICommand command = manager.getCommand(search);
 
@@ -47,6 +58,8 @@ public class HelpCommand implements ICommand {
         }
 
         channel.sendMessage(command.getHelp()).queue();
+
+ */
     }
 
     @Override
@@ -57,6 +70,6 @@ public class HelpCommand implements ICommand {
     @Override
     public String getHelp() {
         return "Affiche la liste des commandes disponibles d'ICal\n" +
-                "Utilisation : `"+Config.get("prefix")+"help [commande]`";
+                "Utilisation : `"+Config.get("prefix")+getName()+"`";
     }
 }

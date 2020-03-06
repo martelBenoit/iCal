@@ -58,6 +58,6 @@ public class URLScheduleCommand extends AbstractScheduleCommand {
     @Override
     public String getHelp() {
         return "Spécifier l'url du planning. Cet url doit renvoyer un fichier de type .ics\n" +
-                "Utilisation : `"+getName()+" [url]` ";
+                "Utilisation : `"+getName()+" {url}` ";
     }
 }

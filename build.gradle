@@ -7,7 +7,7 @@ plugins {
 mainClassName = 'ical.Bot'
 group = "com.github.martelBenoit"
 
-version '1.5.3'
+version '1.5.4'
 
 description = "ICal discord bot"
 

@@ -4,6 +4,7 @@ import ical.command.CommandContext;
 import ical.command.commands.AbstractScheduleCommand;
 import ical.database.entity.Lesson;
 import ical.manager.ScheduleManager;
+import ical.util.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
@@ -44,6 +45,7 @@ public class TomorrowLessonsCommand extends AbstractScheduleCommand {
 
     @Override
     public String getHelp() {
-        return "Indique les cours qui se dérouleront demain.";
+        return "Indique les cours qui se dérouleront demain.\n"+
+                "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
 }

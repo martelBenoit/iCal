@@ -78,6 +78,6 @@ public class ModifNotifCommand implements ICommand {
     @Override
     public String getHelp() {
         return "Permet d'activer/désactiver les notifications de modification de cours\n" +
-                "Utilisation : `"+getName()+" [true/false]`";
+                "Utilisation : `"+getName()+" {true/false}`";
     }
 }

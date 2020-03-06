@@ -5,6 +5,7 @@ import ical.command.ICommand;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
+import ical.util.Config;
 
 public class DefaultChannelCommand implements ICommand {
 
@@ -38,6 +39,7 @@ public class DefaultChannelCommand implements ICommand {
 
     @Override
     public String getHelp() {
-        return "Permet de définir le salon sur lequelle les notifications du planning vont être affichées";
+        return "Permet de définir le salon sur lequelle les notifications du planning vont être affichées.\n"+
+                "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
 }
