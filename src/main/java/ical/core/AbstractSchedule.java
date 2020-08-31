@@ -65,20 +65,6 @@ public abstract class AbstractSchedule {
             if(decompose.length >= 1) {
                 String profName = (decompose[decompose.length - 1].replaceAll("[\\s|^\\W]", "")).replaceAll("\\.", "");
 
-
-                // On récupère les groupes
-               /* description = "";
-                for (int i = 0; i < decompose.length - 1; i++)
-                    if (i != decompose.length - 2)
-                        if (!decompose[i].equals(""))
-                            description = description.concat(decompose[i] + ", ");
-                        else
-                            description = description.concat(decompose[i].replaceAll("\\.", ""));
-
-                description = description.concat("\n" + decompose[decompose.length - 1]);
-*/
-
-
                 ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
                 Professor professor = professorDAO.find(profName);
                 if (professor == null) {
@@ -88,8 +74,10 @@ public abstract class AbstractSchedule {
 
                 if (professor != null)
                     this.lessons.add(new Lesson(uid, name, dtstart, dtend, description, professor, room));
-                else
-                    LOGGER.info("Lesson not added, error with the professor ");
+                else {
+                    LOGGER.info("Lesson added but error with the professor ");
+                    this.lessons.add(new Lesson(uid, name, dtstart, dtend, description, null, room));
+                }
             }
             else
                 this.lessons.add(new Lesson(uid,name,dtstart,dtend,description,null,room));
