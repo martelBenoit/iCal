@@ -33,9 +33,9 @@ public class UpdateSchedule implements Runnable {
         try {
             for (Map.Entry<String, Schedule> e : this.scheduleManager.getSchedules().entrySet()) {
                 Schedule schedule = e.getValue();
-                schedule.updateLessons();
+                schedule.updateEntries();
             }
-            this.scheduleManager.getRoomSchedule().updateLessons();
+            this.scheduleManager.getRoomSchedule().updateEntries();
             LOGGER.info("Schedule update");
             jda.getPresence().setPresence(OnlineStatus.ONLINE, true);
         } catch (ParseException | IOException e) {

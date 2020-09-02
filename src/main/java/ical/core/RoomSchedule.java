@@ -38,7 +38,7 @@ public class RoomSchedule extends AbstractSchedule {
 
 
     @Override
-    public void updateLessons() throws IOException, ParseException, ParserException {
+    public void updateEntries() throws IOException, ParseException, ParserException {
 
         // On vérfie que l'url n'est pas null
         if(this.url != null){

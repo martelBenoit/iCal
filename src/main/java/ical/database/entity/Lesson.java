@@ -131,21 +131,6 @@ public class Lesson implements Comparable<Lesson>{
 
     }
 
-    public boolean isComingSoon(){
-
-        boolean res = false;
-
-        if(this.startDate.getTime() >= System.currentTimeMillis()){
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            cal.setTime(this.startDate);
-            int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-System.currentTimeMillis()));
-            if(days <= Integer.parseInt(Config.get("WATCH_UP")))
-                res = true;
-        }
-
-        return res;
-    }
-
     @Override
     public int compareTo(@NotNull Lesson aLesson) {
         Date aDate = aLesson.getStartDate();

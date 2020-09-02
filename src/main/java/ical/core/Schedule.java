@@ -2,7 +2,6 @@ package ical.core;
 
 import ical.database.entity.Lesson;
 import ical.database.entity.MovedLesson;
-import ical.util.Config;
 import ical.util.Tools;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -21,8 +20,6 @@ public class Schedule extends AbstractSchedule {
     private ArrayList<Lesson> previousLessons = new ArrayList<>();
 
     private boolean alreadyBeenNotified;
-
-    private int watch_up = -1;
 
 
     public Schedule(String url){
@@ -46,13 +43,9 @@ public class Schedule extends AbstractSchedule {
 
         this.alreadyBeenNotified = false;
 
-        this.watch_up = Tools.getNumberFromAString(Config.get("WATCH_UP"));
-        if(this.watch_up <= 0)
-            this.watch_up = -1;
-
     }
 
-    public void updateLessons() throws IOException, ParseException, ParserException {
+    public void updateEntries() throws IOException, ParseException, ParserException {
 
         // On vérfie que l'url n'est pas null
         if(this.url != null){
@@ -157,16 +150,17 @@ public class Schedule extends AbstractSchedule {
 
     public boolean verifyWatchUp(@NotNull Lesson lesson){
 
-        if(watch_up == -1)
-            return true;
-
-        boolean res =false;
+        boolean res = false;
 
         if(lesson.getStartDate().getTime() >= System.currentTimeMillis()){
             Calendar cal = Calendar.getInstance();
             cal.setTime(lesson.getStartDate());
+
+            // Début de semaine + 14 jours
+            cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+
             int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-System.currentTimeMillis()));
-            if(days <= this.watch_up)
+            if(days <= 14)
                 res = true;
         }
 

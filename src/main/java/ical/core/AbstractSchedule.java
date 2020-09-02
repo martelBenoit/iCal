@@ -41,7 +41,7 @@ public abstract class AbstractSchedule {
 
 
 
-    public abstract void updateLessons() throws IOException, ParseException, ParserException;
+    public abstract void updateEntries() throws IOException, ParseException, ParserException;
 
 
 
