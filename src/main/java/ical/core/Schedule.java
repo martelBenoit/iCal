@@ -21,6 +21,10 @@ public class Schedule extends AbstractSchedule {
 
     private boolean alreadyBeenNotified;
 
+    public Schedule(){
+        super();
+    }
+
 
     public Schedule(String url){
 
@@ -156,10 +160,10 @@ public class Schedule extends AbstractSchedule {
             Calendar cal = Calendar.getInstance();
             cal.setTime(lesson.getStartDate());
 
-            // Début de semaine + 14 jours
-            cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+            Calendar actual = Calendar.getInstance();
+            actual.set(Calendar.DAY_OF_WEEK, actual.getFirstDayOfWeek());
 
-            int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-System.currentTimeMillis()));
+            int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
             if(days <= 14)
                 res = true;
         }

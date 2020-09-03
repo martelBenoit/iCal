@@ -26,6 +26,11 @@ public class RoomSchedule extends AbstractSchedule {
                 this.url = new URL(url);
                 net.fortuna.ical4j.model.Calendar calendar = new CalendarBuilder().build(this.url.openStream());
                 fillSchedule(calendar);
+
+                for(Lesson lesson : lessons){
+                    LOGGER.info(lesson.getRoom());
+                }
+                
                 creationDate = Instant.ofEpochMilli(System.currentTimeMillis());
             } catch (ParseException | IOException exception){
                 LOGGER.error(exception.getMessage(),exception);

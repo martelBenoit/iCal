@@ -35,12 +35,20 @@ dependencies {
     compile group: 'org.mnode.ical4j', name: 'ical4j', version: '3.0.1'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+
 }
+
 
 shadowJar {
     exclude '.env'
     archiveName("iCal.jar")
 
+}
+
+test {
+    useJUnitPlatform()
 }
 
 
