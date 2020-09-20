@@ -108,6 +108,14 @@ public class Lesson implements Comparable<Lesson>{
         return new SimpleDateFormat("dd MMMM yyyy").format(this.startDate);
     }
 
+    public int getMinutesDuration(){
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(this.startDate);
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(this.endDate);
+        return (int)TimeUnit.MILLISECONDS.toMinutes(endDate.getTimeInMillis() - startDate.getTimeInMillis());
+    }
+
     public String timeRemaining() {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(this.startDate);

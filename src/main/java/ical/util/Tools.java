@@ -1,10 +1,14 @@
 package ical.util;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.Random;
 
 /**
  * Static Tools class.
@@ -63,5 +67,16 @@ public class Tools {
 
         return ret;
     }
+
+    public static Color getRandomColor(){
+
+        //to get rainbow, pastel colors
+        Random random = new Random();
+        final float hue = random.nextFloat();
+        final float saturation = 0.6f;//1.0 for brilliant, 0.0 for dull
+        final float luminance = 0.8f; //1.0 for brighter, 0.0 for black
+        return Color.getHSBColor(hue, saturation, luminance);
+    }
+
 
 }

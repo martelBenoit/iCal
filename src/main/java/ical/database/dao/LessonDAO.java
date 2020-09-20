@@ -2,6 +2,7 @@ package ical.database.dao;
 
 import ical.database.DAOFactory;
 import ical.database.entity.Lesson;
+import ical.database.entity.OGuild;
 import ical.database.entity.Professor;
 
 import javax.annotation.Nonnull;
@@ -57,6 +58,38 @@ public class LessonDAO extends DAO<Lesson> {
         }
 
         return res;
+
+    }
+
+    public Lesson find(@Nonnull String id_lesson){
+
+        ResultSet result;
+        Lesson lesson = null;
+
+        try{
+            String query = "SELECT id, id_unique, nom, datedebut, datefin, description, professor, classe  FROM lesson WHERE id = ?";
+            PreparedStatement ps = this.conn.prepareStatement(query);
+            ps.setString(1,id_lesson);
+
+            ProfessorDAO professorDAO = (ProfessorDAO)DAOFactory.getProfessorDAO();
+
+            result = ps.executeQuery();
+            if(result.next())
+                lesson = new Lesson(
+                        result.getString(1),
+                        result.getString(2),
+                        result.getString(3),
+                        result.getTimestamp(4),
+                        result.getTimestamp(5),
+                        result.getString(6),
+                        professorDAO.findById( result.getInt(7)),
+                        result.getString(8));
+        } catch (SQLException e){
+            LOGGER.error("Error while searching the lesson : "+id_lesson,e);
+            lesson = null;
+        }
+
+        return lesson;
 
     }
 

@@ -43,7 +43,7 @@ public class UpdateAvatar implements Runnable {
 
             jda.getSelfUser().getManager().setAvatar(Icon.from(imageInByte)).queue(
                     v -> LOGGER.info("Success !"),
-                    t -> LOGGER.info("Error")
+                    t -> LOGGER.error("Error")
             );
 
             if(waiter != null)

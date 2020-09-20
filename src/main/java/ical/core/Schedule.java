@@ -152,6 +152,80 @@ public class Schedule extends AbstractSchedule {
 
     }
 
+    public ArrayList<Lesson> getWeekLessons(){
+
+        ArrayList<Lesson> res = new ArrayList<>();
+
+        Calendar actual = Calendar.getInstance();
+        actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        actual.set(Calendar.HOUR,0);
+        actual.set(Calendar.MINUTE,0);
+        actual.set(Calendar.SECOND,0);
+        actual.set(Calendar.MILLISECOND,0);
+
+
+        Calendar cal = Calendar.getInstance();
+
+
+        for(Lesson lesson : lessons){
+            cal.setTime(lesson.getStartDate());
+            int day = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
+
+            if(day < 6 && day >= 0) {
+                res.add(lesson);
+            }
+        }
+
+        return res;
+
+    }
+    public ArrayList<Lesson> getNextWeekLessons(){
+
+        ArrayList<Lesson> res = new ArrayList<>();
+
+        Calendar actual = Calendar.getInstance();
+        actual.add(Calendar.DATE,7);
+        actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        actual.set(Calendar.HOUR,0);
+        actual.set(Calendar.MINUTE,0);
+        actual.set(Calendar.SECOND,0);
+        actual.set(Calendar.MILLISECOND,0);
+
+
+        Calendar cal = Calendar.getInstance();
+
+
+        for(Lesson lesson : lessons){
+            cal.setTime(lesson.getStartDate());
+            int day = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
+
+            if(day < 6 && day >= 0) {
+                res.add(lesson);
+            }
+        }
+
+        return res;
+
+    }
+
+    /**
+     * Get actual lessons
+     * @return the list of actual lessons
+     */
+    public ArrayList<Lesson> getActualLessons(){
+
+        ArrayList<Lesson> ret = new ArrayList<>();
+
+        final Date currentDate = new Date();
+
+        for(Lesson lesson : this.lessons){
+            if(lesson.getStartDate().compareTo(currentDate) <= 0 && lesson.getEndDate().compareTo(currentDate) >= 0)
+                ret.add(lesson);
+        }
+
+        return ret;
+    }
+
     public boolean verifyWatchUp(@NotNull Lesson lesson){
 
         boolean res = false;
@@ -161,7 +235,7 @@ public class Schedule extends AbstractSchedule {
             cal.setTime(lesson.getStartDate());
 
             Calendar actual = Calendar.getInstance();
-            actual.set(Calendar.DAY_OF_WEEK, actual.getFirstDayOfWeek());
+            actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
             int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
             if(days <= 14)

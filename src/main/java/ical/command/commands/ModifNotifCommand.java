@@ -5,6 +5,7 @@ import ical.command.ICommand;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
+import ical.util.Config;
 
 /**
  * ModifNotif class.
@@ -78,6 +79,6 @@ public class ModifNotifCommand implements ICommand {
     @Override
     public String getHelp() {
         return "Permet d'activer/désactiver les notifications de modification de cours\n" +
-                "Utilisation : `"+getName()+" {true/false}`";
+                "Utilisation : `" +Config.get("prefix")+getName()+" {true/false}`";
     }
 }
