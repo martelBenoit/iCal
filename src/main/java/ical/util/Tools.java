@@ -1,10 +1,5 @@
 package ical.util;
 
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.awt.*;
 import java.util.Date;
 import java.util.Calendar;
@@ -19,7 +14,7 @@ import java.util.Random;
  */
 public class Tools {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Tools.class);
+    public static int colorPos = 0;
 
     /**
      * Retrieves the date resulting from the addition between today's date and the number of days passed in parameter.
@@ -52,31 +47,26 @@ public class Tools {
         return cal.getTime();
     }
 
-    public static int getNumberFromAString(String number){
+    /**
+     * Get a random nice color
+     * @return a random nice color
+     */
+    public static Color getRandomColor(long seed, int multiple){
 
-        if(number == null)
-            return -1;
+        return Color.decode(Colorize.get(seed, multiple));
+    }
 
-        int ret = -1;
-
-        try{
-            ret = Integer.parseInt(number);
-        }catch (NumberFormatException e){
-            LOGGER.error(number + "is not a number");
+    public static long stringToSeed(String s) {
+        if (s == null) {
+            return 0;
         }
-
-        return ret;
+        long hash = 0;
+        for (char c : s.toCharArray()) {
+            hash = 31L*hash + c;
+        }
+        return hash;
     }
 
-    public static Color getRandomColor(){
-
-        //to get rainbow, pastel colors
-        Random random = new Random();
-        final float hue = random.nextFloat();
-        final float saturation = 0.6f;//1.0 for brilliant, 0.0 for dull
-        final float luminance = 0.8f; //1.0 for brighter, 0.0 for black
-        return Color.getHSBColor(hue, saturation, luminance);
-    }
 
 
 }

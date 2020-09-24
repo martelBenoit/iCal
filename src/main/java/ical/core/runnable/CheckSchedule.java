@@ -1,6 +1,6 @@
 package ical.core.runnable;
 
-import ical.database.dao.LessonRemainingTimeDAO;
+
 import ical.database.entity.*;
 import ical.core.Schedule;
 import ical.manager.ScheduleManager;
@@ -58,7 +58,7 @@ public class CheckSchedule implements Runnable {
                                     schedule.setNotified(true);
                                     MessageEmbed message = Notification.prepareNotificationNextLessons(nextLessons);
                                     channel.sendMessage(message).queue((messageEmbed -> {
-                                        messageEmbed.delete().queueAfter(nextLessons.get(0).timeRemainingInSeconds(), TimeUnit.SECONDS);
+                                        messageEmbed.delete().queueAfter(nextLessons.get(0).timeRemainingInSeconds()*2, TimeUnit.SECONDS);
                                     }));
 
                                 }

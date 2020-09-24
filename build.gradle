@@ -7,9 +7,9 @@ plugins {
 mainClassName = 'ical.Bot'
 group = "com.github.martelBenoit"
 
-version '1.5.4'
+version '1.7.2'
 
-description = "ICal discord bot"
+description = "iCal discord bot"
 
 compileJava {
     sourceCompatibility = 1.8

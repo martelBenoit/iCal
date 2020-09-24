@@ -67,3 +67,16 @@ create table eventchange_lesson
         constraint eventchange_lesson_movedlesson_id_fk
             references movedlesson
 );
+
+create table lesson_remaining_time
+(
+    id_message bigint not null,
+    id_lesson  varchar(255)
+        constraint id_lesson
+            references lesson,
+    id_channel bigint
+);
+
+create unique index lesson_remaining_time_id_message_uindex
+    on lesson_remaining_time (id_message);
+

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -16,26 +15,74 @@ import java.util.stream.Collectors;
 
 public class Timetable {
 
-    private ArrayList<Lesson> lessons;
+    private final ArrayList<Lesson> lessons;
+    private final Map<String,Color> colorAssociation;
 
-    private int corner_left_x = 80;
-    private int corner_left_y = 65;
-    private int width_rect = 200;
-    private int height_rect = 30;
+    private final int corner_left_x = 80;
+    private final int corner_left_y = 70;
+    private final int width_rect = 270;
+    private final int height_rect = 35;
+    private final int titleBoxHeight = 40;
+    private final int dayBoxHeight = 35;
+
+
+    private final Font titleFont = new Font("DejaVu Sans",Font.BOLD,24);
+    private final Font dayFont = new Font("DejaVu Sans",Font.BOLD,19);
+    private final Font hoursFont = new Font("DejaVu Sans",Font.ITALIC,15);
+    private final Font titleLessonFont = new Font("DejaVu Sans",Font.BOLD,20);
+    private final Font descriptionLessonFont = new Font("DejaVu Sans",Font.PLAIN,14);
+    private final Font roomNameFont = new Font("DejaVu Sans",Font.BOLD,18);
+
+    private final Color colorTitle = new Color(0x333333);
+    private final Color colorTextBlack = new Color( 58, 61, 62 );
+    private final Color colorTextWhite = new Color( 220, 220, 220 );
+    private final Color backgroundDS = new Color(163, 38, 14);
+
+    private FontMetrics fontMetrics;
+
+    private final Calendar calendar;
+
+    private final BufferedImage laptop_white = ImageIO.read(Timetable.class.getResourceAsStream("/laptop_white.png"));
+    private final BufferedImage laptop_black = ImageIO.read(Timetable.class.getResourceAsStream("/laptop_black.png"));
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Timetable.class);
 
-    public Timetable(ArrayList<Lesson> lessons){
-        this.lessons = lessons;
-    }
+    public Timetable(ArrayList<Lesson> lessons) throws IOException {
 
+        this.lessons = lessons;
+        this.calendar = Calendar.getInstance();
+        this.calendar.setTime(this.lessons.get(0).getStartDate());
+        this.calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        colorAssociation = new HashMap<>();
+        Map<String, java.util.List<Lesson>> lessonByName = lessons.stream().collect(Collectors.groupingBy(lesson -> clearLessonName(lesson.getName())));
+        for(String lessonName : lessonByName.keySet()){
+            Color value = Tools.getRandomColor(Tools.stringToSeed(clearLessonName(lessonName)),0);
+            int i = 1;
+
+            while(colorAssociation.containsValue(value)){
+                value = Tools.getRandomColor(Tools.stringToSeed(clearLessonName(lessonName)),i);
+                i++;
+            }
+
+            colorAssociation.put(lessonName,value);
+        }
+
+
+    }
 
     public InputStream generateTimetable() {
 
         try {
-            BufferedImage base = ImageIO.read(Timetable.class.getResourceAsStream("/empty_planning.png"));
+
+            BufferedImage base = ImageIO.read(Timetable.class.getResourceAsStream("/empty_planning_v3.png"));
             Graphics2D g2 = base.createGraphics();
 
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            fillWeekNumberBox(g2);
             fillDay(g2);
             fillHour(g2);
             fillLesson(g2);
@@ -53,254 +100,302 @@ public class Timetable {
         }
     }
 
-    private  void fillDay(Graphics2D g2) throws IOException, FontFormatException {
+    private void fillWeekNumberBox(Graphics2D g2){
 
-        Calendar actual = Calendar.getInstance();
-        actual.setTime(this.lessons.get(0).getStartDate());
-        actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        String weekOfYear = "SEMAINE N°" + calendar.get(Calendar.WEEK_OF_YEAR);
 
-        InputStream is =  Timetable.class.getResourceAsStream("/OpenSans-Regular.ttf");
-        Font font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(14f);
+        g2.setFont(titleFont);
+        g2.setColor(colorTitle);
 
-        g2.setFont(font);
-        g2.setColor(new Color(0x333333));
-
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        int initial_x = 80;
-
-        String weekOfYear = "SEMAINE N°" + actual.get(Calendar.WEEK_OF_YEAR);
-        FontMetrics metrics = g2.getFontMetrics(font);
-        int width = metrics.stringWidth(weekOfYear);
-        int height = metrics.getHeight();
-
-        g2.drawString(weekOfYear, (5*width_rect-width)/2 + initial_x, (35-height/2));
+        fontMetrics = g2.getFontMetrics(titleFont);
+        int width = fontMetrics.stringWidth(weekOfYear);
+        int height = fontMetrics.getHeight();
 
 
+        g2.drawString(weekOfYear, (5*width_rect-width)/2 + corner_left_x, titleBoxHeight-titleBoxHeight/2+height/2-4);
+
+    }
+
+    private void fillDay(Graphics2D g2) {
+
+        Calendar calendar = this.calendar;
+
+
+        int offset_x = corner_left_x;
 
         for(int i=0; i<=4; i++){
 
-            String displayName = actual.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.FRANCE);
+            String displayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.FRANCE);
             displayName = displayName.substring(0,1).toUpperCase() + displayName.substring(1).toLowerCase();
-            String day = Integer.toString(actual.get(Calendar.DATE));
-            String month = Integer.toString(actual.get(Calendar.MONTH)+1);
+
+            String day = Integer.toString(calendar.get(Calendar.DATE));
+            if(day.length()==1)
+                day = "0"+day;
+
+            String month = Integer.toString(calendar.get(Calendar.MONTH)+1);
             if(month.length()==1)
                 month = "0"+month;
-            String year = Integer.toString(actual.get(Calendar.YEAR));
+
+            String year = Integer.toString(calendar.get(Calendar.YEAR));
 
             String displayDate =  displayName + " " + day+"/"+month+"/"+year;
-            metrics = g2.getFontMetrics(font);
-            width = metrics.stringWidth(displayDate);
-            height = metrics.getHeight();
+
+            g2.setFont(dayFont);
+            g2.setColor(colorTitle);
+
+            fontMetrics = g2.getFontMetrics(dayFont);
+            int widthText = fontMetrics.stringWidth(displayDate);
+            int heightText = fontMetrics.getHeight();
 
 
-            g2.drawString(displayDate, (width_rect-width)/2 + initial_x, corner_left_y - (height_rect-height));
+            g2.drawString(displayDate, (width_rect-widthText)/2 + offset_x, corner_left_y + dayBoxHeight/2 - heightText);
 
-            actual.add(Calendar.DATE,1);
-            initial_x+=200;
+            calendar.add(Calendar.DATE,1);
+            offset_x+=width_rect;
         }
 
     }
 
-    private  void fillHour(Graphics2D g2) throws IOException, FontFormatException {
+    private  void fillHour(Graphics2D g2){
 
-        InputStream is =  Timetable.class.getResourceAsStream("/OpenSans-Regular.ttf");
-        Font font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(10f);
+        g2.setFont(hoursFont);
+        g2.setColor(colorTitle);
+        fontMetrics = g2.getFontMetrics(hoursFont);
 
-        g2.setFont(font);
-        g2.setColor(new Color(0x333333));
+        int offset_y = corner_left_y;
 
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        int initial_y = 65;
-        FontMetrics metrics = g2.getFontMetrics(font);
-        int max_width = metrics.stringWidth("12h30");
-        int height = metrics.getHeight();
+        int max_width = fontMetrics.stringWidth("00h00");
+        int textHeight = fontMetrics.getHeight();
 
         for(int i=8; i<=18; i++){
             if(i < 10)
-                g2.drawString("0"+i+"h00", 80-max_width-2, initial_y+height);
+                g2.drawString("0"+i+"h00", corner_left_x-max_width-2, offset_y+textHeight);
             else
-                g2.drawString(i+"h00", 80-max_width-2, initial_y+height);
+                g2.drawString(i+"h00", corner_left_x-max_width-2, offset_y+textHeight);
             if(i < 10)
-                g2.drawString("0"+i+"h30", 80-max_width-2, initial_y+30+height);
+                g2.drawString("0"+i+"h30", corner_left_x-max_width-2, offset_y+height_rect+textHeight);
             else
-                g2.drawString(i+"h30", 80-max_width-2, initial_y+30+height);
+                g2.drawString(i+"h30", corner_left_x-max_width-2, offset_y+height_rect+textHeight);
 
-            initial_y+=60;
+            offset_y+=2*height_rect;
         }
 
     }
 
-    private  void fillLesson(Graphics2D g2) throws IOException, FontFormatException {
-
-        // Set Font
-        InputStream is =  Timetable.class.getResourceAsStream("/OpenSans-Regular.ttf");
-        Font font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(12f);
-
-        g2.setFont(font);
-
-        Map<String, java.util.List<Lesson>> lessonByName = this.lessons.stream().collect(Collectors.groupingBy(Lesson::getName));
-
-        Map<String,Color> colorAssociation = new HashMap<>();
-        for(String lessonName : lessonByName.keySet()){
-            colorAssociation.put(lessonName,Tools.getRandomColor());
-        }
+    private  void fillLesson(Graphics2D g2) {
 
         for(Lesson lesson : this.lessons){
 
-
-            ArrayList<Lesson> manyLessons = new ArrayList<>();
-            int i = 0;
-            while(i < this.lessons.size()){
-                if(this.lessons.get(i).getStartDate().equals(lesson.getStartDate()))
-                    manyLessons.add(this.lessons.get(i));
-                i++;
-            }
-
             Calendar startDate = Calendar.getInstance();
 
-            if(manyLessons.size() > 1){
+            ArrayList<Lesson> manyLessons = new ArrayList<>();
 
-                startDate.setTime(manyLessons.get(0).getStartDate());
-                startDate.setFirstDayOfWeek(Calendar.MONDAY);
+            for(Lesson aLesson : this.lessons)
+                if(aLesson.getStartDate().equals(lesson.getStartDate()))
+                    manyLessons.add(aLesson);
 
-                Calendar startDay = Calendar.getInstance();
-                startDay.setTime(manyLessons.get(0).getStartDate());
-                startDay.set(Calendar.HOUR_OF_DAY,8);
-                startDay.set(Calendar.MINUTE,0);
-                int start_position = (int) TimeUnit.MILLISECONDS.toMinutes(startDate.getTimeInMillis() - startDay.getTimeInMillis());
+            int widthText;
+            int heightText;
 
-                int pos = 0;
-                int width_rect_special = width_rect/manyLessons.size();
-                for(Lesson aLesson : manyLessons){
+            startDate.setTime(manyLessons.get(0).getStartDate());
+            startDate.setFirstDayOfWeek(Calendar.MONDAY);
 
-                    int minutesDuration = aLesson.getMinutesDuration();
+            Calendar startDay = Calendar.getInstance();
+            startDay.setTime(manyLessons.get(0).getStartDate());
+            startDay.set(Calendar.HOUR_OF_DAY,8);
+            startDay.set(Calendar.MINUTE,0);
+            int startTimeOffset = (int) TimeUnit.MILLISECONDS.toMinutes(startDate.getTimeInMillis() - startDay.getTimeInMillis())*height_rect/30;
 
-                    int pos_rect_x = corner_left_x + (200*(startDate.get(Calendar.DAY_OF_WEEK)-2)+1)+pos*width_rect_special;
-                    int pos_rect_y = corner_left_y + start_position;
+            int pos = 0;
+            int resizedWidthRect = width_rect/manyLessons.size();
 
-                    g2.setColor(colorAssociation.get(lesson.getName()));
-                    g2.fillRect(pos_rect_x,pos_rect_y,width_rect_special-1,minutesDuration-1);
+            for(Lesson aLesson : manyLessons){
 
-                    g2.setColor(Color.white);
+                int minutesDuration = aLesson.getMinutesDuration()*height_rect/30;
 
-                    FontMetrics metrics = g2.getFontMetrics(font);
-                    String nameLesson;
-                    if(aLesson.getName().length()>28)
-                        nameLesson = aLesson.getName().substring(0,27) + "...";
+                int xPosRect = corner_left_x + (width_rect*(startDate.get(Calendar.DAY_OF_WEEK)-2)+1)+pos*resizedWidthRect;
+                int yPosRect = corner_left_y + startTimeOffset+1;
+
+                if(lesson.getName().contains("DS"))
+                    g2.setColor(backgroundDS);
+                else
+                    g2.setColor(colorAssociation.get(clearLessonName(lesson.getName())));
+
+                g2.fillRect(xPosRect,yPosRect,width_rect-1,minutesDuration-1);
+
+                if(lesson.getName().toLowerCase().contains("distant") || lesson.getName().toLowerCase().contains("distanc")){
+                    if(getAppropriateTextColor(g2.getColor())==colorTextBlack)
+                        g2.drawImage(laptop_black.getScaledInstance(40,40,Image.SCALE_SMOOTH),xPosRect+width_rect-10-40,yPosRect+minutesDuration-40,null);
                     else
-                        nameLesson = aLesson.getName();
-                    int width = metrics.stringWidth(nameLesson);
-
-                    if(width > width_rect_special*0.8){
-                        int j = 0;
-                        width = 0;
-                        while(width <  width_rect_special*0.8){
-                            width = metrics.stringWidth(nameLesson.substring(0,j));
-                            j++;
-                        }
-                        g2.drawString(nameLesson.substring(0,j-1), (width_rect_special-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()+4);
-                        width = metrics.stringWidth(nameLesson.substring(j-1));
-                        g2.drawString(nameLesson.substring(j-1), (width_rect_special-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()*2+4);
-
-                    }
-                    else
-                        g2.drawString(lesson.getName(), (width_rect_special-1-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()+4);
-
-                    String professor = lesson.getProfessor().getName()
-                            .replaceAll("([A-Z])", " $1") + ".";
-
-                    width = metrics.stringWidth(professor);
-                    g2.drawString(professor, (width_rect_special-1-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()*3+8+8);
-
-                    String hours = lesson.getStartTime() + " - " + lesson.getEndTime();
-                    width = metrics.stringWidth(hours);
-
-                    g2.drawString(hours, (width_rect_special-1-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()*4+8+8);
-
-                    pos++;
-
-
-
+                        g2.drawImage(laptop_white.getScaledInstance(40,40,Image.SCALE_SMOOTH),xPosRect+width_rect-10-40,yPosRect+minutesDuration-40,null);
                 }
 
 
-
-            }
-            else{
-
-                startDate.setTime(lesson.getStartDate());
-                startDate.setFirstDayOfWeek(Calendar.MONDAY);
-
-                Calendar startDay = Calendar.getInstance();
-                startDay.setTime(lesson.getStartDate());
-                startDay.set(Calendar.HOUR_OF_DAY,8);
-                startDay.set(Calendar.MINUTE,0);
-                int start_position = (int) TimeUnit.MILLISECONDS.toMinutes(startDate.getTimeInMillis() - startDay.getTimeInMillis());
-
-                int minutesDuration = lesson.getMinutesDuration();
-
-
-                int pos_rect_x = corner_left_x + 200*(startDate.get(Calendar.DAY_OF_WEEK)-2)+1;
-                int pos_rect_y = corner_left_y + start_position;
-
-                g2.setColor(colorAssociation.get(lesson.getName()));
-                g2.fillRect(pos_rect_x,pos_rect_y,width_rect-1,minutesDuration-1);
-
-                g2.setColor(Color.white);
-
-                FontMetrics metrics = g2.getFontMetrics(font);
-                String nameLesson;
-                if(lesson.getName().length()>53)
-                    nameLesson = lesson.getName().substring(0,52) + "...";
-                else
-                    nameLesson = lesson.getName();
-                int width = metrics.stringWidth(nameLesson);
-
-                if(width > width_rect*0.8){
-                    int j = 0;
-                    width = 0;
-                    while(width <  width_rect*0.8){
-                        width = metrics.stringWidth(nameLesson.substring(0,j));
-                        j++;
-                    }
-                    g2.drawString(nameLesson.substring(0,j-1), (width_rect-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()+4);
-                    width = metrics.stringWidth(nameLesson.substring(j-1));
-                    g2.drawString(nameLesson.substring(j-1), (width_rect-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()*2+4);
-
+                if(minutesDuration < 90) {
+                    g2.setFont(titleLessonFont.deriveFont(Font.BOLD, 12));
+                    fontMetrics = g2.getFontMetrics(titleLessonFont.deriveFont(Font.BOLD, 12));
                 }
-                else
-                    g2.drawString(nameLesson, (width_rect-1-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()+4);
+                else {
+                    g2.setFont(titleLessonFont);
+                    fontMetrics = g2.getFontMetrics(titleLessonFont);
+                }
+                Color textColor = getAppropriateTextColor(g2.getColor());
+                g2.setColor(textColor);
+                heightText = fontMetrics.getHeight();
+
+                String displayNameLesson = clearLessonName(lesson.getName());
+
+                String[] nameLesson = splitText(displayNameLesson,resizedWidthRect / fontMetrics.stringWidth("0"));
+
+                int yLastPos = 0;
+                for(int i = 0; i < nameLesson.length; i++){
+                    widthText = fontMetrics.stringWidth(nameLesson[i]);
+                    yLastPos = yPosRect+heightText+4+heightText*i;
+                    g2.drawString(nameLesson[i],(resizedWidthRect-widthText)/2+xPosRect,yLastPos);
+                }
+
+                if(minutesDuration < 90) {
+                    g2.setFont(descriptionLessonFont.deriveFont(Font.BOLD, 10));
+                    fontMetrics = g2.getFontMetrics(descriptionLessonFont.deriveFont(Font.BOLD, 10));
+                }
+                else {
+                    g2.setFont(descriptionLessonFont);
+                    fontMetrics = g2.getFontMetrics(descriptionLessonFont);
+                }
+
+                g2.setColor(textColor);
+
+                heightText = fontMetrics.getHeight();
 
                 String professor = lesson.getProfessor().getName()
                         .replaceAll("([A-Z])", " $1") + ".";
 
-                width = metrics.stringWidth(professor);
-                g2.drawString(professor, (width_rect-1-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()*3+8+8);
-
-                String hours = lesson.getStartTime() + " - " + lesson.getEndTime();
-                width = metrics.stringWidth(hours);
-
-                g2.drawString(hours, (width_rect-1-width)/2+pos_rect_x, pos_rect_y+metrics.getHeight()*4+8+8);
+                widthText = fontMetrics.stringWidth(professor);
+                yLastPos = heightText+yLastPos+4;
+                g2.drawString(professor, (resizedWidthRect-1-widthText)/2+xPosRect, yLastPos);
 
 
-                
+                String room = clearRoomName(lesson.getRoom());
+                String[] rooms = room.split(",");
+                int heightLine = heightText;
+                heightText = heightLine* rooms.length;
+
+                if(minutesDuration < 90) {
+                    g2.setFont(roomNameFont.deriveFont(Font.BOLD, 10));
+                    fontMetrics = g2.getFontMetrics(roomNameFont.deriveFont(Font.BOLD, 10));
+                }
+                else {
+                    g2.setFont(roomNameFont);
+                    fontMetrics = g2.getFontMetrics(roomNameFont);
+                }
+
+                int maxWidthText = 0;
+                for(int i = 0; i < room.length(); i++)
+                    if(fontMetrics.stringWidth(rooms[0]) > maxWidthText)
+                        maxWidthText = fontMetrics.stringWidth(rooms[0]);
+
+                int xPosRectRoom = xPosRect+10;
+                int yPosRectRoom = yPosRect+minutesDuration-1-heightText-10;
+                int widthRectRoom = (int)(maxWidthText+maxWidthText*0.2);
+
+                for(int i = 0; i < rooms.length; i++){
+                    widthText = fontMetrics.stringWidth(rooms[i]);
+                    g2.drawString(rooms[i],
+                            xPosRectRoom+(widthRectRoom-widthText)/2,
+                            yPosRectRoom+heightLine+heightLine*i);
+                }
+
+                g2.setStroke(new BasicStroke(2));
+                g2.drawRoundRect(xPosRectRoom,yPosRectRoom,widthRectRoom,(int)(heightText+heightText*0.2),(int)(widthRectRoom*0.25),(int)((heightText+heightText*0.2)*0.25));
+
+                if(lesson.getName().toLowerCase().contains("+mr"))
+                {
+                    g2.setFont(g2.getFont().deriveFont(Font.BOLD, g2.getFont().getSize()-4));
+                    fontMetrics = g2.getFontMetrics(g2.getFont());
+
+                    int heightRectMR = (int)(fontMetrics.getHeight()+fontMetrics.getHeight()*0.2);
+                    int widthRectMR = (int)(fontMetrics.stringWidth("MR")+fontMetrics.stringWidth("MR")*0.2);
+                    int xPosRectMR = xPosRect+10;
+                    int yPosRectMR = (int)(yPosRectRoom-heightRectMR-heightRectMR*0.25);
+
+                    int xMR =xPosRectMR+(widthRectMR-fontMetrics.stringWidth("MR"))/2;
+                    int yMR =(int)(yPosRectMR+fontMetrics.getHeight()-fontMetrics.getHeight()*0.1);
+
+                    g2.drawString("MR",xMR,yMR);
+                    g2.drawRoundRect(xPosRectMR,yPosRectMR,widthRectMR,heightRectMR,(int)(widthRectMR*0.25),(int)(heightRectMR*0.25));
+
+                }
+
+
+                pos++;
 
             }
 
 
-
-
         }
-
-
-
 
     }
 
+    private String[] splitText(String text, int maxLineLength){
+
+        String[] tokens = text.split("\\s+");
+        StringBuilder output = new StringBuilder(text.length());
+        int lineLen = 0;
+        for (int i = 0; i < tokens.length; i++) {
+            String word = tokens[i];
+
+            if (lineLen + (" " + word).length() > maxLineLength) {
+                if (i > 0) {
+                    output.append("\n");
+                }
+                lineLen = 0;
+            }
+            if (i < tokens.length - 1 && (lineLen + (word + " ").length() + tokens[i + 1].length() <=
+                    maxLineLength)) {
+                word += " ";
+            }
+            output.append(word);
+            lineLen += word.length();
+        }
+
+        return output.toString().split("\n");
+    }
+
+    private Color getAppropriateTextColor(Color background){
+        if((background.getRed()*0.3+background.getGreen()*0.59+ background.getBlue()*0.11) >= 128)
+            return colorTextBlack;
+        else
+            return colorTextWhite;
+    }
+
+    private String clearLessonName(String lessonName){
+        String res = lessonName;
+        res = res.replace(" - (ING+MR)","");
+        res = res.replace(" (ING+MR)","");
+        res = res.replace(" - CM","");
+        res = res.replace(" CM", "");
+        res = res.replace(" - TD","");
+        res = res.replace(" TD","");
+        res = res.replace(" - TP","");
+        res = res.replace(" TP","");
+        res = res.replace(" - Présentiel","");
+        res = res.replace(" - (Présentiel)","");
+        res = res.replace(" (Présentiel)","");
+        res = res.replace(" (présentiel)","");
+        res = res.replace(" (Distanciel)","");
+        res = res.replace(" (Distant)","");
+        res = res.replace(" (distant)","");
+        return res;
+    }
+
+    private String clearRoomName(String roomName){
+        String res = roomName;
+        res = res.replace("V-TO-ENSIBS-","");
+        res = res.replace("V-TO-ENSIbs-","");
+        res = res.replace("V-TO-ENSIbs - ","");
+        res = res.replace("V-TO-ENSIbs -","");
+        return res;
+    }
 
 
 }

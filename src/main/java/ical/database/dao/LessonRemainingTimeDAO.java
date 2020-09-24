@@ -3,15 +3,11 @@ package ical.database.dao;
 import ical.database.DAOFactory;
 import ical.database.entity.Lesson;
 import ical.database.entity.LessonRemainingTime;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.utils.data.DataObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -64,9 +60,9 @@ public class LessonRemainingTimeDAO extends DAO<LessonRemainingTime>{
 
     @Override
     public boolean delete(@NotNull LessonRemainingTime obj) {
-        boolean res = false;
+        int res = 0;
 
-        if(checkObject(obj))
+        if(!checkObject(obj))
             return false;
 
         try{
@@ -74,13 +70,13 @@ public class LessonRemainingTimeDAO extends DAO<LessonRemainingTime>{
             PreparedStatement ps = this.conn.prepareStatement(query);
             ps.setLong(1, obj.getId_message());
 
-            res = ps.execute();
+            res = ps.executeUpdate();
 
         } catch (SQLException e){
             LOGGER.error("Error when deleting message_id from lesson remaining time: "+obj.getId_message(),e);
         }
 
-        return res;
+        return res==1;
     }
 
     @Override
@@ -124,6 +120,7 @@ public class LessonRemainingTimeDAO extends DAO<LessonRemainingTime>{
     }
 
     private boolean checkObject(LessonRemainingTime lessonRemainingTime){
+        System.out.println(lessonRemainingTime);
         if(lessonRemainingTime.getLesson() == null){
             LOGGER.error("Object Lesson in LessonRemainingTime is null");
             return false;

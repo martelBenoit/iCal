@@ -14,16 +14,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class WeekInformationPlanning implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WeekInformationPlanning.class);
 
-    private JDA jda;
-    private ScheduleManager scheduleManager;
+    private final JDA jda;
+    private final ScheduleManager scheduleManager;
 
     public WeekInformationPlanning(JDA jda, ScheduleManager scheduleManager){
         this.jda = jda;
@@ -44,6 +45,8 @@ public class WeekInformationPlanning implements Runnable {
             GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
             OGuild guild = guildDAO.find(idGuild);
 
+            LOGGER.info("["+idGuild+"] publication is in progress...");
+
             // On vérifie que l'on a bien récupéré l'objet de la base de données
             if (guild != null) {
 
@@ -57,24 +60,39 @@ public class WeekInformationPlanning implements Runnable {
 
                         final ArrayList<Lesson> lessons = schedule.getWeekLessons();
                         if (lessons.size() > 0) {
-                            Timetable timetable = new Timetable(lessons);
-                            InputStream inputStream = timetable.generateTimetable();
-                            String nameImg = "WEEK_" + UUID.randomUUID() + ".png";
-                            if (inputStream != null) {
-                                final EmbedBuilder eb = new EmbedBuilder();
-                                eb.setTitle("Les cours pr\u00e9vus cette semaine  ", null);
-                                eb.setColor(new Color(238358));
-                                eb.setImage("attachment://" + nameImg);
-                                eb.setTimestamp(schedule.getCreationDate());
-                                eb.setFooter("ENT","https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
+                            try{
+                                Timetable timetable = new Timetable(lessons);
+                                InputStream inputStream = timetable.generateTimetable();
+                                String nameImg = "WEEK_" + UUID.randomUUID() + ".png";
+                                if (inputStream != null) {
+                                    final EmbedBuilder eb = new EmbedBuilder();
+                                    eb.setTitle("Les cours pr\u00e9vus cette semaine  ", null);
+                                    eb.setColor(new Color(238358));
+                                    eb.setImage("attachment://" + nameImg);
+                                    eb.setTimestamp(schedule.getCreationDate());
+                                    eb.setFooter("ENT","https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
 
-                                channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                                    channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                                    LOGGER.info("["+idGuild+"] Sent !");
+                                }
+                                else
+                                    LOGGER.error("Error during image generation");
+                            }catch (IOException exception){
+                                LOGGER.error(exception.getMessage(),exception.fillInStackTrace());
                             }
                         }
+                        else
+                            LOGGER.info("No lessons to display");
 
                     }
+                    else
+                        LOGGER.error("Wrong channel id, verify that id channel "+idChannel+" exist");
                 }
+                else
+                    LOGGER.error("No channel id referenced to guild object in database");
             }
+            else
+                LOGGER.error("Guild not referenced in database");
         }
 
     }

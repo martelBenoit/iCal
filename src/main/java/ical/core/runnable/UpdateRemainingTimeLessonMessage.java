@@ -6,6 +6,8 @@ import ical.database.entity.LessonRemainingTime;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +15,7 @@ public class UpdateRemainingTimeLessonMessage implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateRemainingTimeLessonMessage.class);
 
-    private JDA jda;
+    private final JDA jda;
 
     public UpdateRemainingTimeLessonMessage(JDA jda) {
         this.jda = jda;
@@ -43,6 +45,23 @@ public class UpdateRemainingTimeLessonMessage implements Runnable {
 
 
                     }
+                },(failure) -> {
+                    // if the retrieve request failed this will be called (also async)
+                    if (failure instanceof ErrorResponseException) {
+                        ErrorResponseException ex = (ErrorResponseException) failure;
+                        if (ex.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                            // this means the message doesn't exist
+                            LOGGER.error("Message already deleted on discord");
+                        }
+                        else{
+                            LOGGER.error(ex.getErrorResponse().getMeaning());
+                        }
+                    }
+                    else{
+                        LOGGER.error("Error while searching for message",failure.fillInStackTrace());
+                    }
+                    if(!lessonRemainingTimeDAO.delete(lessonRemainingTime))
+                        LOGGER.error("Impossible to delete the record in the database");
                 });
 
             }
