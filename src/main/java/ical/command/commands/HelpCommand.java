@@ -4,24 +4,38 @@ import ical.manager.CommandManager;
 import ical.util.Config;
 import ical.command.CommandContext;
 import ical.command.ICommand;
-import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.List;
 
+/**
+ * HelpCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public class HelpCommand implements ICommand {
 
-
+    /**
+     * the command manager.
+     */
     private final CommandManager manager;
 
+    /**
+     * Default constructor.
+     *
+     * @param manager the command manager
+     */
     public HelpCommand(CommandManager manager) {
         this.manager = manager;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
         List<String> args = ctx.getArgs();
-        TextChannel channel = ctx.getChannel();
 
         if(args.isEmpty()){
 
@@ -38,35 +52,23 @@ public class HelpCommand implements ICommand {
 
             }
 
-           /* manager.getCommands().stream().map(ICommand::getName).forEach(
-                    it -> builder.append('`').append(Config.get("prefix")).append(it).append("`\n")
-
-            );*/
-
            ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(builder.toString()).queue());
 
-            //channel.sendMessage(builder.toString()).queue();
-            return;
-        }
-/*
-        String search = args.get(0);
-        ICommand command = manager.getCommand(search);
-
-        if(command == null){
-            channel.sendMessage("J'ai rien trouvé pour `"+ search+"`").queue();
-            return;
         }
 
-        channel.sendMessage(command.getHelp()).queue();
-
- */
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "help";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Affiche la liste des commandes disponibles d'ICal\n" +

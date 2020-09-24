@@ -10,13 +10,27 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * TomorrowLessonsCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public class TomorrowLessonsCommand extends AbstractScheduleCommand {
 
-
+    /**
+     * Default constructor.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public TomorrowLessonsCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -38,14 +52,21 @@ public class TomorrowLessonsCommand extends AbstractScheduleCommand {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "tomorrowLessons";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Indique les cours qui se dérouleront demain.\n"+
                 "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
+
 }

@@ -17,14 +17,32 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * LessonWeekCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.7
+ */
 public class LessonWeekCommand extends AbstractScheduleCommand {
 
+    /**
+     * the logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(LessonWeekCommand.class);
 
+    /**
+     * Default constructor.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public LessonWeekCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -42,7 +60,10 @@ public class LessonWeekCommand extends AbstractScheduleCommand {
                         eb.setColor(new Color(238358));
                         eb.setImage("attachment://"+nameImg);
                         eb.setTimestamp(scheduleManager.getSchedule(ctx.getGuild().getId()).getCreationDate());
-                        eb.setFooter("ENT","https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
+                        eb.setFooter(
+                                "ENT",
+                                "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
+                        );
 
                         ctx.getChannel().sendMessage(eb.build()).addFile(inputStream,nameImg).queue();
                     }
@@ -58,7 +79,9 @@ public class LessonWeekCommand extends AbstractScheduleCommand {
         else if(ctx.getArgs().size() == 1){
             if(ctx.getArgs().get(0).equalsIgnoreCase("-next")) {
 
-                final ArrayList<Lesson> lessons = scheduleManager.getSchedule(ctx.getGuild().getId()).getNextWeekLessons();
+                final ArrayList<Lesson> lessons =
+                        scheduleManager.getSchedule(ctx.getGuild().getId()).getNextWeekLessons();
+
                 if (lessons.size() > 0) {
                     try{
                         Timetable timetable = new Timetable(lessons);
@@ -70,25 +93,31 @@ public class LessonWeekCommand extends AbstractScheduleCommand {
                             eb.setColor(new Color(238358));
                             eb.setImage("attachment://" + nameImg);
                             eb.setTimestamp(scheduleManager.getSchedule(ctx.getGuild().getId()).getCreationDate());
-                            eb.setFooter("ENT", "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
+                            eb.setFooter(
+                                    "ENT",
+                                    "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
+                            );
 
                             ctx.getChannel().sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
                         }
                         else
-                            ctx.getChannel().sendMessage("Erreur lors de la génération du planning, ré-essaye plus tard.").queue();
+                            ctx.getChannel()
+                                    .sendMessage("Erreur lors de la génération du planning, ré-essaye plus tard.")
+                                    .queue();
+
                     }catch (IOException exception){
                         LOGGER.error(exception.getMessage(),exception.fillInStackTrace());
-                        ctx.getChannel().sendMessage("Erreur lors de la génération du planning de la semaine prochaine").queue();
+                        ctx.getChannel()
+                                .sendMessage("Erreur lors de la génération du planning de la semaine prochaine")
+                                .queue();
                     }
 
                 }
                 else
                     ctx.getChannel().sendMessage("Pas de cours prévu la semaine prochaine, repose toi !").queue();
             }
-            else{
+            else
                 ctx.getChannel().sendMessage("Option invalide ! Consulte l'aide.").queue();
-            }
-
         }
         else
             ctx.getChannel().sendMessage("Commande invalide ! Consulte l'aide.").queue();
@@ -96,15 +125,24 @@ public class LessonWeekCommand extends AbstractScheduleCommand {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "weekLessons";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
-        return "Affiche les cours qui auront lieu dans la semaine\n" +
-                "Utilisation :\n\t `"+ Config.get("prefix")+getName()+" [-next]` : affiche les cours de la semaine prochaine";
+        return "Affiche les cours qui auront lieu dans la semaine\n"
+                + "Utilisation :\n\t `"
+                + Config.get("prefix")
+                + getName()
+                +" [-next]` : affiche les cours de la semaine prochaine";
     }
 
 }

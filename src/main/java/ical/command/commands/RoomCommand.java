@@ -22,13 +22,30 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
+/**
+ * RoomCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.5
+ */
 public class RoomCommand extends AbstractScheduleCommand {
 
-
+    /**
+     * the logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomCommand.class);
 
-    ArrayList<Room> roomsList;
+    /**
+     * the rooms list.
+     */
+    private ArrayList<Room> roomsList;
 
+    /**
+     * Default constructor.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public RoomCommand(ScheduleManager scheduleManager){
         super(scheduleManager);
 
@@ -38,9 +55,11 @@ public class RoomCommand extends AbstractScheduleCommand {
             LOGGER.error(e.getMessage());
         }
 
-
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -71,20 +90,24 @@ public class RoomCommand extends AbstractScheduleCommand {
             Collections.sort(rooms);
 
 
-
         if(ctx.getArgs().size() == 1){
             if(ctx.getArgs().get(0).equalsIgnoreCase("-i")){
                 if(rooms !=null){
                     StringBuilder build = new StringBuilder();
                     for(Room r : rooms){
                         if(r.isAvailable()){
-                            build.append("\uD83D\uDFE2  ").append("**"+r.getUsualName()).append("**\n");
+                            build.append("\uD83D\uDFE2  ").append("**").append(r.getUsualName()).append("**\n");
 
                         }
                             else
-                            build.append("\uD83D\uDD34  ").append("**"+r.getUsualName()).append("** : ").append(r.getLesson().getName()).append(r.getLesson().getDescription()).append("\n");
+                            build.append("\uD83D\uDD34  ")
+                                    .append("**")
+                                    .append(r.getUsualName())
+                                    .append("** : ")
+                                    .append(r.getLesson().getName())
+                                    .append(r.getLesson().getDescription())
+                                    .append("\n");
                     }
-
 
                     final EmbedBuilder eb = new EmbedBuilder();
                     eb.setTitle("Liste des salles et de leurs disponibilités : ", null);
@@ -117,25 +140,38 @@ public class RoomCommand extends AbstractScheduleCommand {
             }
         }
 
-
-
-
         resetStatus();
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "room";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
-        return "Affiche le statut de chaque salle\n" +
-                "Utilisation :\n\t `"+ Config.get("prefix")+"room [-h {hour}]` : statut de chaqye salle dans h+ {hour}\n"+
-                "\t `"+ Config.get("prefix")+"room [-i]` : détails sur les salles occupées actuellement";
+        return "Affiche le statut de chaque salle\n"
+                + "Utilisation :\n\t `"
+                + Config.get("prefix")
+                +"room [-h {hour}]` : statut de chaqye salle dans h+ {hour}\n"
+                + "\t `"
+                + Config.get("prefix")
+                +"room [-i]` : détails sur les salles occupées actuellement";
     }
 
+    /**
+     * Read file contains rooms list.
+     *
+     * @return the rooms list
+     * @throws IOException if cannot read the file
+     */
     private ArrayList<Room> readFile() throws IOException {
 
         ArrayList<Room> ret = new ArrayList<>();
@@ -150,6 +186,11 @@ public class RoomCommand extends AbstractScheduleCommand {
         return ret;
     }
 
+    /**
+     * Reload the rooms availability status.
+     *
+     * @return the rooms list with the availability status.
+     */
     private ArrayList<Room> getActualStatusRoom(){
 
         ArrayList<Lesson> lessons = scheduleManager.getRoomSchedule().getNowLesson();
@@ -176,8 +217,12 @@ public class RoomCommand extends AbstractScheduleCommand {
 
     }
 
-
-
+    /**
+     * Reload the rooms availability status in x hour(s).
+     *
+     * @param hour the number of hours for which we want to know the availability of rooms
+     * @return the rooms list with the availability status.
+     */
     private ArrayList<Room> getStatusRoomAt(int hour){
 
         Date date = new Date();
@@ -210,10 +255,14 @@ public class RoomCommand extends AbstractScheduleCommand {
 
     }
 
+    /**
+     * Reset rooms availability status.
+     */
     private void resetStatus(){
         for(Room r : this.roomsList){
             r.setAvailable(true);
             r.setLesson(null);
         }
     }
+
 }

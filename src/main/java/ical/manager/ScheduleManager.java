@@ -14,12 +14,12 @@ import java.util.HashMap;
  */
 public class ScheduleManager {
 
-    private RoomSchedule roomSchedule;
+    private final RoomSchedule roomSchedule;
 
     /**
      * Each schedule has a id guild represented by this HashMap.
      */
-    private HashMap<String, Schedule> schedules;
+    private final HashMap<String, Schedule> schedules;
 
     /**
      * Constructor.

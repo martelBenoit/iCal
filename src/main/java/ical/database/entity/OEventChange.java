@@ -13,10 +13,21 @@ import java.util.Date;
  * @author Benoît Martel
  * @version 1.0
  */
-public class OEventChange {
+public class OEventChange extends Entity{
 
+    /**
+     * the event change id.
+     */
     private final String id;
+
+    /**
+     * the event change date.
+     */
     private final Date date;
+
+    /**
+     * the event change type.
+     */
     private final ModificationType type;
 
     /**

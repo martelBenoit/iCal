@@ -7,8 +7,18 @@ import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
 import ical.util.Config;
 
+/**
+ * DefaultChannelCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public class DefaultChannelCommand implements ICommand {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -23,7 +33,9 @@ public class DefaultChannelCommand implements ICommand {
                     if(guildDAO.update(guild))
                         ctx.getChannel().sendMessage("✅ Mise à jour du salon par défaut effectuée !").queue();
                     else
-                        ctx.getChannel().sendMessage("❌ La prise en compte du nouveau salon par défaut n'a pas fonctionnée").queue();
+                        ctx.getChannel()
+                                .sendMessage("❌ La prise en compte du nouveau salon par défaut n'a pas fonctionnée")
+                                .queue();
 
                 }
             }
@@ -32,14 +44,21 @@ public class DefaultChannelCommand implements ICommand {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "setDefaultChannel";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Permet de définir le salon sur lequelle les notifications du planning vont être affichées.\n"+
                 "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
+
 }

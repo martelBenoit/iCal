@@ -10,6 +10,7 @@ package ical.command;
 public interface ICommand {
 
     /**
+     * Method invoke to trigger an execution and / or a treatment for any command.
      *
      * @see CommandContext
      * @param ctx the command context

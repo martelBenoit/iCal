@@ -37,13 +37,21 @@ public class UpdateRemainingTimeLessonMessage implements Runnable {
                         }
                         else{
                             if (message.getEmbeds().get(0).getTitle().contains("Plusieurs")) {
-                                em.setTitle("  Plusieurs cours à venir dans " + lessonRemainingTime.getLesson().timeRemaining(), null);
+                                em.setTitle(
+                                        "  Plusieurs cours à venir dans "
+                                                + lessonRemainingTime.getLesson().timeRemaining(),
+                                        null
+                                );
                             } else
-                                em.setTitle("  " + lessonRemainingTime.getLesson().getName() + "  dans " + lessonRemainingTime.getLesson().timeRemaining(), null);
+                                em.setTitle(
+                                        "  "
+                                                + lessonRemainingTime.getLesson().getName()
+                                                + "  dans "
+                                                + lessonRemainingTime.getLesson().timeRemaining(),
+                                        null
+                                );
                             channel.editMessageById(lessonRemainingTime.getId_message(), em.build()).queue();
                         }
-
-
                     }
                 },(failure) -> {
                     // if the retrieve request failed this will be called (also async)
@@ -68,9 +76,7 @@ public class UpdateRemainingTimeLessonMessage implements Runnable {
 
             else
                 LOGGER.error("Channel id is'nt valid !");
-
         }
-
 
     }
 }

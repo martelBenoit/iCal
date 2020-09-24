@@ -7,25 +7,26 @@ import javax.annotation.Nonnull;
 
 /**
  * Professor class.
+ *
  * <br>The Professor entity.
  *
  * @author Benoît Martel
  * @version 1.0
  */
-public class Professor {
+public class Professor extends Entity{
 
     /**
-     * the id of the professor
+     * the id of the professor.
      */
     private int id;
 
     /**
-     * the name of the professor
+     * the name of the professor.
      */
     private final String name;
 
     /**
-     * the url of the image of the professor
+     * the url of the image of the professor.
      */
     private final String url;
 
@@ -44,6 +45,7 @@ public class Professor {
 
     /**
      * Constructor.
+     *
      * <br>This constructor is used to create a teacher by knowing neither his id in the database nor the url
      * of an image.
      * <br>If the professor already exists in the database then we recover the image otherwise it is one by default.

@@ -10,12 +10,27 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * LessonCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public class LessonsCommand extends AbstractScheduleCommand {
 
+    /**
+     * Default constructor.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public LessonsCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -39,14 +54,21 @@ public class LessonsCommand extends AbstractScheduleCommand {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "lessons";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Affiche les cours qui auront lieu dans {nombre} jour(s) par rapport à aujourd'hui.\n" +
                 "Utilisation : `"+ Config.get("prefix")+getName()+" {nombre}`";
     }
+
 }
