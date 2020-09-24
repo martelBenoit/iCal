@@ -108,6 +108,14 @@ public class Lesson implements Comparable<Lesson>{
         return new SimpleDateFormat("dd MMMM yyyy").format(this.startDate);
     }
 
+    public int getMinutesDuration(){
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(this.startDate);
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(this.endDate);
+        return (int)TimeUnit.MILLISECONDS.toMinutes(endDate.getTimeInMillis() - startDate.getTimeInMillis());
+    }
+
     public String timeRemaining() {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(this.startDate);
@@ -129,21 +137,6 @@ public class Lesson implements Comparable<Lesson>{
 
         return false;
 
-    }
-
-    public boolean isComingSoon(){
-
-        boolean res = false;
-
-        if(this.startDate.getTime() >= System.currentTimeMillis()){
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            cal.setTime(this.startDate);
-            int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-System.currentTimeMillis()));
-            if(days <= Integer.parseInt(Config.get("WATCH_UP")))
-                res = true;
-        }
-
-        return res;
     }
 
     @Override

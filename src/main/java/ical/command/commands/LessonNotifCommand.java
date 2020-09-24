@@ -5,6 +5,7 @@ import ical.command.ICommand;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
+import ical.util.Config;
 
 /**
  * LessonNotif class.
@@ -73,6 +74,6 @@ public class LessonNotifCommand implements ICommand {
     @Override
     public String getHelp() {
         return "Permet d'activer/désactiver les notifications pour le prochain cours qui arrive\n" +
-                "Utilisation : `"+getName()+" {true/false}`";
+                "Utilisation : `"+ Config.get("prefix")+getName()+" {true/false}`";
     }
 }

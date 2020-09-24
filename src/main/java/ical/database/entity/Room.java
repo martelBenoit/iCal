@@ -22,7 +22,9 @@ public class Room implements Comparable<Room> {
     }
 
     public String getUsualName(){
-        return name.replaceAll("V-TO-ENSIbs\\s?-\\s?","");
+
+        String ret = name.replaceAll("V-TO-ENSIBS\\s?-\\s?","");
+        return ret.replaceAll("V-TO-ENSIbs\\s?-\\s?","");
     }
 
     public Lesson getLesson(){

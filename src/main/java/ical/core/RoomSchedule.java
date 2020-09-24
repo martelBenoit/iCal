@@ -26,6 +26,7 @@ public class RoomSchedule extends AbstractSchedule {
                 this.url = new URL(url);
                 net.fortuna.ical4j.model.Calendar calendar = new CalendarBuilder().build(this.url.openStream());
                 fillSchedule(calendar);
+
                 creationDate = Instant.ofEpochMilli(System.currentTimeMillis());
             } catch (ParseException | IOException exception){
                 LOGGER.error(exception.getMessage(),exception);
@@ -38,7 +39,7 @@ public class RoomSchedule extends AbstractSchedule {
 
 
     @Override
-    public void updateLessons() throws IOException, ParseException, ParserException {
+    public void updateEntries() throws IOException, ParseException, ParserException {
 
         // On vérfie que l'url n'est pas null
         if(this.url != null){

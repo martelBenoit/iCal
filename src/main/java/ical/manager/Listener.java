@@ -1,9 +1,7 @@
 package ical.manager;
 
 import ical.core.Schedule;
-import ical.core.runnable.CheckSchedule;
-import ical.core.runnable.UpdateAvatar;
-import ical.core.runnable.UpdateSchedule;
+import ical.core.runnable.*;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
@@ -41,6 +39,8 @@ public class Listener extends ListenerAdapter {
         taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
         taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager,event.getJDA()),5);
         taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
+        taskScheduler.run30seconds("UpdateLessonRemainingTimeMessage",new UpdateRemainingTimeLessonMessage(event.getJDA()));
+        taskScheduler.runAt8EveryMonday("WeekInformationPlanning",new WeekInformationPlanning(event.getJDA(),scheduleManager));
 
         taskScheduler.runOneTime("UpdateAvatar",new UpdateAvatar(event.getJDA(),waiter));
         synchronized (waiter){
@@ -55,8 +55,6 @@ public class Listener extends ListenerAdapter {
         for(OGuild guild : guilds){
             scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(guild.getUrlSchedule()));
         }
-
-        LOGGER.info("Watch up configuration : "+Config.get("WATCH_UP")+" day(s)");
 
         LOGGER.info("Configuration done !");
         LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());

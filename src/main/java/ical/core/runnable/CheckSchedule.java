@@ -1,22 +1,23 @@
 package ical.core.runnable;
 
-import ical.database.entity.Lesson;
+
+import ical.database.entity.*;
 import ical.core.Schedule;
-import ical.database.entity.MovedLesson;
 import ical.manager.ScheduleManager;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
-import ical.database.entity.OEventChange;
-import ical.database.entity.OGuild;
 import ical.util.ModificationType;
 import ical.util.Notification;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class CheckSchedule implements Runnable {
+
 
     private ScheduleManager scheduleManager;
     private JDA jda;
@@ -56,7 +57,9 @@ public class CheckSchedule implements Runnable {
                                     channel.sendTyping().queue();
                                     schedule.setNotified(true);
                                     MessageEmbed message = Notification.prepareNotificationNextLessons(nextLessons);
-                                    channel.sendMessage(message).queue();
+                                    channel.sendMessage(message).queue((messageEmbed -> {
+                                        messageEmbed.delete().queueAfter(nextLessons.get(0).timeRemainingInSeconds()*2, TimeUnit.SECONDS);
+                                    }));
 
                                 }
                             }

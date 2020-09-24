@@ -3,11 +3,15 @@ package ical.manager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.*;
 
 /**
@@ -36,6 +40,20 @@ public class TaskScheduler {
      */
     public TaskScheduler(){
         tasks = new HashMap<>();
+    }
+
+    /**
+     * Create a task that starts every 30 seconds.
+     *
+     * @param name the name of the task
+     * @param runnable the runnable object to launch
+     */
+    public void run30seconds(String name, Runnable runnable){
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        LOGGER.info("Task '" + name + "' will next run 30 seconds.");
+        ScheduledFuture future = scheduler.scheduleAtFixedRate(runnable, 0, 30, TimeUnit.SECONDS);
+        tasks.put(name,future);
     }
 
     /**
@@ -89,11 +107,28 @@ public class TaskScheduler {
         else
             delayTime = initialDelay;
 
+
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         LOGGER.info("Task '" + name + "' will next run at midnight");
 
         ScheduledFuture future = scheduler.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
+
+        tasks.put(name,future);
+
+    }
+
+    public void runAt8EveryMonday(String name, Runnable runnable){
+
+        LocalDateTime dateNextRun = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 0,0);
+        long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.SECONDS);
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        LOGGER.info("Task '" + name + "' will next run at "+dateNextRun+" in "+delayTime/60/60+" hour(s)");
+        LOGGER.info("Second execution scheduled at : "+LocalDateTime.now().plusSeconds(delayTime+TimeUnit.DAYS.toSeconds(7)));
+
+        ScheduledFuture future = scheduler.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toSeconds(7), TimeUnit.SECONDS);
 
         tasks.put(name,future);
 

@@ -105,4 +105,29 @@ public class ProfessorDAO extends DAO<Professor>{
 
         return professor;
     }
+
+    @Nullable
+    public Professor findById(int id){
+        ResultSet results;
+
+        Professor professor = null;
+
+        try{
+            String query = "SELECT id, name, url FROM professor WHERE id = ?";
+            PreparedStatement preparedStatement = this.conn.prepareStatement(query);
+            preparedStatement.setInt(1,id);
+            results = preparedStatement.executeQuery();
+
+            if(results.isBeforeFirst()){
+                results.next();
+                professor = new Professor(results.getInt(1),results.getString(2),results.getString(3));
+            }
+
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        return professor;
+    }
 }

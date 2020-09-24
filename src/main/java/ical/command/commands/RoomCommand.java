@@ -3,6 +3,7 @@ package ical.command.commands;
 import ical.command.CommandContext;
 import ical.database.entity.Lesson;
 import ical.database.entity.Room;
+import ical.graphic.Timetable;
 import ical.manager.Listener;
 import ical.manager.ScheduleManager;
 import ical.util.Config;
@@ -24,7 +25,7 @@ import java.util.Date;
 public class RoomCommand extends AbstractScheduleCommand {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomCommand.class);
 
     ArrayList<Room> roomsList;
 
@@ -166,7 +167,6 @@ public class RoomCommand extends AbstractScheduleCommand {
                 k++;
             }
             if(found){
-                System.out.println(l);
                 list.get(k-1).setLesson(l);
                 list.get(k-1).setAvailable(false);
             }

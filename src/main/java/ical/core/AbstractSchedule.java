@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractSchedule {
 
@@ -41,7 +42,7 @@ public abstract class AbstractSchedule {
 
 
 
-    public abstract void updateLessons() throws IOException, ParseException, ParserException;
+    public abstract void updateEntries() throws IOException, ParseException, ParserException;
 
 
 

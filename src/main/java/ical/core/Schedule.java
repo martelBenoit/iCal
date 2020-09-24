@@ -2,7 +2,6 @@ package ical.core;
 
 import ical.database.entity.Lesson;
 import ical.database.entity.MovedLesson;
-import ical.util.Config;
 import ical.util.Tools;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -22,7 +21,9 @@ public class Schedule extends AbstractSchedule {
 
     private boolean alreadyBeenNotified;
 
-    private int watch_up = -1;
+    public Schedule(){
+        super();
+    }
 
 
     public Schedule(String url){
@@ -46,13 +47,9 @@ public class Schedule extends AbstractSchedule {
 
         this.alreadyBeenNotified = false;
 
-        this.watch_up = Tools.getNumberFromAString(Config.get("WATCH_UP"));
-        if(this.watch_up <= 0)
-            this.watch_up = -1;
-
     }
 
-    public void updateLessons() throws IOException, ParseException, ParserException {
+    public void updateEntries() throws IOException, ParseException, ParserException {
 
         // On vérfie que l'url n'est pas null
         if(this.url != null){
@@ -155,18 +152,93 @@ public class Schedule extends AbstractSchedule {
 
     }
 
+    public ArrayList<Lesson> getWeekLessons(){
+
+        ArrayList<Lesson> res = new ArrayList<>();
+
+        Calendar actual = Calendar.getInstance();
+        actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        actual.set(Calendar.HOUR,0);
+        actual.set(Calendar.MINUTE,0);
+        actual.set(Calendar.SECOND,0);
+        actual.set(Calendar.MILLISECOND,0);
+
+
+        Calendar cal = Calendar.getInstance();
+
+
+        for(Lesson lesson : lessons){
+            cal.setTime(lesson.getStartDate());
+            int day = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
+
+            if(day < 6 && day >= 0) {
+                res.add(lesson);
+            }
+        }
+
+        return res;
+
+    }
+    public ArrayList<Lesson> getNextWeekLessons(){
+
+        ArrayList<Lesson> res = new ArrayList<>();
+
+        Calendar actual = Calendar.getInstance();
+        actual.add(Calendar.DATE,7);
+        actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        actual.set(Calendar.HOUR,0);
+        actual.set(Calendar.MINUTE,0);
+        actual.set(Calendar.SECOND,0);
+        actual.set(Calendar.MILLISECOND,0);
+
+
+        Calendar cal = Calendar.getInstance();
+
+
+        for(Lesson lesson : lessons){
+            cal.setTime(lesson.getStartDate());
+            int day = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
+
+            if(day < 6 && day >= 0) {
+                res.add(lesson);
+            }
+        }
+
+        return res;
+
+    }
+
+    /**
+     * Get actual lessons
+     * @return the list of actual lessons
+     */
+    public ArrayList<Lesson> getActualLessons(){
+
+        ArrayList<Lesson> ret = new ArrayList<>();
+
+        final Date currentDate = new Date();
+
+        for(Lesson lesson : this.lessons){
+            if(lesson.getStartDate().compareTo(currentDate) <= 0 && lesson.getEndDate().compareTo(currentDate) >= 0)
+                ret.add(lesson);
+        }
+
+        return ret;
+    }
+
     public boolean verifyWatchUp(@NotNull Lesson lesson){
 
-        if(watch_up == -1)
-            return true;
-
-        boolean res =false;
+        boolean res = false;
 
         if(lesson.getStartDate().getTime() >= System.currentTimeMillis()){
             Calendar cal = Calendar.getInstance();
             cal.setTime(lesson.getStartDate());
-            int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-System.currentTimeMillis()));
-            if(days <= this.watch_up)
+
+            Calendar actual = Calendar.getInstance();
+            actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+            int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
+            if(days <= 14)
                 res = true;
         }
 

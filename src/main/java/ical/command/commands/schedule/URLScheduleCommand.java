@@ -6,6 +6,7 @@ import ical.manager.ScheduleManager;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
+import ical.util.Config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,6 +59,6 @@ public class URLScheduleCommand extends AbstractScheduleCommand {
     @Override
     public String getHelp() {
         return "Spécifier l'url du planning. Cet url doit renvoyer un fichier de type .ics\n" +
-                "Utilisation : `"+getName()+" {url}` ";
+                "Utilisation : `"+ Config.get("prefix")+getName()+" {url}` ";
     }
 }

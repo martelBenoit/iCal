@@ -86,4 +86,15 @@ public class DAOFactory {
         return new EventChange_LessonDAO(conn);
     }
 
+    /**
+     * Get the Lesson Remaining Time DAO.
+     *
+     * @return the Lesson Remaining TIme DAO
+     */
+    @NotNull
+    @Contract(" -> new")
+    public static DAO<?> getLesson_Remaining_Time(){
+        return new LessonRemainingTimeDAO(conn);
+    }
+
 }
