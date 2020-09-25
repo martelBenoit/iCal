@@ -44,8 +44,7 @@ public class ConnectionSingleton {
                 );
                 LOGGER.info("Connected to PostgreSQL database!");
             } catch (SQLException e){
-                LOGGER.info("Connection failure.");
-                e.printStackTrace();
+                LOGGER.info("Connection failure.",e.fillInStackTrace());
             }
         }
             

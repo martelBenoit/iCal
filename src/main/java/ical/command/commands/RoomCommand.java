@@ -3,14 +3,11 @@ package ical.command.commands;
 import ical.command.CommandContext;
 import ical.database.entity.Lesson;
 import ical.database.entity.Room;
-import ical.graphic.Timetable;
-import ical.manager.Listener;
 import ical.manager.ScheduleManager;
 import ical.util.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.tools.jstat.ParserException;
 
 import java.awt.*;
 import java.io.BufferedReader;
