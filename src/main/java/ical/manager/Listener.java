@@ -36,8 +36,14 @@ public class Listener extends ListenerAdapter {
         taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
         taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager,event.getJDA()),5);
         taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
-        taskScheduler.run30seconds("UpdateLessonRemainingTimeMessage",new UpdateRemainingTimeLessonMessage(event.getJDA()));
-        taskScheduler.runAt8EveryMonday("WeekInformationPlanning",new WeekInformationPlanning(event.getJDA(),scheduleManager));
+        taskScheduler.run30seconds(
+                "UpdateLessonRemainingTimeMessage",
+                new UpdateRemainingTimeLessonMessage(event.getJDA())
+        );
+        taskScheduler.runAt8EveryMonday(
+                "WeekInformationPlanning",
+                new WeekInformationPlanning(event.getJDA(),scheduleManager)
+        );
 
         //Run synchronously instead of async with waiter
         new UpdateAvatar(event.getJDA()).run();
@@ -91,12 +97,21 @@ public class Listener extends ListenerAdapter {
         if(!guilds.contains(guild)){
             if(guildDAO.create(guild) != null){
                 if(scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(null)))
-                    LOGGER.info("Bot joined a new guild : "+event.getGuild().getName()+", id = "+event.getGuild().getId());
+                    LOGGER.info("Bot joined a new guild : "
+                            + event.getGuild().getName()
+                            + ", id = "+event.getGuild().getId()
+                    );
                 else
-                    LOGGER.error("Bot joined a new guild but the schedule object was not added to the schedule manager : " + event.getGuild().getName());
+                    LOGGER.error("Bot joined a new guild "
+                            + "but the schedule object was not added to the schedule manager : "
+                            + event.getGuild().getName()
+                    );
             }
             else
-                LOGGER.error("Bot joined a new guild without registered it : "+event.getGuild().getName()+", id = "+event.getGuild().getId());
+                LOGGER.error("Bot joined a new guild without registered it : "
+                        + event.getGuild().getName()
+                        + ", id = "+event.getGuild().getId()
+                );
         }
 
     }
@@ -118,7 +133,10 @@ public class Listener extends ListenerAdapter {
             LOGGER.info("Bot left a guild : "+event.getGuild().getName()+", id = "+event.getGuild().getId());
         }
         else
-            LOGGER.error("Bot left a guild without unregistered it : "+event.getGuild().getName()+", id = "+event.getGuild().getId());
+            LOGGER.error("Bot left a guild without unregistered it : "
+                    + event.getGuild().getName()
+                    + ", id = "+event.getGuild().getId()
+            );
 
     }
 

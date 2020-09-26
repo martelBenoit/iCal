@@ -11,12 +11,27 @@ import ical.util.Config;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * URLScheduleCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public class URLScheduleCommand extends AbstractScheduleCommand {
 
+    /**
+     * Default constructor.
+     *
+     * @param manager the schedule manager
+     */
     public URLScheduleCommand(ScheduleManager manager) {
         super(manager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -51,14 +66,21 @@ public class URLScheduleCommand extends AbstractScheduleCommand {
             ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "setUrlSchedule";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Spécifier l'url du planning. Cet url doit renvoyer un fichier de type .ics\n" +
                 "Utilisation : `"+ Config.get("prefix")+getName()+" {url}` ";
     }
+
 }

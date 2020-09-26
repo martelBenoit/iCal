@@ -34,7 +34,8 @@ public class LessonDAO extends DAO<Lesson> {
 
 
         try{
-            String query = "INSERT INTO lesson(id, id_unique, nom, datedebut, datefin, description, classe, professor) VALUES (?,?,?,?,?,?,?,?)";
+            String query = "INSERT INTO lesson(id, id_unique, nom, datedebut, datefin, description, classe, professor)"+
+                           "VALUES (?,?,?,?,?,?,?,?)";
             PreparedStatement ps = this.conn.prepareStatement(query);
             ps.setString(1, unique_id);
             ps.setString(2, obj.getUID());
@@ -67,7 +68,10 @@ public class LessonDAO extends DAO<Lesson> {
         Lesson lesson = null;
 
         try{
-            String query = "SELECT id, id_unique, nom, datedebut, datefin, description, professor, classe  FROM lesson WHERE id = ?";
+            String query = "SELECT id, id_unique, nom, datedebut, datefin, description, professor, classe  " +
+                           "FROM lesson " +
+                           "WHERE id = ?";
+
             PreparedStatement ps = this.conn.prepareStatement(query);
             ps.setString(1,id_lesson);
 

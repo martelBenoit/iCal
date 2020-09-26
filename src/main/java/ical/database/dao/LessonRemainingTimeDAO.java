@@ -107,10 +107,6 @@ public class LessonRemainingTimeDAO extends DAO<LessonRemainingTime>{
             }
 
 
-
-
-
-
         }catch(SQLException e){
             LOGGER.error("Error when find all lesson remaining time object : "+e.getMessage(),e);
         }
@@ -120,7 +116,7 @@ public class LessonRemainingTimeDAO extends DAO<LessonRemainingTime>{
     }
 
     private boolean checkObject(LessonRemainingTime lessonRemainingTime){
-        System.out.println(lessonRemainingTime);
+
         if(lessonRemainingTime.getLesson() == null){
             LOGGER.error("Object Lesson in LessonRemainingTime is null");
             return false;

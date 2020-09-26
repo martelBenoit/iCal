@@ -57,13 +57,6 @@ public class CommandManager {
                 ret = command;
             }
         }
-/*
-        for (ICommand command : this.commands) {
-            if(command.getName().equals(searchLower) || command.getAliases().contains(searchLower)){
-                ret = command;
-                break;
-            }
-        }*/
 
         return ret;
 

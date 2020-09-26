@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 /**
  * Config class.
+ *
  * <br>Load the config file.
  *
  * @author Benoît Martel

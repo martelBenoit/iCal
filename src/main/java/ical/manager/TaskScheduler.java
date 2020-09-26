@@ -80,7 +80,9 @@ public class TaskScheduler {
     public void runAtMidnight(String name, Runnable runnable) {
 
         long delayTime;
-        final long initialDelay = LocalDateTime.now().until(LocalDate.now().plusDays(1).atTime(0, 2), ChronoUnit.MINUTES);
+        final long initialDelay = LocalDateTime.now().until(
+                LocalDate.now().plusDays(1).atTime(0, 2),
+                ChronoUnit.MINUTES);
 
         if (initialDelay > TimeUnit.DAYS.toMinutes(1))
             delayTime = LocalDateTime.now().until(LocalDate.now().atTime(0, 1), ChronoUnit.MINUTES);
@@ -88,18 +90,22 @@ public class TaskScheduler {
             delayTime = initialDelay;
 
 
+
         LOGGER.info("Task '" + name + "' will run every day at midnight");
+
 
         executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
     }
 
     public void runAt8EveryMonday(String name, Runnable runnable) {
 
+
         LocalDateTime dateNextRun = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 0, 0);
         long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.SECONDS);
 
         LOGGER.info("Task '" + name + "' will run at " + dateNextRun + " in " + delayTime / 60 / 60 + " hour(s)");
         LOGGER.info("Second execution scheduled at : " + LocalDateTime.now().plusSeconds(delayTime + TimeUnit.DAYS.toSeconds(7)));
+
 
         executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toSeconds(7), TimeUnit.SECONDS);
     }

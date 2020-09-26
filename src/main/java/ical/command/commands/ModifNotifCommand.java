@@ -39,7 +39,9 @@ public class ModifNotifCommand implements ICommand {
                         if(guildDAO.update(guild))
                             ctx.getChannel().sendMessage("✅ Notification des modifications activée !").queue();
                         else
-                            ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
+                            ctx.getChannel()
+                                    .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
+                                    .queue();
 
                     }
                     else if(enable.equalsIgnoreCase("false")){
@@ -48,7 +50,9 @@ public class ModifNotifCommand implements ICommand {
                         if(guildDAO.update(guild))
                             ctx.getChannel().sendMessage("✅ Notification des modifications désactivée !").queue();
                         else
-                            ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
+                            ctx.getChannel()
+                                    .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
+                                    .queue();
                     }
                     else
                         ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
@@ -64,7 +68,7 @@ public class ModifNotifCommand implements ICommand {
     /**
      * Get the name of modifNotif command.
      *
-     * @return "modifNotif"
+     * @return {@code modifNotif}
      */
     @Override
     public String getName() {

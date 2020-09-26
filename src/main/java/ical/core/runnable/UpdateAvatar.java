@@ -38,6 +38,7 @@ public class UpdateAvatar implements Runnable {
             e.printStackTrace();
             LOGGER.error("Failed to update avatar");
         }
+
     }
 
     private BufferedImage todayImage() throws IOException, FontFormatException {

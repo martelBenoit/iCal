@@ -10,18 +10,32 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * TodayLessonsCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public class TodayLessonsCommand extends AbstractScheduleCommand {
 
+    /**
+     * Default constructor.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public TodayLessonsCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
         final ArrayList<Lesson> lessons = scheduleManager.getSchedule(ctx.getGuild().getId()).getLessons(0);
 
-        //scheduleManager.getSchedule(ctx.getGuild().getId()).getNextLessons().get(0).setDate();
         if (lessons.size() > 0) {
             final EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Les cours pr\u00e9vus dans la journ\u00e9e : ", null);
@@ -38,11 +52,17 @@ public class TodayLessonsCommand extends AbstractScheduleCommand {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "todayLessons";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Indique les cours qui se déroule aujourd'hui.\n"+

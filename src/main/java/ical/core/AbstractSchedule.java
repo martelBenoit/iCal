@@ -19,20 +19,43 @@ import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract schedule class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class AbstractSchedule {
 
+    /**
+     * the logger.
+     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(Schedule.class);
 
+    /**
+     * the schedule creation date.
+     */
     protected TemporalAccessor creationDate;
 
+    /**
+     * the lessons list.
+     */
     protected ArrayList<Lesson> lessons = new ArrayList<>();
 
+    /**
+     * the date format.
+     */
     protected final SimpleDateFormat dateFormat;
 
+    /**
+     * the schedule url.
+     */
     protected URL url;
 
-
-
+    /**
+     * Default constructor.
+     */
     public AbstractSchedule(){
 
         dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
@@ -40,12 +63,21 @@ public abstract class AbstractSchedule {
 
     }
 
-
-
+    /**
+     * Update schedule entries.
+     *
+     * @throws IOException if cannot open the url
+     * @throws ParseException if cannot parse the url
+     * @throws ParserException if cannot parse the ics file
+     */
     public abstract void updateEntries() throws IOException, ParseException, ParserException;
 
-
-
+    /**
+     * Reset and fill the schedule with the calendar object.
+     *
+     * @param calendar the calendar containing the result of parsing the ics file
+     * @throws ParseException if cannot parse the calendar object
+     */
     protected void fillSchedule(Calendar calendar) throws ParseException {
 
         this.lessons = new ArrayList<>();
@@ -64,7 +96,10 @@ public abstract class AbstractSchedule {
             String[] decompose = description.split("[\\r\\n|\\r|\\n]+");
 
             if(decompose.length >= 1) {
-                String profName = (decompose[decompose.length - 1].replaceAll("[\\s|^\\W]", "")).replaceAll("\\.", "");
+                String profName = (
+                        decompose[decompose.length - 1]
+                        .replaceAll("[\\s|^\\W]", "")
+                ).replaceAll("\\.", "");
 
                 ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
                 Professor professor = professorDAO.find(profName);
@@ -89,7 +124,11 @@ public abstract class AbstractSchedule {
 
     }
 
-
+    /**
+     * Get the schedule creation date.
+     *
+     * @return the creation date
+     */
     public TemporalAccessor getCreationDate(){
         return this.creationDate;
     }

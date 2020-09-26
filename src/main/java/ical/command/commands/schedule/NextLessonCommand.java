@@ -20,12 +20,27 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+/**
+ * NextLessonCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.0
+ */
 public class NextLessonCommand extends AbstractScheduleCommand {
 
+    /**
+     * Default constructor.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public NextLessonCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
         TextChannel channel = ctx.getChannel();
@@ -46,8 +61,10 @@ public class NextLessonCommand extends AbstractScheduleCommand {
             MessageEmbed embedMessage = eb.build();
 
             channel.sendMessage(embedMessage).queue(message -> {
-                LessonRemainingTime lessonRemainingTime = new LessonRemainingTime(lessons.get(0),message.getIdLong(),message.getChannel().getIdLong());
-                LessonRemainingTimeDAO lessonRemainingTimeDAO = (LessonRemainingTimeDAO) DAOFactory.getLesson_Remaining_Time();
+                LessonRemainingTime lessonRemainingTime =
+                        new LessonRemainingTime(lessons.get(0),message.getIdLong(),message.getChannel().getIdLong());
+                LessonRemainingTimeDAO lessonRemainingTimeDAO =
+                        (LessonRemainingTimeDAO) DAOFactory.getLesson_Remaining_Time();
                 lessonRemainingTimeDAO.create(lessonRemainingTime);
             });
         }
@@ -65,8 +82,10 @@ public class NextLessonCommand extends AbstractScheduleCommand {
             }
             MessageEmbed embedMessage = eb.build();
             channel.sendMessage(embedMessage).queue(message -> {
-                LessonRemainingTime lessonRemainingTime = new LessonRemainingTime(lessons.get(0),message.getIdLong(),message.getChannel().getIdLong());
-                LessonRemainingTimeDAO lessonRemainingTimeDAO = (LessonRemainingTimeDAO) DAOFactory.getLesson_Remaining_Time();
+                LessonRemainingTime lessonRemainingTime =
+                        new LessonRemainingTime(lessons.get(0),message.getIdLong(),message.getChannel().getIdLong());
+                LessonRemainingTimeDAO lessonRemainingTimeDAO =
+                        (LessonRemainingTimeDAO) DAOFactory.getLesson_Remaining_Time();
                 lessonRemainingTimeDAO.create(lessonRemainingTime);
             });
         }
@@ -74,14 +93,19 @@ public class NextLessonCommand extends AbstractScheduleCommand {
             channel.sendMessage("Pas de prochain cours").queue();
         }
 
-
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "nextLesson";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Affiche le/les prochain(s) cours (si plusieurs en même temps).\n"+

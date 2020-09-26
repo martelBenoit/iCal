@@ -7,8 +7,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.List;
 
 /**
- * CommandContext class. Implement ICommandContext
- * <br> Gère le contexte d'une commande, permet notamment de récupérer l'évènement.
+ * CommandContext class. Implement {@link ICommandContext}
+ * <br> Manages the context of an order, in particular allows you to retrieve the event.
  *
  * @author Benoît Martel
  * @version 1.0

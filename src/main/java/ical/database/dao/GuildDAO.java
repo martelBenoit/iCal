@@ -61,7 +61,10 @@ public class GuildDAO extends DAO<OGuild> {
         int res = -1;
 
         try{
-            String query = "UPDATE guild SET idchannel = ?, urlplanning = ?, modifnotif = ?, lessonnotif = ? WHERE idguild = ?";
+            String query =
+                    "UPDATE guild " +
+                    "SET idchannel = ?, urlplanning = ?, modifnotif = ?, lessonnotif = ? " +
+                    "WHERE idguild = ?";
             PreparedStatement ps = this.conn.prepareStatement(query);
 
             ps.setString(1,obj.getIdChannel());
@@ -85,7 +88,10 @@ public class GuildDAO extends DAO<OGuild> {
         OGuild guild = null;
 
         try{
-            String query = "SELECT idguild, idchannel, urlplanning, modifnotif, lessonnotif FROM guild WHERE idGuild = ?";
+            String query = "SELECT idguild, idchannel, urlplanning, modifnotif, lessonnotif " +
+                           "FROM guild " +
+                           "WHERE idGuild = ?";
+
             PreparedStatement ps = this.conn.prepareStatement(query);
             ps.setString(1,idGuild);
 

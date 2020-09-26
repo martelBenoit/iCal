@@ -7,12 +7,27 @@ import ical.database.entity.OGuild;
 import ical.manager.ScheduleManager;
 import ical.util.Config;
 
+/**
+ * InfoCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.4
+ */
 public class InfoCommand extends AbstractScheduleCommand {
 
+    /**
+     * Default constructor.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public InfoCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -22,7 +37,7 @@ public class InfoCommand extends AbstractScheduleCommand {
             OGuild guild = guildDAO.find(idGuild);
 
             StringBuilder message = new StringBuilder();
-            message.append("**Information sur l'état actuel de ma configuration sur le serveur ** \n\n");
+            message.append("**Information sur l'état actuel de ma configuration sur le serveur **\n\n");
 
             if(guild != null){
                 String urlSchedule = guild.getUrlSchedule();
@@ -64,18 +79,23 @@ public class InfoCommand extends AbstractScheduleCommand {
         else
             ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
 
-
-
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "info";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Affiche l'état actuel de la configuration du bot sur le serveur.\n"+
                 "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
+
 }

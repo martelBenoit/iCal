@@ -11,37 +11,38 @@ import java.util.Objects;
  * @author Benoît Martel
  * @version 1.1
  */
-public class OGuild {
+public class OGuild extends Entity{
 
     /**
-     * the id of the guild
+     * the id of the guild.
      */
     private final String idGuild;
 
     /**
-     * the id of the default channel
+     * the id of the default channel.
      */
     private String idChannel;
 
     /**
-     * the url of the schedule
+     * the url of the schedule.
      */
     private String urlSchedule;
 
     /**
-     * the modification notification
+     * the modification notification.
      */
     private boolean modifNotif;
 
     /**
-     * the lesson notification
+     * the lesson notification.
      */
     private boolean lessonNotif;
 
     /**
      * Constructor.
-     * Allow to create an object only with the id of the guild. The id of default channel and the url of the schedule
-     * are null.
+     *
+     * <br>Allow to create an object only with the id of the guild. The id of default channel and the url of the
+     * schedule are null.
      *
      * @param idGuild the id of the guild
      */
@@ -51,7 +52,8 @@ public class OGuild {
 
     /**
      * Contructor.
-     * Allow to create an object with the id of the guild, id of the channel and the url of the schedule.
+     *
+     * <br>Allow to create an object with the id of the guild, id of the channel and the url of the schedule.
      *
      * @param idGuild the id of the guild
      * @param idChannel the id of the channel
@@ -59,7 +61,11 @@ public class OGuild {
      * @param modifNotif the boolean which indicates whether lessons modifications notifications are active or not
      * @param lessonNotif the boolean which indicates whether lesson notifications are active or not
      */
-    public OGuild(@Nonnull String idGuild, String idChannel, String urlSchedule, boolean modifNotif, boolean lessonNotif) {
+    public OGuild(@Nonnull String idGuild,
+                  String idChannel,
+                  String urlSchedule,
+                  boolean modifNotif,
+                  boolean lessonNotif) {
         this.idGuild = idGuild;
         this.idChannel = idChannel;
         this.urlSchedule = urlSchedule;
@@ -69,6 +75,7 @@ public class OGuild {
 
     /**
      * Get the guild id.
+     *
      * @return the guild id
      */
     @Nonnull
@@ -78,6 +85,7 @@ public class OGuild {
 
     /**
      * Get the default channel id.
+     *
      * @return the default channel id
      */
     @Nullable
@@ -87,6 +95,7 @@ public class OGuild {
 
     /**
      * Set the default channel id.
+     *
      * @param idChannel the default channel id
      */
     public void setIdChannel(@Nonnull String idChannel) {
@@ -95,6 +104,7 @@ public class OGuild {
 
     /**
      * Get the schedule url.
+     *
      * @return the schedule url
      */
     @Nullable
@@ -149,7 +159,8 @@ public class OGuild {
 
     /**
      * Override the default method equals.
-     * Compare the id guild of the current object and the object passed in parameter.
+     *
+     * <br>Compare the id guild of the current object and the object passed in parameter.
      *
      * @param o the object to compare
      * @return true if the id guild of the two objects is equal
@@ -162,13 +173,20 @@ public class OGuild {
         return idGuild.equals(oGuild.idGuild);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(idGuild);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "OGuild [idGuild : "+idGuild+", idChannel : "+idChannel+", url : "+ urlSchedule +"]";
     }
+
 }
