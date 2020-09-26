@@ -22,7 +22,6 @@ public class UpdateSchedule implements Runnable {
 
 
     public UpdateSchedule(ScheduleManager scheduleManager, JDA jda){
-
         this.scheduleManager = scheduleManager;
         this.jda = jda;
     }
@@ -49,4 +48,5 @@ public class UpdateSchedule implements Runnable {
 
 
     }
+
 }

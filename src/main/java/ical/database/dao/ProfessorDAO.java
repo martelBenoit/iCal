@@ -70,7 +70,11 @@ public class ProfessorDAO extends DAO<Professor>{
             results = this.conn.createStatement().executeQuery(query);
 
             while(results.next()){
-                professor = new Professor(results.getInt(1),results.getString(2),results.getString(3));
+                professor = new Professor(
+                        results.getInt(1),
+                        results.getString(2),
+                        results.getString(3)
+                );
                 professors.add(professor);
 
             }
@@ -95,7 +99,11 @@ public class ProfessorDAO extends DAO<Professor>{
 
             if(results.isBeforeFirst()){
                 results.next();
-                professor = new Professor(results.getInt(1),results.getString(2),results.getString(3));
+                professor = new Professor(
+                        results.getInt(1),
+                        results.getString(2),
+                        results.getString(3)
+                );
             }
 
 
@@ -120,7 +128,11 @@ public class ProfessorDAO extends DAO<Professor>{
 
             if(results.isBeforeFirst()){
                 results.next();
-                professor = new Professor(results.getInt(1),results.getString(2),results.getString(3));
+                professor = new Professor(
+                        results.getInt(1),
+                        results.getString(2),
+                        results.getString(3)
+                );
             }
 
 

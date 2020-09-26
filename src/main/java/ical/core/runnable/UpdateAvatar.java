@@ -55,7 +55,6 @@ public class UpdateAvatar implements Runnable {
             e.printStackTrace();
         }
 
-
     }
 
     private BufferedImage todayImage() throws IOException, FontFormatException {

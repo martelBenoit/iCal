@@ -1,26 +1,25 @@
 package ical.database.entity;
 
-
 /**
  * LessonRemainingTime entity.
  *
  * @version 1.0
  * @author Benoît Martel
  */
-public class LessonRemainingTime {
+public class LessonRemainingTime extends Entity {
 
     /**
-     * a lesson
+     * a lesson.
      */
     private Lesson lesson;
 
     /**
-     * message id
+     * message id.
      */
     private final Long id_message;
 
     /**
-     * channel id
+     * channel id.
      */
     private final Long id_channel;
 
@@ -38,7 +37,8 @@ public class LessonRemainingTime {
     }
 
     /**
-     * Get the lesson
+     * Get the lesson.
+     *
      * @return the lesson
      */
     public Lesson getLesson() {
@@ -46,7 +46,8 @@ public class LessonRemainingTime {
     }
 
     /**
-     * Set the lesson
+     * Set the lesson.
+     *
      * @param lesson the lesson
      */
     public void setLesson(Lesson lesson) {
@@ -54,7 +55,8 @@ public class LessonRemainingTime {
     }
 
     /**
-     * Get the id message
+     * Get the id message.
+     *
      * @return the id message
      */
     public Long getId_message() {
@@ -62,13 +64,17 @@ public class LessonRemainingTime {
     }
 
     /**
-     * Get the id channel
+     * Get the id channel.
+     *
      * @return the id channel
      */
     public Long getId_channel() {
         return id_channel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "LessonRemainingTime{" +

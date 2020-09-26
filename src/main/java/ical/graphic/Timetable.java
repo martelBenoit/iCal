@@ -42,8 +42,10 @@ public class Timetable {
 
     private final Calendar calendar;
 
-    private final BufferedImage laptop_white = ImageIO.read(Timetable.class.getResourceAsStream("/laptop_white.png"));
-    private final BufferedImage laptop_black = ImageIO.read(Timetable.class.getResourceAsStream("/laptop_black.png"));
+    private final BufferedImage laptop_white =
+            ImageIO.read(Timetable.class.getResourceAsStream("/laptop_white.png"));
+    private final BufferedImage laptop_black =
+            ImageIO.read(Timetable.class.getResourceAsStream("/laptop_black.png"));
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Timetable.class);
@@ -56,7 +58,8 @@ public class Timetable {
         this.calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
         colorAssociation = new HashMap<>();
-        Map<String, java.util.List<Lesson>> lessonByName = lessons.stream().collect(Collectors.groupingBy(lesson -> clearLessonName(lesson.getName())));
+        Map<String, java.util.List<Lesson>> lessonByName =
+                lessons.stream().collect(Collectors.groupingBy(lesson -> clearLessonName(lesson.getName())));
         for(String lessonName : lessonByName.keySet()){
             Color value = Tools.getRandomColor(Tools.stringToSeed(clearLessonName(lessonName)),0);
             int i = 1;
@@ -112,7 +115,11 @@ public class Timetable {
         int height = fontMetrics.getHeight();
 
 
-        g2.drawString(weekOfYear, (5*width_rect-width)/2 + corner_left_x, titleBoxHeight-titleBoxHeight/2+height/2-4);
+        g2.drawString(
+                weekOfYear,
+                (5*width_rect-width)/2 + corner_left_x,
+                titleBoxHeight-titleBoxHeight/2+height/2-4
+        );
 
     }
 
@@ -148,7 +155,11 @@ public class Timetable {
             int heightText = fontMetrics.getHeight();
 
 
-            g2.drawString(displayDate, (width_rect-widthText)/2 + offset_x, corner_left_y + dayBoxHeight/2 - heightText);
+            g2.drawString(
+                    displayDate,
+                    (width_rect-widthText)/2 + offset_x,
+                    corner_left_y + dayBoxHeight/2 - heightText
+            );
 
             calendar.add(Calendar.DATE,1);
             offset_x+=width_rect;
@@ -204,7 +215,10 @@ public class Timetable {
             startDay.setTime(manyLessons.get(0).getStartDate());
             startDay.set(Calendar.HOUR_OF_DAY,8);
             startDay.set(Calendar.MINUTE,0);
-            int startTimeOffset = (int) TimeUnit.MILLISECONDS.toMinutes(startDate.getTimeInMillis() - startDay.getTimeInMillis())*height_rect/30;
+            int startTimeOffset =
+                    (int) TimeUnit.MILLISECONDS.toMinutes(
+                            startDate.getTimeInMillis() - startDay.getTimeInMillis()
+                    ) * height_rect / 30;
 
             int pos = 0;
             int resizedWidthRect = width_rect/manyLessons.size();
@@ -213,7 +227,9 @@ public class Timetable {
 
                 int minutesDuration = aLesson.getMinutesDuration()*height_rect/30;
 
-                int xPosRect = corner_left_x + (width_rect*(startDate.get(Calendar.DAY_OF_WEEK)-2)+1)+pos*resizedWidthRect;
+                int xPosRect = corner_left_x
+                        + (width_rect*(startDate.get(Calendar.DAY_OF_WEEK)-2)+1)
+                        + pos*resizedWidthRect;
                 int yPosRect = corner_left_y + startTimeOffset+1;
 
                 if(lesson.getName().contains("DS"))
@@ -223,11 +239,26 @@ public class Timetable {
 
                 g2.fillRect(xPosRect,yPosRect,width_rect-1,minutesDuration-1);
 
-                if(lesson.getName().toLowerCase().contains("distant") || lesson.getName().toLowerCase().contains("distanc")){
+                if(lesson.getName().toLowerCase().contains("distant")
+                        || lesson.getName().toLowerCase().contains("distanc"))
+                {
                     if(getAppropriateTextColor(g2.getColor())==colorTextBlack)
-                        g2.drawImage(laptop_black.getScaledInstance(40,40,Image.SCALE_SMOOTH),xPosRect+width_rect-10-40,yPosRect+minutesDuration-40,null);
+                        g2.drawImage(laptop_black.getScaledInstance(
+                                                                40,
+                                                                40,
+                                                                Image.SCALE_SMOOTH
+                                                            ),
+                                xPosRect+width_rect-10-40,
+                                yPosRect+minutesDuration-40,
+                                null
+                        );
                     else
-                        g2.drawImage(laptop_white.getScaledInstance(40,40,Image.SCALE_SMOOTH),xPosRect+width_rect-10-40,yPosRect+minutesDuration-40,null);
+                        g2.drawImage(laptop_white.getScaledInstance(
+                                40,
+                                40,Image.SCALE_SMOOTH),
+                                xPosRect+width_rect-10-40,
+                                yPosRect+minutesDuration-40,null
+                        );
                 }
 
 
@@ -245,7 +276,8 @@ public class Timetable {
 
                 String displayNameLesson = clearLessonName(lesson.getName());
 
-                String[] nameLesson = splitText(displayNameLesson,resizedWidthRect / fontMetrics.stringWidth("0"));
+                String[] nameLesson =
+                        splitText(displayNameLesson,resizedWidthRect / fontMetrics.stringWidth("0"));
 
                 int yLastPos = 0;
                 for(int i = 0; i < nameLesson.length; i++){
@@ -306,7 +338,14 @@ public class Timetable {
                 }
 
                 g2.setStroke(new BasicStroke(2));
-                g2.drawRoundRect(xPosRectRoom,yPosRectRoom,widthRectRoom,(int)(heightText+heightText*0.2),(int)(widthRectRoom*0.25),(int)((heightText+heightText*0.2)*0.25));
+                g2.drawRoundRect(
+                        xPosRectRoom,
+                        yPosRectRoom,
+                        widthRectRoom,
+                        (int)(heightText+heightText*0.2),
+                        (int)(widthRectRoom*0.25),
+                        (int)((heightText+heightText*0.2)*0.25)
+                );
 
                 if(lesson.getName().toLowerCase().contains("+mr"))
                 {
@@ -322,7 +361,14 @@ public class Timetable {
                     int yMR =(int)(yPosRectMR+fontMetrics.getHeight()-fontMetrics.getHeight()*0.1);
 
                     g2.drawString("MR",xMR,yMR);
-                    g2.drawRoundRect(xPosRectMR,yPosRectMR,widthRectMR,heightRectMR,(int)(widthRectMR*0.25),(int)(heightRectMR*0.25));
+                    g2.drawRoundRect(
+                            xPosRectMR,
+                            yPosRectMR,
+                            widthRectMR,
+                            heightRectMR,
+                            (int)(widthRectMR*0.25),
+                            (int)(heightRectMR*0.25)
+                    );
 
                 }
 

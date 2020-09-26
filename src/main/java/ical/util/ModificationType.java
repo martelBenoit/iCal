@@ -2,6 +2,7 @@ package ical.util;
 
 /**
  * ModificationType enum.
+ *
  * <br>Manages the type of modification for a lesson.
  *
  * @author Benoît Martel
@@ -13,7 +14,10 @@ public enum ModificationType {
     REMOVE(2),
     MOVE(3);
 
-    private int value;
+    /**
+     * the modification type value.
+     */
+    private final int value;
 
     /**
      * Constructor.
@@ -33,4 +37,5 @@ public enum ModificationType {
     public int getValue() {
         return value;
     }
+
 }

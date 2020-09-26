@@ -17,6 +17,9 @@ import ical.util.Config;
  */
 public class LessonNotifCommand implements ICommand {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(CommandContext ctx) {
 
@@ -35,7 +38,9 @@ public class LessonNotifCommand implements ICommand {
                         if (guildDAO.update(guild))
                             ctx.getChannel().sendMessage("✅ Notification des cours activée !").queue();
                         else
-                            ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
+                            ctx.getChannel()
+                                    .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
+                                    .queue();
 
                     } else if (enable.equalsIgnoreCase("false")) {
 
@@ -43,7 +48,9 @@ public class LessonNotifCommand implements ICommand {
                         if (guildDAO.update(guild))
                             ctx.getChannel().sendMessage("✅ Notification des cours désactivée !").queue();
                         else
-                            ctx.getChannel().sendMessage("❌ Erreur lors de la prise en compte de votre demande..").queue();
+                            ctx.getChannel()
+                                    .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
+                                    .queue();
                     } else
                         ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
                 }
@@ -59,7 +66,7 @@ public class LessonNotifCommand implements ICommand {
     /**
      * Get the name of lessonNotif command.
      *
-     * @return "lessonNotif"
+     * @return {@code lessonNotif}
      */
     @Override
     public String getName() {

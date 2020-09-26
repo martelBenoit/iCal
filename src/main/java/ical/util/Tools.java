@@ -1,9 +1,13 @@
 package ical.util;
 
+import ical.database.entity.Lesson;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Static Tools class.
@@ -45,6 +49,31 @@ public class Tools {
         cal.set(java.util.Calendar.MILLISECOND, 0);
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
         return cal.getTime();
+    }
+
+    /**
+     * Check that the lesson is in the supervision zone.
+     *
+     * @param lesson the lesson to check
+     * @return true if the lesson is in the supervision zone
+     */
+    public static boolean verifyWatchUp(@NotNull Lesson lesson){
+
+        boolean res = false;
+
+        if(lesson.getStartDate().getTime() >= System.currentTimeMillis()){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(lesson.getStartDate());
+
+            Calendar actual = Calendar.getInstance();
+            actual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+            int days = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
+            if(days <= 14)
+                res = true;
+        }
+
+        return res;
     }
 
     /**

@@ -8,6 +8,7 @@ import java.sql.Connection;
 
 /**
  * The DAO Factory class.
+ *
  * <br>Provides all DAO object for this application.
  *
  * @author Benoît Martel
@@ -16,7 +17,7 @@ import java.sql.Connection;
 public class DAOFactory {
 
     /**
-     * the connection at the database
+     * the connection at the database.
      */
     protected static final Connection conn = ConnectionSingleton.getInstance();
 

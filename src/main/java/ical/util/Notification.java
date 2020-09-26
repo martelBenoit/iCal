@@ -61,7 +61,10 @@ public class Notification {
         return me;
     }
 
-    public static MessageEmbed prepareNotificationModificationsLessons(OEventChange eventChange, List<MovedLesson> movedLessons, TemporalAccessor time){
+    public static MessageEmbed prepareNotificationModificationsLessons(
+            OEventChange eventChange,
+            List<MovedLesson> movedLessons,
+            TemporalAccessor time){
 
         EventChangeDAO evtChangeDAO = (EventChangeDAO) DAOFactory.getEventChange();
         OEventChange evtChange = evtChangeDAO.create(eventChange);
@@ -93,7 +96,8 @@ public class Notification {
                             LOGGER.error("Error movedLessonCreated is null");
                     }
                     else
-                        LOGGER.error("To create an moved event change lesson you should insert a prevLesson and a actLesson not null ");
+                        LOGGER.error("To create an moved event change lesson " +
+                                "you should insert a prevLesson and a actLesson not null ");
 
                 }
 
@@ -134,7 +138,10 @@ public class Notification {
             dynamicString = dynamicString.concat("s");
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("[Information] - Changement d'emploi du temps", "https://ical.benoitmartel.ovh/?id="+eventChange.getId());
+        eb.setTitle(
+                "[Information] - Changement d'emploi du temps",
+                "https://ical.benoitmartel.ovh/?id="+eventChange.getId()
+        );
         eb.setTimestamp(time);
         eb.setFooter("ENT","https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
         eb.setColor(new Color(238358));
@@ -146,9 +153,21 @@ public class Notification {
                 for (MovedLesson movedLesson : movedLessons) {
                     oldLesson = movedLesson.getPreviousLesson();
                     newLesson = movedLesson.getActualLesson();
-                    eb.addField("", newLesson.getName() + "\n~~Le " + oldLesson.getDay()+"~~\nLe "+newLesson.getDay(), false);
-                    eb.addField("*D\u00e9but du cours*", "~~"+oldLesson.getStartTime()+"~~\n"+newLesson.getStartTime(), true);
-                    eb.addField("*Fin du cours*", "~~"+oldLesson.getEndTime()+"~~\n"+newLesson.getEndTime(), true);
+                    eb.addField(
+                            "",
+                            newLesson.getName() + "\n~~Le " + oldLesson.getDay()+"~~\nLe "+newLesson.getDay(),
+                            false
+                    );
+                    eb.addField(
+                            "*D\u00e9but du cours*",
+                            "~~"+oldLesson.getStartTime()+"~~\n"+newLesson.getStartTime(),
+                            true
+                    );
+                    eb.addField(
+                            "*Fin du cours*",
+                            "~~"+oldLesson.getEndTime()+"~~\n"+newLesson.getEndTime(),
+                            true
+                    );
                     eb.addBlankField(false);
                 }
             }
@@ -173,9 +192,21 @@ public class Notification {
                 for (MovedLesson movedLesson : movedLessons) {
                     oldLesson = movedLesson.getPreviousLesson();
                     newLesson = movedLesson.getActualLesson();
-                    eb.addField("", newLesson.getName() + "\n~~Le " + oldLesson.getDay()+"~~\nLe "+newLesson.getDay(), false);
-                    eb.addField("*D\u00e9but du cours*", "~~"+oldLesson.getStartTime()+"~~\n"+newLesson.getStartTime(), true);
-                    eb.addField("*Fin du cours*", "~~"+oldLesson.getEndTime()+"~~\n"+newLesson.getEndTime(), true);
+                    eb.addField(
+                            "",
+                            newLesson.getName() + "\n~~Le " + oldLesson.getDay()+"~~\nLe "+newLesson.getDay(),
+                            false
+                    );
+                    eb.addField(
+                            "*D\u00e9but du cours*",
+                            "~~"+oldLesson.getStartTime()+"~~\n"+newLesson.getStartTime(),
+                            true
+                    );
+                    eb.addField(
+                            "*Fin du cours*",
+                            "~~"+oldLesson.getEndTime()+"~~\n"+newLesson.getEndTime(),
+                            true
+                    );
                     eb.addBlankField(false);
                 }
             }
@@ -193,16 +224,34 @@ public class Notification {
             }
         }
         else{
-            eb.setDescription("Il y a "+movedLessons.size()+" cours qui ont été "+dynamicString+" !\nVoici les 3 premiers : ");
+            eb.setDescription(
+                    "Il y a "
+                    +movedLessons.size()
+                    + " cours qui ont été "
+                    +dynamicString
+                    + " !\nVoici les 3 premiers : "
+            );
             Lesson newLesson;
             Lesson oldLesson;
             if (typeEvent == ModificationType.MOVE){
                 for (MovedLesson movedLesson : movedLessons) {
                     oldLesson = movedLesson.getPreviousLesson();
                     newLesson = movedLesson.getActualLesson();
-                    eb.addField("", newLesson.getName() + "\n~~Le " + oldLesson.getDay()+"~~\nLe "+newLesson.getDay(), false);
-                    eb.addField("*D\u00e9but du cours*", "~~"+oldLesson.getStartTime()+"~~\n"+newLesson.getStartTime(), true);
-                    eb.addField("*Fin du cours*", "~~"+oldLesson.getEndTime()+"~~\n"+newLesson.getEndTime(), true);
+                    eb.addField(
+                            "",
+                            newLesson.getName() + "\n~~Le " + oldLesson.getDay()+"~~\nLe "+newLesson.getDay(),
+                            false
+                    );
+                    eb.addField(
+                            "*D\u00e9but du cours*",
+                            "~~"+oldLesson.getStartTime()+"~~\n"+newLesson.getStartTime(),
+                            true
+                    );
+                    eb.addField(
+                            "*Fin du cours*",
+                            "~~"+oldLesson.getEndTime()+"~~\n"+newLesson.getEndTime(),
+                            true
+                    );
                     eb.addBlankField(false);
                 }
             }

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.*;
 
 public class WeekInformationPlanning implements Runnable {
@@ -70,7 +69,10 @@ public class WeekInformationPlanning implements Runnable {
                                     eb.setColor(new Color(238358));
                                     eb.setImage("attachment://" + nameImg);
                                     eb.setTimestamp(schedule.getCreationDate());
-                                    eb.setFooter("ENT","https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
+                                    eb.setFooter(
+                                            "ENT",
+                                            "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
+                                    );
 
                                     channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
                                     LOGGER.info("["+idGuild+"] Sent !");

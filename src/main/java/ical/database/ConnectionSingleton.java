@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 /**
  * ConnectionSingleton class.
+ *
  * <br>Used to create the connection to the database and provides an instance of this connection once established.
  *
  * @author Benoît Martel
@@ -18,12 +19,12 @@ import java.sql.SQLException;
 public class ConnectionSingleton {
 
     /**
-     * the logger
+     * the logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionSingleton.class);
 
     /**
-     * the connection
+     * the connection.
      */
     private static Connection connection;
 
@@ -36,11 +37,14 @@ public class ConnectionSingleton {
         if(connection == null){
 
             try{
-                connection = DriverManager.getConnection(Config.get("DB_URL"),Config.get("DB_USERNAME"),Config.get(("DB_PASSWORD")));
+                connection = DriverManager.getConnection(
+                        Config.get("DB_URL"),
+                        Config.get("DB_USERNAME"),
+                        Config.get(("DB_PASSWORD"))
+                );
                 LOGGER.info("Connected to PostgreSQL database!");
             } catch (SQLException e){
-                LOGGER.info("Connection failure.");
-                e.printStackTrace();
+                LOGGER.info("Connection failure.",e.fillInStackTrace());
             }
         }
             
