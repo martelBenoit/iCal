@@ -30,9 +30,6 @@ public class Listener extends ListenerAdapter {
     private final CommandManager manager = new CommandManager(scheduleManager);
     private final TaskScheduler taskScheduler = new TaskScheduler();
 
-    private final Object waiter = new Object();
-
-
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
 
@@ -42,13 +39,8 @@ public class Listener extends ListenerAdapter {
         taskScheduler.run30seconds("UpdateLessonRemainingTimeMessage",new UpdateRemainingTimeLessonMessage(event.getJDA()));
         taskScheduler.runAt8EveryMonday("WeekInformationPlanning",new WeekInformationPlanning(event.getJDA(),scheduleManager));
 
-        taskScheduler.runOneTime("UpdateAvatar",new UpdateAvatar(event.getJDA(),waiter));
-        synchronized (waiter){
-            try{
-                waiter.wait();
-            }catch (InterruptedException ignored){ }
-
-        }
+        //Run synchronously instead of async with waiter
+        new UpdateAvatar(event.getJDA()).run();
 
         GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
         ArrayList<OGuild> guilds = guildDAO.findAll();

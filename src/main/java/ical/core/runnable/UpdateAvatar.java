@@ -15,47 +15,29 @@ import java.util.GregorianCalendar;
 
 public class UpdateAvatar implements Runnable {
 
-    private JDA jda;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateAvatar.class);
 
-    private final Object waiter;
+    private final JDA jda;
 
-    public UpdateAvatar(JDA jda){
+    public UpdateAvatar(JDA jda) {
         this.jda = jda;
-        this.waiter = null;
-    }
-
-    public UpdateAvatar(JDA jda, Object waiter){
-        this.jda = jda;
-        this.waiter = waiter;
     }
 
     @Override
     public void run() {
         LOGGER.info("Avatar updating..");
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(todayImage(), "png", baos );
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            baos.close();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            ImageIO.write(todayImage(), "png", output);
+            byte[] imageInByte = output.toByteArray();
 
-            jda.getSelfUser().getManager().setAvatar(Icon.from(imageInByte)).queue(
-                    v -> LOGGER.info("Success !"),
-                    t -> LOGGER.error("Error")
-            );
-
-            if(waiter != null)
-                synchronized (waiter){
-                    waiter.notify();
-                }
+            jda.getSelfUser().getManager().setAvatar(Icon.from(imageInByte)).complete();
+            LOGGER.info("Successfully updated avatar ");
 
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("Failed to update avatar");
         }
-
-
     }
 
     private BufferedImage todayImage() throws IOException, FontFormatException {
@@ -66,7 +48,7 @@ public class UpdateAvatar implements Runnable {
         BufferedImage base = ImageIO.read(UpdateAvatar.class.getResourceAsStream("/base.png"));
         Graphics2D g2 = (Graphics2D) base.getGraphics();
 
-        InputStream is =  UpdateAvatar.class.getResourceAsStream("/font.ttf");
+        InputStream is = UpdateAvatar.class.getResourceAsStream("/font.ttf");
         Font font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(370f);
 
         g2.setFont(font);
@@ -76,13 +58,13 @@ public class UpdateAvatar implements Runnable {
 
         g2.setColor(new Color(0x333333));
 
-        int centerX = base.getWidth()/2;
-        int centerY = base.getHeight()/2;
+        int centerX = base.getWidth() / 2;
+        int centerY = base.getHeight() / 2;
 
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.drawString(str, centerX - width/2, centerY + height/2 - 10);
+        g2.drawString(str, centerX - width / 2, centerY + height / 2 - 10);
         return base;
     }
 
