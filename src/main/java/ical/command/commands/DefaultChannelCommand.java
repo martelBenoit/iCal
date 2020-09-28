@@ -40,7 +40,7 @@ public class DefaultChannelCommand implements ICommand {
                 }
             }
         else
-            ctx.getChannel().sendMessage("❌ Petit coquin tu es pas autorisé à exécuter cette commande").queue();
+            ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
 
     }
 

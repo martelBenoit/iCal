@@ -41,7 +41,7 @@ public class HelpCommand implements ICommand {
 
             StringBuilder builder = new StringBuilder();
 
-            builder.append("__**Liste des commandes du bot ICal**__\n\n");
+            builder.append("__**Liste des commandes du bot iCal**__\n\n");
 
             for(ICommand command : manager.getCommands()){
                 if(!command.getName().equalsIgnoreCase("help")){
@@ -71,7 +71,7 @@ public class HelpCommand implements ICommand {
      */
     @Override
     public String getHelp() {
-        return "Affiche la liste des commandes disponibles d'ICal\n" +
+        return "Affiche la liste des commandes disponibles d'iCal\n" +
                 "Utilisation : `"+Config.get("prefix")+getName()+"`";
     }
 }
