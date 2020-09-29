@@ -10,6 +10,7 @@ import ical.manager.ScheduleManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +75,15 @@ public class WeekInformationPlanning implements Runnable {
                                             "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
                                     );
 
-                                    channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
-                                    LOGGER.info("["+idGuild+"] Sent !");
+                                    try{
+                                        channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                                        LOGGER.info("["+idGuild+"] Sent !");
+
+
+                                    }catch (InsufficientPermissionException e1){
+                                        LOGGER.error(e1.getMessage());
+                                    }
+
                                 }
                                 else
                                     LOGGER.error("Error during image generation");

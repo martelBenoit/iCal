@@ -33,9 +33,9 @@ public class OEventChange extends Entity{
     /**
      * Constructor.
      *
-     * @param id the id of the event change
-     * @param date the date of the event change
-     * @param type the type of the event change
+     * @param id    the id of the event change
+     * @param date  the date of the event change
+     * @param type  the type of the event change
      */
     public OEventChange(@NotNull String id, @NotNull Date date, @NotNull ModificationType type) {
         this.id = id;

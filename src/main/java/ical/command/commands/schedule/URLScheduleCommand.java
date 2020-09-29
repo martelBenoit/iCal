@@ -52,12 +52,12 @@ public class URLScheduleCommand extends AbstractScheduleCommand {
                         if(guildDAO.update(guild))
                             ctx.getChannel().sendMessage("✅ Mise à jour du lien du planning réalisée !").queue();
                         else
-                            ctx.getChannel().sendMessage("❌ Ca n'a pas fonctionné..").queue();
+                            ctx.getChannel().sendMessage("❌ Ça n'a pas fonctionné..").queue();
 
                     }
 
                 }catch (MalformedURLException e){
-                    ctx.getChannel().sendMessage("❌ Ton lien est pas valide !").queue();
+                    ctx.getChannel().sendMessage("❌ Ton lien n'est pas valide !").queue();
                 }
             }
             else

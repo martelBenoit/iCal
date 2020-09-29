@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class TaskScheduler.<br>
  * Class used to generate tasks to be executed periodically.<br>
- * All the tasks created are stored in a Map.
  *
  * @author Benoît Martel
  * @version 1.0
