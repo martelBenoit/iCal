@@ -1,6 +1,6 @@
 package ical.command.commands;
 
-import ical.command.CommandContext;
+import ical.command.GuildCommandContext;
 import ical.database.entity.Lesson;
 import ical.database.entity.Room;
 import ical.manager.ScheduleManager;
@@ -58,88 +58,84 @@ public class RoomCommand extends AbstractScheduleCommand {
      * {@inheritDoc}
      */
     @Override
-    public void handle(CommandContext ctx) {
+    public void handle(GuildCommandContext ctx) {
 
-        ArrayList<Room> rooms = null;
-        if(ctx.getArgs().size() == 2){
-            if(ctx.getArgs().get(0).equalsIgnoreCase("-h")){
-                try{
-                    int hour = Integer.parseInt(ctx.getArgs().get(1));
-                    if(hour >= 0)
-                        rooms = getStatusRoomAt(hour);
-                    else
+
+            ArrayList<Room> rooms = null;
+            if (ctx.getArgs().size() == 2) {
+                if (ctx.getArgs().get(0).equalsIgnoreCase("-h")) {
+                    try {
+                        int hour = Integer.parseInt(ctx.getArgs().get(1));
+                        if (hour >= 0)
+                            rooms = getStatusRoomAt(hour);
+                        else
+                            ctx.getChannel().sendMessage("C'est pas un entier positif en paramètre, coquin !").queue();
+                    } catch (NumberFormatException e) {
                         ctx.getChannel().sendMessage("C'est pas un entier positif en paramètre, coquin !").queue();
+                    }
+                } else {
+                    ctx.getChannel().sendMessage("Paramètre inconnu pour cette commande !").queue();
                 }
-                catch (NumberFormatException e){
-                    ctx.getChannel().sendMessage("C'est pas un entier positif en paramètre, coquin !").queue();
-                }
-            }
-            else{
-                ctx.getChannel().sendMessage("Paramètre inconnu pour cette commande !").queue();
+
+            } else {
+                rooms = getActualStatusRoom();
             }
 
-        }
-        else{
-            rooms = getActualStatusRoom();
-        }
-
-        if(rooms != null)
-            Collections.sort(rooms);
+            if (rooms != null)
+                Collections.sort(rooms);
 
 
-        if(ctx.getArgs().size() == 1){
-            if(ctx.getArgs().get(0).equalsIgnoreCase("-i")){
-                if(rooms !=null){
-                    StringBuilder build = new StringBuilder();
-                    for(Room r : rooms){
-                        if(r.isAvailable()){
-                            build.append("\uD83D\uDFE2  ").append("**").append(r.getUsualName()).append("**\n");
+            if (ctx.getArgs().size() == 1) {
+                if (ctx.getArgs().get(0).equalsIgnoreCase("-i")) {
+                    if (rooms != null) {
+                        StringBuilder build = new StringBuilder();
+                        for (Room r : rooms) {
+                            if (r.isAvailable()) {
+                                build.append("\uD83D\uDFE2  ").append("**").append(r.getUsualName()).append("**\n");
 
+                            } else
+                                build.append("\uD83D\uDD34  ")
+                                        .append("**")
+                                        .append(r.getUsualName())
+                                        .append("** : ")
+                                        .append(r.getLesson().getName())
+                                        .append(r.getLesson().getDescription())
+                                        .append("\n");
                         }
-                            else
-                            build.append("\uD83D\uDD34  ")
-                                    .append("**")
-                                    .append(r.getUsualName())
-                                    .append("** : ")
-                                    .append(r.getLesson().getName())
-                                    .append(r.getLesson().getDescription())
-                                    .append("\n");
+
+                        final EmbedBuilder eb = new EmbedBuilder();
+                        eb.setTitle("Liste des salles et de leurs disponibilités : ", null);
+                        eb.setColor(new Color(0xA3A21C));
+
+                        eb.addField("", build.toString(), false);
+
+                        ctx.getChannel().sendMessage(eb.build()).queue();
+                    }
+                } else {
+                    ctx.getChannel().sendMessage("Paramètre inconnu pour cette commande !").queue();
+                }
+
+            } else {
+                if (rooms != null) {
+                    StringBuilder build = new StringBuilder();
+                    for (Room r : rooms) {
+                        if (r.isAvailable())
+                            build.append("\uD83D\uDFE2  ").append(r.getUsualName()).append("\n");
+                        else
+                            build.append("\uD83D\uDD34  ").append(r.getUsualName()).append("\n");
                     }
 
-                    final EmbedBuilder eb = new EmbedBuilder();
-                    eb.setTitle("Liste des salles et de leurs disponibilités : ", null);
-                    eb.setColor(new Color(0xA3A21C));
+                    String msg = "Liste des salles et de leurs disponibilités : \n\n" + build;
 
-                    eb.addField("", build.toString(), false);
 
-                    ctx.getChannel().sendMessage(eb.build()).queue();
+                    ctx.getChannel().sendMessage(msg).queue();
                 }
             }
-            else{
-                ctx.getChannel().sendMessage("Paramètre inconnu pour cette commande !").queue();
-            }
 
-        }
-        else{
-            if(rooms !=null){
-                StringBuilder build = new StringBuilder();
-                for(Room r : rooms){
-                    if(r.isAvailable())
-                        build.append("\uD83D\uDFE2  ").append(r.getUsualName()).append("\n");
-                    else
-                        build.append("\uD83D\uDD34  ").append(r.getUsualName()).append("\n");
-                }
-
-                String msg = "Liste des salles et de leurs disponibilités : \n\n"+build;
-
-
-                ctx.getChannel().sendMessage(msg).queue();
-            }
+            resetStatus();
         }
 
-        resetStatus();
 
-    }
 
     /**
      * {@inheritDoc}

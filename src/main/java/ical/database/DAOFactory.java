@@ -98,4 +98,16 @@ public class DAOFactory {
         return new LessonRemainingTimeDAO(conn);
     }
 
+    /**
+     * Get the Reminder DAO.
+     *
+     * @return the reminder DAO
+     */
+    @NotNull
+    @Contract(" -> new")
+    public static DAO<?> getReminder(){
+        return new ReminderDAO(conn);
+    }
+
+
 }

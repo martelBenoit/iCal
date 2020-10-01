@@ -1,7 +1,7 @@
 package ical.command.commands;
 
-import ical.command.CommandContext;
-import ical.command.ICommand;
+import ical.command.GuildCommandContext;
+import ical.command.IGuildCommand;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
@@ -15,7 +15,7 @@ import ical.util.Config;
  * @author Benoît Martel
  * @version 1.0
  */
-public class ModifNotifCommand implements ICommand {
+public class ModifNotifCommand implements IGuildCommand {
 
     /**
      * Used to process the modifNotif command.
@@ -23,47 +23,45 @@ public class ModifNotifCommand implements ICommand {
      * @param ctx the command context
      */
     @Override
-    public void handle(CommandContext ctx) {
+    public void handle(GuildCommandContext ctx) {
 
-        if(ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId()))
-            if(ctx.getArgs().size() == 1){
-                String enable = ctx.getArgs().get(0);
+            if (ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId()))
+                if (ctx.getArgs().size() == 1) {
+                    String enable = ctx.getArgs().get(0);
 
-                GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
-                OGuild guild = guildDAO.find(ctx.getGuild().getId());
+                    GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+                    OGuild guild = guildDAO.find(ctx.getGuild().getId());
 
-                if(guild != null){
-                    if(enable.equalsIgnoreCase("true")){
+                    if (guild != null) {
+                        if (enable.equalsIgnoreCase("true")) {
 
-                        guild.setModifNotif(true);
-                        if(guildDAO.update(guild))
-                            ctx.getChannel().sendMessage("✅ Notification des modifications activée !").queue();
-                        else
-                            ctx.getChannel()
-                                    .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
-                                    .queue();
+                            guild.setModifNotif(true);
+                            if (guildDAO.update(guild))
+                                ctx.getChannel().sendMessage("✅ Notification des modifications activée !").queue();
+                            else
+                                ctx.getChannel()
+                                        .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
+                                        .queue();
 
+                        } else if (enable.equalsIgnoreCase("false")) {
+
+                            guild.setModifNotif(false);
+                            if (guildDAO.update(guild))
+                                ctx.getChannel().sendMessage("✅ Notification des modifications désactivée !").queue();
+                            else
+                                ctx.getChannel()
+                                        .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
+                                        .queue();
+                        } else
+                            ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
                     }
-                    else if(enable.equalsIgnoreCase("false")){
 
-                        guild.setModifNotif(false);
-                        if(guildDAO.update(guild))
-                            ctx.getChannel().sendMessage("✅ Notification des modifications désactivée !").queue();
-                        else
-                            ctx.getChannel()
-                                    .sendMessage("❌ Erreur lors de la prise en compte de votre demande..")
-                                    .queue();
-                    }
-                    else
-                        ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
-                }
-
-            }
+                } else
+                    ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
             else
-                ctx.getChannel().sendMessage("❌ Paramètre de la commande incorrect !").queue();
-        else
-            ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
-    }
+                ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
+        }
+
 
     /**
      * Get the name of modifNotif command.

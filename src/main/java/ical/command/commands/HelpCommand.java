@@ -1,9 +1,9 @@
 package ical.command.commands;
 
+import ical.command.*;
 import ical.manager.CommandManager;
+import ical.manager.GuildCommandManager;
 import ical.util.Config;
-import ical.command.CommandContext;
-import ical.command.ICommand;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-public class HelpCommand implements ICommand {
+public class HelpCommand implements IGuildCommand, IPrivateCommand {
 
     /**
      * the command manager.
@@ -30,21 +30,50 @@ public class HelpCommand implements ICommand {
         this.manager = manager;
     }
 
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handle(CommandContext ctx) {
+    public void handle(GuildCommandContext ctx) {
+
+            List<String> args = ctx.getArgs();
+
+            if (args.isEmpty()) {
+
+                StringBuilder builder = new StringBuilder();
+
+                builder.append("__**Liste des commandes du bot iCal**__\n\n");
+
+                for (ICommand command : manager.getCommands()) {
+                    if (!command.getName().equalsIgnoreCase("help")) {
+                        builder.append('`').append(command.getName()).append("`\n");
+                        builder.append(command.getHelp());
+                        builder.append("\n\n");
+                    }
+
+                }
+
+                ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(builder.toString()).queue());
+
+            }
+
+
+    }
+
+    @Override
+    public void handle(PrivateCommandContext ctx) {
+
         List<String> args = ctx.getArgs();
 
-        if(args.isEmpty()){
+        if (args.isEmpty()) {
 
             StringBuilder builder = new StringBuilder();
 
             builder.append("__**Liste des commandes du bot iCal**__\n\n");
 
-            for(ICommand command : manager.getCommands()){
-                if(!command.getName().equalsIgnoreCase("help")){
+            for (ICommand command : manager.getCommands()) {
+                if (!command.getName().equalsIgnoreCase("help")) {
                     builder.append('`').append(command.getName()).append("`\n");
                     builder.append(command.getHelp());
                     builder.append("\n\n");
@@ -52,7 +81,7 @@ public class HelpCommand implements ICommand {
 
             }
 
-           ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(builder.toString()).queue());
+            ctx.getChannel().sendMessage(builder.toString()).queue();
 
         }
 
@@ -74,4 +103,6 @@ public class HelpCommand implements ICommand {
         return "Affiche la liste des commandes disponibles d'iCal\n" +
                 "Utilisation : `"+Config.get("prefix")+getName()+"`";
     }
+
+
 }
