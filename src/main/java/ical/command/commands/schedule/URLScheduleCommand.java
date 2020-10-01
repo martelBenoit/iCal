@@ -1,6 +1,6 @@
 package ical.command.commands.schedule;
 
-import ical.command.CommandContext;
+import ical.command.GuildCommandContext;
 import ical.command.commands.AbstractScheduleCommand;
 import ical.manager.ScheduleManager;
 import ical.database.DAOFactory;
@@ -33,38 +33,38 @@ public class URLScheduleCommand extends AbstractScheduleCommand {
      * {@inheritDoc}
      */
     @Override
-    public void handle(CommandContext ctx) {
+    public void handle(GuildCommandContext ctx) {
 
-        if(ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId()))
+            if (ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId()))
 
-            if(ctx.getArgs().size() == 1){
-                String urlString = ctx.getArgs().get(0);
+                if (ctx.getArgs().size() == 1) {
+                    String urlString = ctx.getArgs().get(0);
 
-                try{
-                    URL url = new URL(urlString);
+                    try {
+                        URL url = new URL(urlString);
 
-                    GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
-                    OGuild guild = guildDAO.find(ctx.getGuild().getId());
+                        GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+                        OGuild guild = guildDAO.find(ctx.getGuild().getId());
 
-                    if(guild != null){
-                        guild.setUrlSchedule(urlString);
-                        this.scheduleManager.getSchedule(ctx.getGuild().getId()).setURL(url);
-                        if(guildDAO.update(guild))
-                            ctx.getChannel().sendMessage("✅ Mise à jour du lien du planning réalisée !").queue();
-                        else
-                            ctx.getChannel().sendMessage("❌ Ça n'a pas fonctionné..").queue();
+                        if (guild != null) {
+                            guild.setUrlSchedule(urlString);
+                            this.scheduleManager.getSchedule(ctx.getGuild().getId()).setURL(url);
+                            if (guildDAO.update(guild))
+                                ctx.getChannel().sendMessage("✅ Mise à jour du lien du planning réalisée !").queue();
+                            else
+                                ctx.getChannel().sendMessage("❌ Ça n'a pas fonctionné..").queue();
 
+                        }
+
+                    } catch (MalformedURLException e) {
+                        ctx.getChannel().sendMessage("❌ Ton lien n'est pas valide !").queue();
                     }
-
-                }catch (MalformedURLException e){
-                    ctx.getChannel().sendMessage("❌ Ton lien n'est pas valide !").queue();
-                }
-            }
+                } else
+                    ctx.getChannel().sendMessage("❌ Tu dois renseigner un lien avec cette commande").queue();
             else
-                ctx.getChannel().sendMessage("❌ Tu dois renseigner un lien avec cette commande").queue();
-        else
-            ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
-    }
+                ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
+        }
+
 
     /**
      * {@inheritDoc}

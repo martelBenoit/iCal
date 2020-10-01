@@ -1,18 +1,18 @@
 package ical.command.commands;
 
-import ical.command.ICommand;
+import ical.command.IGuildCommand;
 import ical.manager.ScheduleManager;
 
 /**
  * AbstractScheduleCommand class.
  *
- * This class implements {@link ICommand} interface
+ * This class implements {@link IGuildCommand} interface
  *
  * @author Benoît Martel
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
-public abstract class AbstractScheduleCommand implements ICommand {
+public abstract class AbstractScheduleCommand implements IGuildCommand {
 
     /**
      * the schedule manager

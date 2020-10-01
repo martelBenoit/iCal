@@ -39,7 +39,7 @@ public class TaskScheduler {
      */
     public void run30seconds(String name, Runnable runnable) {
         LOGGER.info("Task '" + name + "' will run every 30 seconds.");
-        executorService.scheduleAtFixedRate(runnable, 0, 30, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(runnable, 0, 30000, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -49,8 +49,12 @@ public class TaskScheduler {
      * @param runnable the runnable object to launch
      */
     public void runMinutely(String name, Runnable runnable) {
+        LocalDateTime dateNextRun = LocalDate.now().atTime(LocalDateTime.now().getHour(),LocalDateTime.now().getMinute(),0);
+        dateNextRun = dateNextRun.plusMinutes(1);
+
+        long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.MILLIS);
         LOGGER.info("Task '" + name + "' will run every minute.");
-        executorService.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.MINUTES);
+        executorService.scheduleAtFixedRate(runnable, delayTime, 60000, TimeUnit.MILLISECONDS);
     }
 
 
