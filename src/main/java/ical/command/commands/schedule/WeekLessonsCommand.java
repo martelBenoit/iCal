@@ -24,19 +24,19 @@ import java.util.UUID;
  * @version 1.0
  * @since 1.7
  */
-public class LessonWeekCommand extends AbstractScheduleCommand {
+public class WeekLessonsCommand extends AbstractScheduleCommand {
 
     /**
      * the logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LessonWeekCommand.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WeekLessonsCommand.class);
 
     /**
      * Default constructor.
      *
      * @param scheduleManager the schedule manager
      */
-    public LessonWeekCommand(ScheduleManager scheduleManager) {
+    public WeekLessonsCommand(ScheduleManager scheduleManager) {
         super(scheduleManager);
     }
 

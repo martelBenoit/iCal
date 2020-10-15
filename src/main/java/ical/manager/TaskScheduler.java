@@ -32,14 +32,20 @@ public class TaskScheduler {
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
 
     /**
-     * Create a task that starts every 30 seconds.
+     * Create a task that starts every minute.
+     *
+     * <br>Example : 07:00:50, 07:01:50 (10 seconds before next minute)
      *
      * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void run30seconds(String name, Runnable runnable) {
-        LOGGER.info("Task '" + name + "' will run every 30 seconds.");
-        executorService.scheduleAtFixedRate(runnable, 0, 30000, TimeUnit.MILLISECONDS);
+    public void runMinutelySpecial(String name, Runnable runnable) {
+        LocalDateTime dateNextRun = LocalDate.now().atTime(LocalDateTime.now().getHour(),LocalDateTime.now().getMinute(),0);
+        dateNextRun = dateNextRun.plusSeconds(50);
+
+        long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.MILLIS);
+        LOGGER.info("Task '" + name + "' will run every minute.");
+        executorService.scheduleAtFixedRate(runnable, delayTime, 60000, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -92,10 +98,7 @@ public class TaskScheduler {
         else
             delayTime = initialDelay;
 
-
-
         LOGGER.info("Task '" + name + "' will run every day at midnight");
-
 
         executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
     }

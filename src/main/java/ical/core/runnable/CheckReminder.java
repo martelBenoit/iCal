@@ -6,30 +6,48 @@ import ical.database.entity.Reminder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.exceptions.MissingAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * CheckReminder class. Implements {@link Runnable}.
+ *
+ * @author Benoît Martel
+ * @version 1.0
  * @since 1.8
  */
 public class CheckReminder implements Runnable {
 
-    private JDA jda;
+    /**
+     * the JDA.
+     */
+    private final JDA jda;
 
     /**
      * the logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckReminder.class);
 
+    /**
+     * the reminder DAO.
+     */
     private final ReminderDAO reminderDAO = (ReminderDAO) DAOFactory.getReminder();
 
+    /**
+     * Default constructor.
+     *
+     * @param jda the JDA.
+     */
     public CheckReminder(JDA jda) {
         this.jda = jda;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void run() {
+
         for(Reminder reminder : reminderDAO.findAll()){
             if(reminder.timeRemainingInSeconds() <= 0){
                 try{
@@ -62,5 +80,6 @@ public class CheckReminder implements Runnable {
                 }
             }
         }
+
     }
 }

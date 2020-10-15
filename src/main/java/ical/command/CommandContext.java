@@ -2,8 +2,16 @@ package ical.command;
 
 import net.dv8tion.jda.api.events.Event;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * CommandContext abstract class.
+ *
+ * @author Benoît Martel
+ * @version 1.1
+ * @since 1.0
+ */
 public abstract class CommandContext {
 
     /**
@@ -11,7 +19,12 @@ public abstract class CommandContext {
      */
     protected final List<String> args;
 
-    public CommandContext(List<String> args) {
+    /**
+     * Default constructor.
+     *
+     * @param args the args list
+     */
+    public CommandContext(@Nonnull List<String> args) {
 
         this.args = args;
     }
@@ -28,6 +41,7 @@ public abstract class CommandContext {
      *
      * @return the command arguments list
      */
+    @Nonnull
     public abstract List<String> getArgs();
 
 }

@@ -335,9 +335,21 @@ public class Lesson extends Entity implements Comparable<Lesson>{
      * @return the time to "x day (s) y hour (s) z minute (s)"
      */
     private static String formattedTimeLeft(final long millis) {
-        final int days = (int)(TimeUnit.MILLISECONDS.toDays(millis));
-        final int hrs = (int)(TimeUnit.MILLISECONDS.toHours(millis) % 24L);
-        final int min = (int)(TimeUnit.MILLISECONDS.toMinutes(millis) % 60L);
+        int days = (int)(TimeUnit.MILLISECONDS.toDays(millis));
+        int hrs = (int)(TimeUnit.MILLISECONDS.toHours(millis) % 24L);
+        int min = (int)(TimeUnit.MILLISECONDS.toMinutes(millis) % 60L);
+
+        if((int)(TimeUnit.MILLISECONDS.toSeconds(millis) % 60L) > 0){
+            min+=1;
+            if(min == 60){
+                hrs+=1;
+                min=0;
+                if(hrs == 24){
+                    days+=1;
+                    hrs=0;
+                }
+            }
+        }
 
         String res = "";
         if(days == 1)
