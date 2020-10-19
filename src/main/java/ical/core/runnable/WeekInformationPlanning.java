@@ -47,7 +47,7 @@ public class WeekInformationPlanning implements Runnable {
             LOGGER.info("["+idGuild+"] publication is in progress...");
 
             // On vérifie que l'on a bien récupéré l'objet de la base de données
-            if (guild != null) {
+            if (guild != null && guild.lessonNotifisEnabled()) {
 
                 String idChannel = guild.getIdChannel();
 
