@@ -19,7 +19,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * ReminderCommand class.
+ *
+ * <br>Command available for guilds and for private messages.
+ *
+ * @author Benoît Martel
+ * @version 1.0
  * @since 1.8
+ * @see IGuildCommand
+ * @see IPrivateCommand
  */
 public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
@@ -28,8 +36,14 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ReminderCommand.class);
 
+    /**
+     * the reminder DAO
+     */
     private final ReminderDAO reminderDAO = (ReminderDAO) DAOFactory.getReminder();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(PrivateCommandContext ctx) {
 
@@ -52,7 +66,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                 if(remindText.length() >= 250)
                     ctx.getChannel().sendMessage("Le texte de ton rappel est trop long, soit plus concis !").queue();
 
-                else if (publishReminder(ctx, remindText, date))
+                else if (postReminder(ctx, remindText, date))
                     ctx.getChannel().sendMessage("Ton rappel personnel a correctement été défini ! \uD83D\uDE42").queue();
             }
 
@@ -122,7 +136,9 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(GuildCommandContext ctx) {
 
@@ -154,7 +170,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
                         if (remindText.length() >= 250)
                             channel.sendMessage("Le texte de ton rappel est trop long, soit plus concis ! \uD83D\uDE44").queue();
-                        else if (publishReminder(ctx, remindText, date, idRecipient))
+                        else if (postReminder(ctx, remindText, date, idRecipient))
                             channel.sendMessage("Le rappel a correctement été défini ! \uD83D\uDE42").queue();
                     } else {
                         channel.sendMessage("Je n'ai malheureusement pas le droit d'écrire dans <#" + idRecipient + "> \uD83D\uDE25").queue();
@@ -176,7 +192,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
             if(remindText.toString().length() >= 250)
                 channel.sendMessage("Le texte de ton rappel est trop long, soit plus concis ! \uD83D\uDE44").queue();
-            else if (publishReminder(ctx, remindText.toString(), date, ctx.getAuthor().getId()))
+            else if (postReminder(ctx, remindText.toString(), date, ctx.getAuthor().getId()))
                 channel.sendMessage("Ton rappel personnel a correctement été défini ! \uD83D\uDE42").queue();
 
         } else if (ctx.getArgs().size() == 2 && ctx.getArgs().get(0).equalsIgnoreCase("delete")) {
@@ -231,21 +247,35 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
     }
 
-    private Date stringToDate(String date, String hourString) {
+    /**
+     * Parse {@code String} object into a {@code Date} object.
+     *
+     * <br>The date format string must be of this type : {@code dd/MM/yyyy}.
+     * <br>The time format string must be of this type : {@code hh:mm}.
+     * @param date the date
+     * @param time the time
+     * @return {@code Date} object if the parse is successful, null otherwise
+     */
+    private Date stringToDate(String date, String time) {
         try{
-            String parse = date+" "+hourString;
+            String parse = date+" "+time;
             return new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(parse);
         }catch (Exception e) {
             return null;
         }
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "remind";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return "Permet d'utiliser les rappels.\n"+
@@ -253,8 +283,16 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                 "__Utilisation par message privée :__\n\t `"+ Config.get("prefix")+getName()+" [{dd}/{MM}/{yyyy} {hh}:{mm} {name}] | [-list [id]] | [-delete {id}] | [-next] `";
     }
 
-
-    private boolean publishReminder(GuildCommandContext ctx, String name, Date date, String recipient){
+    /**
+     * Post a reminder for a guild on the database.
+     *
+     * @param ctx           the guild command context
+     * @param name          the reminder name
+     * @param date          the reminder date
+     * @param recipient     the reminder recipient
+     * @return {@code true} if the publish operation is successful, {@code false} otherwise
+     */
+    private boolean postReminder(GuildCommandContext ctx, String name, Date date, String recipient){
 
         OGuild guild;
         if(recipient.equals(ctx.getAuthor().getId()))
@@ -276,7 +314,15 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
         return res != null;
     }
 
-    private boolean publishReminder(PrivateCommandContext ctx, String name, Date date){
+    /**
+     * Post a private reminder on the database.
+     *
+     * @param ctx   the private command context
+     * @param name  the reminder name
+     * @param date  the reminder date
+     * @return {@code true} if the publish operation is successful, {@code false} otherwise
+     */
+    private boolean postReminder(PrivateCommandContext ctx, String name, Date date){
 
         Reminder reminder = new Reminder(
                 name,
@@ -292,7 +338,15 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
         return res != null;
     }
 
-    private ArrayList<EmbedBuilder> constructList(ArrayList<Reminder> reminders, boolean isPrivate, boolean printIdentifiant){
+    /**
+     * Allows you to build the message to display the list of reminders.
+     *
+     * @param reminders     the list of reminders to display in the message
+     * @param isPrivate     are they private or guild reminder ?
+     * @param displayIDs    display the reminder IDs or not?
+     * @return the list of {@code EmbedBuilder} to build the message
+     */
+    private ArrayList<EmbedBuilder> constructList(ArrayList<Reminder> reminders, boolean isPrivate, boolean displayIDs){
 
 
         ArrayList<EmbedBuilder> embedBuilders = new ArrayList<>();
@@ -329,7 +383,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
                 String title =reminder.getName();
                 String content = reminder.getTime();
-                if(printIdentifiant)
+                if(displayIDs)
                     title = title+" ("+reminder.getId()+")";
                 if(!isPrivate){
                    content = content + "\n" + "<#" + reminder.getRecipient() + ">";
@@ -341,8 +395,6 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                     content,
                     true
                 );
-
-
 
 
                 temp = new EmbedBuilder(eb);
@@ -371,6 +423,5 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
         return embedBuilders;
     }
-
 
 }

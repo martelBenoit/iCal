@@ -12,14 +12,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * PrivateCommandManager class.
+ *
+ * @version 1.0
+ * @since 1.8
+ * @author Benoît Martel
+ * @see CommandManager
+ */
 public class PrivateCommandManager extends CommandManager{
 
+    /**
+     * Default constructor.
+     *
+     * <br>Loads commands that can be used.
+     *
+     */
     public PrivateCommandManager(){
         addCommand(new ReminderCommand());
         addCommand(new HelpCommand(this));
 
     }
 
+    /**
+     * The handle for private message received event.
+     *
+     * @param event the private message received event
+     */
     void handle(PrivateMessageReceivedEvent event){
 
         String[] split = event.getMessage().getContentRaw()

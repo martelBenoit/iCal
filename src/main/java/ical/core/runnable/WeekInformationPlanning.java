@@ -50,56 +50,56 @@ public class WeekInformationPlanning implements Runnable {
             // On vérifie que l'on a bien récupéré l'objet de la base de données
             if (guild != null) {
 
-                String idChannel = guild.getIdChannel();
+                if (guild.lessonNotifisEnabled()) {
 
-                if (idChannel != null) {
+                    String idChannel = guild.getIdChannel();
 
-                    TextChannel channel = jda.getTextChannelById(idChannel);
+                    if (idChannel != null) {
 
-                    if (channel != null && channel.canTalk()) {
+                        TextChannel channel = jda.getTextChannelById(idChannel);
 
-                        final ArrayList<Lesson> lessons = schedule.getWeekLessons();
-                        if (lessons.size() > 0) {
-                            try{
-                                Timetable timetable = new Timetable(lessons);
-                                InputStream inputStream = timetable.generateTimetable();
-                                String nameImg = "WEEK_" + UUID.randomUUID() + ".png";
-                                if (inputStream != null) {
-                                    final EmbedBuilder eb = new EmbedBuilder();
-                                    eb.setTitle("Les cours pr\u00e9vus cette semaine  ", null);
-                                    eb.setColor(new Color(238358));
-                                    eb.setImage("attachment://" + nameImg);
-                                    eb.setTimestamp(schedule.getCreationDate());
-                                    eb.setFooter(
-                                            "ENT",
-                                            "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
-                                    );
+                        if (channel != null && channel.canTalk()) {
 
-                                    try{
-                                        channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
-                                        LOGGER.info("["+idGuild+"] Sent !");
+                            final ArrayList<Lesson> lessons = schedule.getWeekLessons();
+                            if (lessons.size() > 0) {
+                                try {
+                                    Timetable timetable = new Timetable(lessons);
+                                    InputStream inputStream = timetable.generateTimetable();
+                                    String nameImg = "WEEK_" + UUID.randomUUID() + ".png";
+                                    if (inputStream != null) {
+                                        final EmbedBuilder eb = new EmbedBuilder();
+                                        eb.setTitle("Les cours pr\u00e9vus cette semaine  ", null);
+                                        eb.setColor(new Color(238358));
+                                        eb.setImage("attachment://" + nameImg);
+                                        eb.setTimestamp(schedule.getCreationDate());
+                                        eb.setFooter(
+                                                "ENT",
+                                                "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
+                                        );
+
+                                        try {
+                                            channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                                            LOGGER.info("[" + idGuild + "] Sent !");
 
 
-                                    }catch (InsufficientPermissionException e1){
-                                        LOGGER.error(e1.getMessage());
-                                    }
+                                        } catch (InsufficientPermissionException e1) {
+                                            LOGGER.error(e1.getMessage());
+                                        }
 
+                                    } else
+                                        LOGGER.error("Error during image generation");
+                                } catch (IOException exception) {
+                                    LOGGER.error(exception.getMessage(), exception.fillInStackTrace());
                                 }
-                                else
-                                    LOGGER.error("Error during image generation");
-                            }catch (IOException exception){
-                                LOGGER.error(exception.getMessage(),exception.fillInStackTrace());
-                            }
-                        }
-                        else
-                            LOGGER.info("No lessons to display");
+                            } else
+                                LOGGER.info("No lessons to display");
 
-                    }
-                    else
-                        LOGGER.error("Wrong channel id, verify that id channel "+idChannel+" exist");
-                }
-                else
-                    LOGGER.error("No channel id referenced to guild object in database");
+                        } else
+                            LOGGER.error("Wrong channel id, verify that id channel " + idChannel + " exist");
+                    } else
+                        LOGGER.error("No channel id referenced to guild object in database");
+                } else
+                    LOGGER.info("Not subscribed to notifications");
             }
             else
                 LOGGER.error("Guild not referenced in database");

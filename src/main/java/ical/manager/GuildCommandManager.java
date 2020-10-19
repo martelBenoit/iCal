@@ -6,17 +6,30 @@ import ical.command.commands.*;
 import ical.command.commands.reminder.ReminderCommand;
 import ical.command.commands.schedule.*;
 import ical.util.Config;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * GuildCommandManager class.
+ *
+ * @version 1.0
+ * @since 1.8
+ * @author Benoît Martel
+ * @see CommandManager
+ */
 public class GuildCommandManager extends CommandManager {
 
+    /**
+     * Default constructor.
+     *
+     * <br>Loads commands that can be used.
+     *
+     * @param scheduleManager the schedule manager
+     */
     public GuildCommandManager(ScheduleManager scheduleManager){
         addCommand(new HelpCommand(this));
         addCommand(new DefaultChannelCommand());
@@ -29,11 +42,16 @@ public class GuildCommandManager extends CommandManager {
         addCommand(new ModifNotifCommand());
         addCommand(new LessonNotifCommand());
         addCommand(new RoomCommand(scheduleManager));
-        addCommand(new LessonWeekCommand(scheduleManager));
+        addCommand(new WeekLessonsCommand(scheduleManager));
         addCommand(new ReminderCommand());
 
     }
 
+    /**
+     * The handle for guild message received event.
+     *
+     * @param event the guild message received event
+     */
     void handle(GuildMessageReceivedEvent event){
 
         String[] split = event.getMessage().getContentRaw()
@@ -53,5 +71,6 @@ public class GuildCommandManager extends CommandManager {
             cmd.handle(ctx);
         }
     }
+
 }
 

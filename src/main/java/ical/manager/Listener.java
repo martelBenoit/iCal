@@ -38,11 +38,11 @@ public class Listener extends ListenerAdapter {
         taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
         taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager,event.getJDA()),5);
         taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
-        taskScheduler.runMinutely(
+        taskScheduler.runMinutelySpecial(
                 "UpdateLessonRemainingTimeMessage",
                 new UpdateRemainingTimeLessonMessage(event.getJDA())
         );
-        taskScheduler.runAt8EveryMonday(
+        taskScheduler.runAt8H5MEveryMonday(
                 "WeekInformationPlanning",
                 new WeekInformationPlanning(event.getJDA(),scheduleManager)
         );
