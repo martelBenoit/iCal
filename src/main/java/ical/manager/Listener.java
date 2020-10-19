@@ -42,7 +42,7 @@ public class Listener extends ListenerAdapter {
                 "UpdateLessonRemainingTimeMessage",
                 new UpdateRemainingTimeLessonMessage(event.getJDA())
         );
-        taskScheduler.runAt8EveryMonday(
+        taskScheduler.runAt8H5MEveryMonday(
                 "WeekInformationPlanning",
                 new WeekInformationPlanning(event.getJDA(),scheduleManager)
         );

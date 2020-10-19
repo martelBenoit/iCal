@@ -103,10 +103,10 @@ public class TaskScheduler {
         executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
     }
 
-    public void runAt8EveryMonday(String name, Runnable runnable) {
+    public void runAt8H5MEveryMonday(String name, Runnable runnable) {
 
 
-        LocalDateTime dateNextRun = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 0, 0);
+        LocalDateTime dateNextRun = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 5, 0);
         long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.SECONDS);
 
         LOGGER.info("Task '" + name + "' will run at " + dateNextRun + " in " + delayTime / 60 / 60 + " hour(s)");
