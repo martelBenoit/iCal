@@ -234,7 +234,7 @@ public class Notification {
             Lesson newLesson;
             Lesson oldLesson;
             if (typeEvent == ModificationType.MOVE){
-                for (MovedLesson movedLesson : movedLessons) {
+                for (MovedLesson movedLesson : movedLessons.subList(0,3)) {
                     oldLesson = movedLesson.getPreviousLesson();
                     newLesson = movedLesson.getActualLesson();
                     eb.addField(

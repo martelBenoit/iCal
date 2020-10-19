@@ -29,28 +29,22 @@ public class Colorize {
     private static final Map<String, String> colorsMap = new LinkedHashMap<String, String>() {
         {
 
-            put("dbd3d8","#dbd3d8");
-            put("82c0cc","#82c0cc");
-            put("368f8b","#368f8b");
-            put("70c1b3","#70c1b3");
-            put("a6808c","#a6808c");
-            put("73a942","#73a942");
-            put("da627d","#da627d");
-            put("c17c74","#c17c74");
-            put("bcac9b","#bcac9b");
-            put("e8998d","#e8998d");
-            put("a1c181","#a1c181");
-            put("ffc09f","#ffc09f");
-            put("9db4c0","#9db4c0");
-            put("ccb7ae","#ccb7ae");
-            put("577399","#577399");
-            put("d4bebe","#d4bebe");
-            put("b7b7a4","#b7b7a4");
-            put("d4e09b","#d4e09b");
-            put("c18c5d","#c18c5d");
-            put("ce796b","#ce796b");
-            put("b0c4b1","#b0c4b1");
-            put("cfe0c3","#cfe0c3");
+            put("#c2185b","#c2185b");
+            put("#7b1fa2","#7b1fa2");
+            put("#512da8","#512da8");
+            put("#303f9f","#303f9f");
+            put("#1976d2","#1976d2");
+            put("#0288d1","#0288d1");
+            put("#0097a7","#0097a7");
+            put("#00796b","#00796b");
+            put("#388e3c","#388e3c");
+            put("#afb42b","#afb42b");
+            put("#fbc02d","#fbc02d");
+            put("#ffa000","#ffa000");
+            put("#f57c00","#f57c00");
+            put("#e64a19","#e64a19");
+            put("#616161","#616161");
+            put("#455a64","#455a64");
 
         }
     };

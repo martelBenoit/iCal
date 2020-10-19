@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.slf4j.Logger;
@@ -27,11 +28,9 @@ public class Listener extends ListenerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
 
     private final ScheduleManager scheduleManager = new ScheduleManager();
-    private final CommandManager manager = new CommandManager(scheduleManager);
+    private final GuildCommandManager guildCommandManager = new GuildCommandManager(scheduleManager);
+    private final PrivateCommandManager privateCommandManager = new PrivateCommandManager();
     private final TaskScheduler taskScheduler = new TaskScheduler();
-
-    private final Object waiter = new Object();
-
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
@@ -39,22 +38,18 @@ public class Listener extends ListenerAdapter {
         taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
         taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager,event.getJDA()),5);
         taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
-        taskScheduler.run30seconds(
+        taskScheduler.runMinutelySpecial(
                 "UpdateLessonRemainingTimeMessage",
                 new UpdateRemainingTimeLessonMessage(event.getJDA())
         );
-        taskScheduler.runAt8EveryMonday(
+        taskScheduler.runAt8H5MEveryMonday(
                 "WeekInformationPlanning",
                 new WeekInformationPlanning(event.getJDA(),scheduleManager)
         );
+        taskScheduler.runMinutely("CheckReminder",new CheckReminder(event.getJDA()));
 
-        taskScheduler.runOneTime("UpdateAvatar",new UpdateAvatar(event.getJDA(),waiter));
-        synchronized (waiter){
-            try{
-                waiter.wait();
-            }catch (InterruptedException ignored){ }
-
-        }
+        //Run synchronously instead of async with waiter
+        new UpdateAvatar(event.getJDA()).run();
 
         GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
         ArrayList<OGuild> guilds = guildDAO.findAll();
@@ -66,6 +61,8 @@ public class Listener extends ListenerAdapter {
         LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());
 
     }
+
+
 
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event){
@@ -89,7 +86,33 @@ public class Listener extends ListenerAdapter {
         }
 
         if(raw.startsWith(prefix)){
-            manager.handle(event);
+            guildCommandManager.handle(event);
+        }
+    }
+
+    @Override
+    public void onPrivateMessageReceived(@Nonnull PrivateMessageReceivedEvent event){
+
+        User user = event.getAuthor();
+
+        if(user.isBot()){
+            return;
+        }
+
+        String prefix = Config.get("prefix");
+        String raw = event.getMessage().getContentRaw();
+
+        if(raw.equalsIgnoreCase(prefix + "shutdown")
+                && event.getAuthor().getId().equals(Config.get("owner_id"))){
+            LOGGER.info("Shutting down");
+            event.getJDA().shutdown();
+            BotCommons.shutdown(event.getJDA());
+
+            return;
+        }
+
+        if(raw.startsWith(prefix)){
+            privateCommandManager.handle(event);
         }
     }
 

@@ -85,6 +85,7 @@ public class Tools {
         return Color.decode(Colorize.get(seed, multiple));
     }
 
+
     public static long stringToSeed(String s) {
         if (s == null) {
             return 0;

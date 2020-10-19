@@ -309,43 +309,49 @@ public class Timetable {
 
                 String room = clearRoomName(lesson.getRoom());
                 String[] rooms = room.split(",");
-                int heightLine = heightText;
-                heightText = heightLine* rooms.length;
 
-                if(minutesDuration < 90) {
-                    g2.setFont(roomNameFont.deriveFont(Font.BOLD, 10));
-                    fontMetrics = g2.getFontMetrics(roomNameFont.deriveFont(Font.BOLD, 10));
-                }
-                else {
-                    g2.setFont(roomNameFont);
-                    fontMetrics = g2.getFontMetrics(roomNameFont);
-                }
-
-                int maxWidthText = 0;
-                for(int i = 0; i < room.length(); i++)
-                    if(fontMetrics.stringWidth(rooms[0]) > maxWidthText)
-                        maxWidthText = fontMetrics.stringWidth(rooms[0]);
-
-                int xPosRectRoom = xPosRect+10;
                 int yPosRectRoom = yPosRect+minutesDuration-1-heightText-10;
-                int widthRectRoom = (int)(maxWidthText+maxWidthText*0.2);
+                if(rooms.length > 0 && !rooms[0].equals("")){
+                    int heightLine = heightText;
+                    heightText = heightLine* rooms.length;
 
-                for(int i = 0; i < rooms.length; i++){
-                    widthText = fontMetrics.stringWidth(rooms[i]);
-                    g2.drawString(rooms[i],
-                            xPosRectRoom+(widthRectRoom-widthText)/2,
-                            yPosRectRoom+heightLine+heightLine*i);
+                    if(minutesDuration < 90) {
+                        g2.setFont(roomNameFont.deriveFont(Font.BOLD, 10));
+                        fontMetrics = g2.getFontMetrics(roomNameFont.deriveFont(Font.BOLD, 10));
+                    }
+                    else {
+                        g2.setFont(roomNameFont);
+                        fontMetrics = g2.getFontMetrics(roomNameFont);
+                    }
+
+                    int maxWidthText = 0;
+                    for(int i = 0; i < room.length(); i++)
+                        if(fontMetrics.stringWidth(rooms[0]) > maxWidthText)
+                            maxWidthText = fontMetrics.stringWidth(rooms[0]);
+
+                    int xPosRectRoom = xPosRect+10;
+                    yPosRectRoom = yPosRect+minutesDuration-1-heightText-10;
+                    int widthRectRoom = (int)(maxWidthText+maxWidthText*0.2);
+
+                    for(int i = 0; i < rooms.length; i++){
+                        widthText = fontMetrics.stringWidth(rooms[i]);
+                        g2.drawString(rooms[i],
+                                xPosRectRoom+(widthRectRoom-widthText)/2,
+                                yPosRectRoom+heightLine+heightLine*i);
+                    }
+
+                    g2.setStroke(new BasicStroke(2));
+                    g2.drawRoundRect(
+                            xPosRectRoom,
+                            yPosRectRoom,
+                            widthRectRoom,
+                            (int)(heightText+heightText*0.2),
+                            (int)(widthRectRoom*0.25),
+                            (int)((heightText+heightText*0.2)*0.25)
+                    );
+
                 }
 
-                g2.setStroke(new BasicStroke(2));
-                g2.drawRoundRect(
-                        xPosRectRoom,
-                        yPosRectRoom,
-                        widthRectRoom,
-                        (int)(heightText+heightText*0.2),
-                        (int)(widthRectRoom*0.25),
-                        (int)((heightText+heightText*0.2)*0.25)
-                );
 
                 if(lesson.getName().toLowerCase().contains("+mr"))
                 {

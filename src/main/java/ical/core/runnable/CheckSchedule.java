@@ -55,12 +55,12 @@ public class CheckSchedule implements Runnable {
                                     channel.sendTyping().queue();
                                     schedule.setNotified(true);
                                     MessageEmbed message = Notification.prepareNotificationNextLessons(nextLessons);
-                                    channel.sendMessage(message).queue((messageEmbed -> {
+                                    channel.sendMessage(message).queue(/*(messageEmbed -> {
                                         messageEmbed.delete().queueAfter(
                                                 nextLessons.get(0).timeRemainingInSeconds()*2,
                                                 TimeUnit.SECONDS
                                         );
-                                    }));
+                                    })*/);
 
                                 }
                             }

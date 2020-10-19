@@ -8,16 +8,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class TaskScheduler.<br>
  * Class used to generate tasks to be executed periodically.<br>
- * All the tasks created are stored in a Map.
  *
  * @author Benoît Martel
  * @version 1.0
@@ -30,74 +27,66 @@ public class TaskScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskScheduler.class);
 
     /**
-     * the map of the tasks created
+     * Executor service
      */
-    private final Map<String, ScheduledFuture> tasks;
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
 
     /**
-     * Constructor.
-     * <br> Initialize the HashMap.
-     */
-    public TaskScheduler(){
-        tasks = new HashMap<>();
-    }
-
-    /**
-     * Create a task that starts every 30 seconds.
+     * Create a task that starts every minute.
      *
-     * @param name the name of the task
+     * <br>Example : 07:00:50, 07:01:50 (10 seconds before next minute)
+     *
+     * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void run30seconds(String name, Runnable runnable){
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    public void runMinutelySpecial(String name, Runnable runnable) {
+        LocalDateTime dateNextRun = LocalDate.now().atTime(LocalDateTime.now().getHour(),LocalDateTime.now().getMinute(),0);
+        dateNextRun = dateNextRun.plusSeconds(50);
 
-        LOGGER.info("Task '" + name + "' will next run 30 seconds.");
-        ScheduledFuture future = scheduler.scheduleAtFixedRate(runnable, 0, 30, TimeUnit.SECONDS);
-        tasks.put(name,future);
+        long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.MILLIS);
+        LOGGER.info("Task '" + name + "' will run every minute.");
+        executorService.scheduleAtFixedRate(runnable, delayTime, 60000, TimeUnit.MILLISECONDS);
     }
 
     /**
      * Create a task that starts every minute.
      *
-     * @param name the name of the task
+     * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void runMinutely(String name, Runnable runnable){
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    public void runMinutely(String name, Runnable runnable) {
+        LocalDateTime dateNextRun = LocalDate.now().atTime(LocalDateTime.now().getHour(),LocalDateTime.now().getMinute(),0);
+        dateNextRun = dateNextRun.plusMinutes(1);
 
-        LOGGER.info("Task '" + name + "' will next run every minute.");
-        ScheduledFuture future = scheduler.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.MINUTES);
-        tasks.put(name,future);
+        long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.MILLIS);
+        LOGGER.info("Task '" + name + "' will run every minute.");
+        executorService.scheduleAtFixedRate(runnable, delayTime, 60000, TimeUnit.MILLISECONDS);
     }
 
 
     /**
      * Create a task that starts every x minute(s).
      *
-     * @param name the name of the task
+     * @param name     the name of the task
      * @param runnable the runnable object to launch
-     * @param period the period in minutes
+     * @param period   the period in minutes
      */
-    public void runPeriod(String name, Runnable runnable, int period){
+    public void runPeriod(String name, Runnable runnable, int period) {
 
-        if(period > 0 && period < 60){
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-            LOGGER.info("Task '" + name + "' will next run "+period+" minute(s).");
-            ScheduledFuture future = scheduler.scheduleAtFixedRate(runnable, 0, period, TimeUnit.MINUTES);
-            tasks.put(name,future);
-        }
-        else
+        if (period > 0 && period < 60) {
+            LOGGER.info("Task '" + name + "' will run every " + period + " minute(s).");
+            executorService.scheduleAtFixedRate(runnable, 0, period, TimeUnit.MINUTES);
+        } else
             LOGGER.error("Invalid period");
     }
 
     /**
      * Create a task that starts at midnight every day.
      *
-     * @param name the name of the task
+     * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void runAtMidnight(String name, Runnable runnable){
+    public void runAtMidnight(String name, Runnable runnable) {
 
         long delayTime;
         final long initialDelay = LocalDateTime.now().until(
@@ -109,58 +98,40 @@ public class TaskScheduler {
         else
             delayTime = initialDelay;
 
+        LOGGER.info("Task '" + name + "' will run every day at midnight");
 
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-        LOGGER.info("Task '" + name + "' will next run at midnight");
-
-        ScheduledFuture future = scheduler.scheduleAtFixedRate(
-                runnable,
-                delayTime,
-                TimeUnit.DAYS.toMinutes(1),
-                TimeUnit.MINUTES
-        );
-
-        tasks.put(name,future);
-
+        executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
     }
 
-    public void runAt8EveryMonday(String name, Runnable runnable){
+    public void runAt8H5MEveryMonday(String name, Runnable runnable) {
 
-        LocalDateTime dateNextRun =
-                LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 0,0);
+
+        LocalDateTime dateNextRun = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 5, 0);
         long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.SECONDS);
 
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        LOGGER.info("Task '" + name + "' will run at " + dateNextRun + " in " + delayTime / 60 / 60 + " hour(s)");
+        LOGGER.info("Second execution scheduled at : " + LocalDateTime.now().plusSeconds(delayTime + TimeUnit.DAYS.toSeconds(7)));
 
-        LOGGER.info("Task '" + name + "' will next run at "+dateNextRun+" in "+delayTime/60/60+" hour(s)");
-        LOGGER.info("Second execution scheduled at : "
-                + LocalDateTime.now().plusSeconds(delayTime+TimeUnit.DAYS.toSeconds(7))
-        );
 
-        ScheduledFuture future = scheduler.scheduleAtFixedRate(
-                runnable,
-                delayTime,
-                TimeUnit.DAYS.toSeconds(7),
-                TimeUnit.SECONDS
-        );
-
-        tasks.put(name,future);
-
+        executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toSeconds(7), TimeUnit.SECONDS);
     }
 
     /**
      * Create a task that starts only one time.
      *
-     * @param name the name of the task
+     * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void runOneTime(String name, Runnable runnable){
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    public void runOneTime(String name, Runnable runnable) {
+        LOGGER.info("Running '" + name);
+        executorService.execute(runnable);
+    }
 
-        LOGGER.info("Task '" + name + "' starting");
-        scheduler.execute(runnable);
-
+    /**
+     * Shutdown the executor and cancel any running task
+     */
+    public void shutdown(){
+        executorService.shutdownNow();
     }
 
 }

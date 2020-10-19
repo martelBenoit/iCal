@@ -1,6 +1,6 @@
 package ical.command.commands;
 
-import ical.command.CommandContext;
+import ical.command.GuildCommandContext;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
@@ -29,55 +29,53 @@ public class InfoCommand extends AbstractScheduleCommand {
      * {@inheritDoc}
      */
     @Override
-    public void handle(CommandContext ctx) {
+    public void handle(GuildCommandContext ctx) {
 
-        if(ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId())){
-            String idGuild = ctx.getGuild().getId();
-            GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
-            OGuild guild = guildDAO.find(idGuild);
+            if (ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId())) {
+                String idGuild = ctx.getGuild().getId();
+                GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+                OGuild guild = guildDAO.find(idGuild);
 
-            StringBuilder message = new StringBuilder();
-            message.append("**Information sur l'état actuel de ma configuration sur le serveur **\n\n");
+                StringBuilder message = new StringBuilder();
+                message.append("**Information sur l'état actuel de ma configuration sur le serveur **\n\n");
 
-            if(guild != null){
-                String urlSchedule = guild.getUrlSchedule();
-                String idDefaultChannel = guild.getIdChannel();
+                if (guild != null) {
+                    String urlSchedule = guild.getUrlSchedule();
+                    String idDefaultChannel = guild.getIdChannel();
 
-                message.append("Planning :\n");
+                    message.append("Planning :\n");
 
-                if(urlSchedule != null && !urlSchedule.equals(""))
-                    message.append("✅ Lien du planning OK").append("\n");
-                else
-                    message.append("❌ Lien du planning pas configuré").append("\n");
+                    if (urlSchedule != null && !urlSchedule.equals(""))
+                        message.append("✅ Lien du planning OK").append("\n");
+                    else
+                        message.append("❌ Lien du planning pas configuré").append("\n");
 
 
-                message.append("\nNotifications :\n");
+                    message.append("\nNotifications :\n");
 
-                if(idDefaultChannel != null && !idDefaultChannel.equals("")){
+                    if (idDefaultChannel != null && !idDefaultChannel.equals("")) {
 
-                    message.append("✅ Salon des notifications : <#").append(idDefaultChannel).append(">\n");
+                        message.append("✅ Salon des notifications : <#").append(idDefaultChannel).append(">\n");
+                    } else
+                        message.append("❌ Salon des notifications pas configuré").append("\n");
+
+
+                    if (guild.lessonNotifisEnabled())
+                        message.append("✅");
+                    else
+                        message.append("❎");
+                    message.append(" Notfication prochain cours\n");
+
+                    if (guild.modifNotifisEnabled())
+                        message.append("✅");
+                    else
+                        message.append("❎");
+                    message.append(" Notfication modification de cours");
+
+                    ctx.getChannel().sendMessage(message).queue();
                 }
-                else
-                    message.append("❌ Salon des notifications pas configuré").append("\n");
-
-
-                if(guild.lessonNotifisEnabled())
-                    message.append("✅");
-                else
-                    message.append("❎");
-                message.append(" Notfication prochain cours\n");
-
-                if(guild.modifNotifisEnabled())
-                    message.append("✅");
-                else
-                    message.append("❎");
-                message.append(" Notfication modification de cours");
-
-                ctx.getChannel().sendMessage(message).queue();
-            }
-        }
-        else
-            ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
+            } else
+                ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
 
     }
 
