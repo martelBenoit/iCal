@@ -35,14 +35,13 @@ public class UpdateSchedule implements Runnable {
                 schedule.updateEntries();
             }
             this.scheduleManager.getRoomSchedule().updateEntries();
-            LOGGER.info("Schedule update");
+            //LOGGER.info("Schedule update");
             jda.getPresence().setPresence(OnlineStatus.ONLINE, true);
         } catch (ParseException | IOException e) {
-            LOGGER.error("Error when updating the schedule");
+            LOGGER.error("Error when updating the schedule",e.fillInStackTrace());
             jda.getPresence().setPresence(OnlineStatus.IDLE, true);
-            e.printStackTrace();
         } catch (ParserException parser) {
-            LOGGER.error("Parser error : " + parser.getMessage());
+            LOGGER.error("Parser error : " + parser.getMessage(),parser.fillInStackTrace());
             jda.getPresence().setPresence(OnlineStatus.IDLE, true);
         }
 
