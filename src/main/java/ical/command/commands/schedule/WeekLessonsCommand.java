@@ -112,6 +112,34 @@ public class WeekLessonsCommand extends AbstractScheduleCommand {
 
                     } else
                         ctx.getChannel().sendMessage("Pas de cours prévu la semaine prochaine, repose toi !").queue();
+                } else if(ctx.getArgs().get(0).matches("\\d+") && Integer.parseInt(ctx.getArgs().get(0)) > 0 && Integer.parseInt(ctx.getArgs().get(0)) <= 52 ){
+                    final ArrayList<Lesson> lessons = scheduleManager.getSchedule(ctx.getGuild().getId()).getWeekLessons(Integer.parseInt(ctx.getArgs().get(0)));
+                    if (lessons.size() > 0) {
+                        try {
+                            Timetable timetable = new Timetable(lessons);
+                            InputStream inputStream = timetable.generateTimetable();
+                            String nameImg = "WEEK_" + UUID.randomUUID() + ".png";
+                            if (inputStream != null) {
+                                final EmbedBuilder eb = new EmbedBuilder();
+                                eb.setTitle("Les cours pr\u00e9vus la semaine n°"+ctx.getArgs().get(0), null);
+                                eb.setColor(new Color(238358));
+                                eb.setImage("attachment://" + nameImg);
+                                eb.setTimestamp(scheduleManager.getSchedule(ctx.getGuild().getId()).getCreationDate());
+                                eb.setFooter(
+                                        "ENT",
+                                        "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
+                                );
+
+                                ctx.getChannel().sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                            }
+                        } catch (IOException exception) {
+                            LOGGER.error(exception.getMessage(), exception.fillInStackTrace());
+                            ctx.getChannel().sendMessage("Erreur lors de la génération du planning de la semaine").queue();
+                        }
+
+
+                    } else
+                        ctx.getChannel().sendMessage("Pas de cours prévu la semaine n°"+ctx.getArgs().get(0)+", repose toi !").queue();
                 } else
                     ctx.getChannel().sendMessage("Option invalide ! Consulte l'aide.").queue();
             } else
