@@ -105,7 +105,6 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             Collections.sort(reminders);
 
             if(reminders.size() > 0) {
-
                 for(EmbedBuilder embedBuilder : constructList(reminders,true,printIdentifiant)){
                     ctx.getChannel().sendMessage(embedBuilder.build()).queue();
 
@@ -230,11 +229,8 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
             Collections.sort(reminders);
             if (reminders.size() > 0) {
-
-
                 for(EmbedBuilder embedBuilder : constructList(reminders,false, printIdentifiant)){
                     ctx.getChannel().sendMessage(embedBuilder.build()).queue();
-
                 }
 
             } else
@@ -360,9 +356,11 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
         Map<String, List<Reminder>> reminderListGrouped =
                 reminders.stream().collect(Collectors.groupingBy(Reminder::getFormattedDateForComparison));
         SortedSet<String> keys = new TreeSet<>(reminderListGrouped.keySet());
+
         for (String key : keys) {
             List<Reminder> reminderList = reminderListGrouped.get(key);
             Collections.sort(reminderList);
+
 
             MessageEmbed.Field field = new MessageEmbed.Field(
                     " *• Le "+reminderList.get(0).getDay()+"*",
@@ -373,23 +371,24 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             temp = new EmbedBuilder(eb);
             temp.addField(field);
 
-            if(!temp.isValidLength()) {
+
+            if(!temp.isValidLength() || temp.getFields().size() > 25) {
                 embedBuilders.add(eb);
                 eb = new EmbedBuilder();
+                eb.setColor(new Color(0x055B89));
             }
             eb.addField(field);
 
             for (Reminder reminder : reminderList) {
 
-                String title =reminder.getName();
-                String content = reminder.getTime();
+                String title    = reminder.getName();
+                String content  = reminder.getTime();
                 if(displayIDs)
                     title = title+" ("+reminder.getId()+")";
                 if(!isPrivate){
                    content = content + "\n" + "<#" + reminder.getRecipient() + ">";
                    content = content + "\n Ajouté par <@"+reminder.getAuthor() + ">";
                 }
-
                 MessageEmbed.Field field2 = new MessageEmbed.Field(
                     title,
                     content,
@@ -400,9 +399,10 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                 temp = new EmbedBuilder(eb);
                 temp.addField(field2);
 
-                if(!temp.isValidLength()) {
+                if(!temp.isValidLength() || temp.getFields().size() > 25) {
                     embedBuilders.add(eb);
                     eb = new EmbedBuilder();
+                    eb.setColor(new Color(0x055B89));
                 }
                 eb.addField(field2);
 
@@ -411,9 +411,11 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             temp = new EmbedBuilder(eb);
             temp.addBlankField(false);
 
-            if(!temp.isValidLength()) {
+            if(!temp.isValidLength() || temp.getFields().size() > 25) {
                 embedBuilders.add(eb);
                 eb = new EmbedBuilder();
+                eb.setColor(new Color(0x055B89));
+
             }
             eb.addBlankField(false);
 

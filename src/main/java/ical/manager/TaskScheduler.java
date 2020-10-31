@@ -29,7 +29,7 @@ public class TaskScheduler {
     /**
      * Executor service
      */
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(15);
 
     /**
      * Create a task that starts every minute.

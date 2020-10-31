@@ -6,7 +6,7 @@
 
     <groupId>com.github.martelBenoit</groupId>
     <artifactId>iCal</artifactId>
-    <version>1.8</version>
+    <version>1.8.2</version>
 
     <packaging>jar</packaging>
 
