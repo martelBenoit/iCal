@@ -220,6 +220,28 @@ public class Schedule extends AbstractSchedule {
      *
      * @return the list of lessons for the week
      */
+    public ArrayList<Lesson> getWeekLessons(final int weekNumber){
+
+        ArrayList<Lesson> res = new ArrayList<>();
+
+        Calendar cal = Calendar.getInstance();
+
+        for(Lesson lesson : lessons){
+            cal.setTime(lesson.getStartDate());
+            if(cal.get(Calendar.WEEK_OF_YEAR) == weekNumber)
+                res.add(lesson);
+
+        }
+
+        return res;
+
+    }
+
+    /**
+     * Get the list of lessons for the week.
+     *
+     * @return the list of lessons for the week
+     */
     public ArrayList<Lesson> getWeekLessons(){
 
         ArrayList<Lesson> res = new ArrayList<>();

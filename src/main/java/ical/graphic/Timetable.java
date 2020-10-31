@@ -435,6 +435,7 @@ public class Timetable {
         res = res.replace(" (Présentiel)","");
         res = res.replace(" (présentiel)","");
         res = res.replace(" (Distanciel)","");
+        res = res.replace(" - (Distant)","");
         res = res.replace(" (Distant)","");
         res = res.replace(" (distant)","");
         return res;
