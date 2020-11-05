@@ -72,13 +72,12 @@ public class Notification {
         ModificationType typeEvent = eventChange.getType();
 
         if(evtChange != null) {
-            System.out.println("event change created");
-            System.out.println(typeEvent);
+
             EventChange_LessonDAO eventChangeLessonDAO = (EventChange_LessonDAO) DAOFactory.getEventChange_Lesson();
             MovedLessonDAO movedLessonDAO = (MovedLessonDAO) DAOFactory.getMovedLessonDAO();
             LessonDAO lessonDAO = (LessonDAO) DAOFactory.getLessonDAO();
 
-
+            LOGGER.info(evtChange.getId()+": "+typeEvent.name());
 
             // Si on enregistre un déplacement de cours
             if(typeEvent == ModificationType.MOVE){

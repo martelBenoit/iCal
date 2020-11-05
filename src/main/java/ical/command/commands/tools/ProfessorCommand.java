@@ -26,13 +26,33 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-
+/**
+ * ProfessorCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.9
+ */
 public class ProfessorCommand extends AbstractScheduleCommand {
 
+    /**
+     * the logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfessorCommand.class);
 
+    /**
+     * the professor DAO.
+     */
     private final ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
+
+    /**
+     * the guild DAO.
+     */
     private final GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+
+    /**
+     * the professor picture by guild DAO.
+     */
     private final Professor_Picture_By_GuildDAO professorPictureByGuildDAO = (Professor_Picture_By_GuildDAO) DAOFactory.getProfessorPictureByGuild();
 
 
@@ -48,44 +68,50 @@ public class ProfessorCommand extends AbstractScheduleCommand {
     @Override
     public void handle(GuildCommandContext ctx) {
 
+        // on récupère le serveur affecté par la commande
         OGuild guild = guildDAO.find(ctx.getGuild().getId());
+
+        // on récupère l'auteur de la commande
         User author = ctx.getEvent().getAuthor();
 
         if (ctx.getArgs().size() == 2) {
-            if(ctx.getArgs().get(0).equalsIgnoreCase("search")){
 
-                if(guild != null){
+            // Commande pour rechercher un professeur
+            if (ctx.getArgs().get(0).equalsIgnoreCase("search")) {
 
+                if (guild != null) {
+
+                    // On récupère tous les professeurs dont le nom contient le mot-clé passé en 2nd paramètre de la commande
                     ArrayList<Professor> professors = professorDAO.searchByValue(ctx.getArgs().get(1));
-                    professors = filterProfessor(professors,guild.getIdGuild());
 
-                    if(!professors.isEmpty()){
-                        if(professors.size() == 1){
+                    // On filtre la liste pour ne garder que les professeurs intervenant dans les cours du serveur
+                    professors = filterProfessor(professors, guild.getIdGuild());
+
+                    if (!professors.isEmpty()) {
+                        if (professors.size() == 1) {
 
                             Professor professor = professors.get(0);
-                            if(guild.usingSpecificPPGranted()){
-                                Professor_Picture_By_Guild professorPictureByGuild = professorPictureByGuildDAO.findByGuildAndProfessor(guild,professor);
-                                if(professorPictureByGuild != null){
-                                    professor.setUrl(professorPictureByGuild.getUrl());
-                                }
 
+                            if (guild.usingSpecificPPGranted()) {
+                                Professor_Picture_By_Guild professorPictureByGuild = professorPictureByGuildDAO.findByGuildAndProfessor(guild, professor);
+                                if (professorPictureByGuild != null)
+                                    professor.setUrl(professorPictureByGuild.getUrl());
                             }
 
                             EmbedBuilder embedBuilder = new EmbedBuilder();
                             embedBuilder.setTitle("It's a match ! \uD83D\uDC96");
                             embedBuilder.setThumbnail(professor.getUrl());
                             embedBuilder.setColor(0x055B89);
-                            embedBuilder.setFooter("ENT","https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
-                            String description = "**"+professor.getDisplayName()+"**\n\n";
-                            description += "Son identifiant : "+professor.getId();
-                            description += "\nNombre de cours restants : "+scheduleManager.getSchedule(ctx.getGuild().getId()).getLessonWithProfessor(professor).size();
+                            embedBuilder.setFooter("ENT", "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png");
+                            String description = "**" + professor.getDisplayName() + "**\n\n";
+                            description += "Son identifiant : " + professor.getId();
+                            description += "\nNombre de cours restants : " + scheduleManager.getSchedule(ctx.getGuild().getId()).getLessonWithProfessor(professor).size();
                             embedBuilder.appendDescription(description);
                             ctx.getChannel().sendMessage(embedBuilder.build()).queue();
-                        }
-                        else{
+                        } else {
                             StringBuilder message = new StringBuilder();
                             message.append("**Voici les résultats :**\n");
-                            for(Professor professor : professors){
+                            for (Professor professor : professors) {
                                 message.append("  • ")
                                         .append(professor.getId()).append("\t")
                                         .append(professor.getDisplayName())
@@ -93,52 +119,48 @@ public class ProfessorCommand extends AbstractScheduleCommand {
                             }
                             ctx.getChannel().sendMessage(message).queue();
                         }
-                    }
-                    else
+                    } else
                         ctx.getChannel()
                                 .sendMessage("Aucune corespondance trouvée \uD83D\uDE22")
                                 .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
 
-                }
-                else{
+                } else {
                     ctx.getChannel()
                             .sendMessage("❌ Une erreur s'est produite, ré-essaye plus tard")
                             .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                 }
 
 
-            }else{
+            } else {
                 ctx.getChannel()
                         .sendMessage("❌ Erreur dans ta commande, consulte l'aide !")
                         .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             }
 
 
-        }
-        else if(ctx.getArgs().size() == 3 && ctx.getArgs().get(0).equalsIgnoreCase("edit")){
+        } else if (ctx.getArgs().size() == 3 && ctx.getArgs().get(0).equalsIgnoreCase("edit")) {
 
             int id;
 
-
-            try{
+            try {
                 id = Integer.parseInt(ctx.getArgs().get(1));
 
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 ctx.getChannel()
-                        .sendMessage("❌ L'id que tu fournis n'est pas un nombre.\n> Psst je te donne un exemple : "+(int)(Math.random() * 1000))
+                        .sendMessage("❌ L'id que tu fournis n'est pas un nombre.\n> Psst je te donne un exemple : " + (int) (Math.random() * 1000))
                         .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                 return;
             }
 
             Professor professor = professorDAO.findById(id);
 
-            if(professor != null && guild != null && checkProfessorIsUsed(professor,guild.getIdGuild())){
+            if (professor != null && guild != null && checkProfessorIsUsed(professor, guild.getIdGuild())) {
                 try {
 
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setTitle("Valides-tu ?");
                     eb.setDescription("Tu souhaites remplacer la photo de profil de " + professor.getDisplayName() + " par celle " +
-                            "qui est actuellement affichée ?\n\uD83D\uDC4D : OUI\n\uD83D\uDC4E : NON\n\n>>> **PS 1** : Validation par le propriétaire du serveur uniquement \n**PS 2** : Le message s'auto-détruit dans deux minutes et tu ne pourras plus le valider\n**PS 3** : Si l'image sélectionnée ne s'affiche pas dans ce message alors, le lien est incorrecte");
+                            "qui est actuellement affichée ?\n\uD83D\uDC4D : OUI\n\uD83D\uDC4E : NON\n\n>>> **PS 1** : Validation par le propriétaire du serveur uniquement \n**PS 2** : Le message s'auto-détruit dans deux minutes et tu ne pourras plus le valider\n**PS 3** : Si l'image sélectionnée ne s'affiche pas dans ce message alors, le lien est incorrect");
                     eb.setThumbnail(ctx.getArgs().get(2));
                     AtomicBoolean isChecked = new AtomicBoolean(false);
 
@@ -163,7 +185,7 @@ public class ProfessorCommand extends AbstractScheduleCommand {
                                                     if (reaction.retrieveUsers().stream().anyMatch(u -> u.getIdLong() == ctx.getGuild().getOwnerIdLong())) {
 
 
-                                                        Professor_Picture_By_Guild professorPictureByGuild = new Professor_Picture_By_Guild(guild,professor,ctx.getArgs().get(2),author.getId());
+                                                        Professor_Picture_By_Guild professorPictureByGuild = new Professor_Picture_By_Guild(guild, professor, ctx.getArgs().get(2), author.getId());
 
                                                         if (professorPictureByGuildDAO.update(professorPictureByGuild)) {
                                                             scheduleManager.updatePP(guild.getIdGuild());
@@ -197,8 +219,7 @@ public class ProfessorCommand extends AbstractScheduleCommand {
                                         Thread.sleep(1000);
                                     } catch (ErrorResponseException errorResponseException) {
                                         isChecked.set(true);
-                                    }
-                                    catch (Exception e) {
+                                    } catch (Exception e) {
                                         LOGGER.error(e.getMessage(), e.fillInStackTrace());
                                         isChecked.set(true);
                                     }
@@ -207,26 +228,25 @@ public class ProfessorCommand extends AbstractScheduleCommand {
 
                             }).start()
                     );
-                }catch(IllegalArgumentException e){
-                    if(e.getMessage().equals("URL must be a valid http(s) or attachment url.")){
+                } catch (IllegalArgumentException e) {
+                    if (e.getMessage().equals("URL must be a valid http(s) or attachment url.")) {
                         ctx.getChannel()
                                 .sendMessage("❌ L'URL renseignée est incorrecte ")
                                 .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
-                    }
-                    else{
+                    } else {
                         ctx.getChannel()
                                 .sendMessage("❌ Une erreur est apparue, vérifie l'URL !")
                                 .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
-                        LOGGER.error(e.getMessage(),e.fillInStackTrace());
+                        LOGGER.error(e.getMessage(), e.fillInStackTrace());
                     }
                 }
-            }else{
+            } else {
                 ctx.getChannel()
-                        .sendMessage("❌ Je ne trouve aucun professeur avec cet l'id "+ctx.getArgs().get(1))
+                        .sendMessage("❌ Je ne trouve aucun professeur avec cet l'id " + ctx.getArgs().get(1))
                         .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             }
         }
-        else{
+        else {
             ctx.getChannel()
                     .sendMessage("❌ Erreur dans ta commande, consulte l'aide !")
                     .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
@@ -244,18 +264,27 @@ public class ProfessorCommand extends AbstractScheduleCommand {
     public String getHelp() {
         return "Permet de gérer les professeurs\n" +
                 "Utilisation :" +
-                "\n\t• Rechercher un professeur       : `" + Config.get("prefix")+getName()+" search {keyword}`" +
-                "\n\t• Modifier la PP d'un professeur : `" + Config.get("prefix")+getName()+" edit {id} {link}`";
+                "\n\t• Rechercher un professeur       : `" + Config.get("prefix") + getName() + " search {keyword}`" +
+                "\n\t• Modifier la PP d'un professeur : `" + Config.get("prefix") + getName() + " edit {id} {link}`";
     }
 
-    private ArrayList<Professor> filterProfessor(ArrayList<Professor> professors, String guildID){
+    /**
+     * Filter the list to keep only the professors involved in the courses for a specific server.
+     * <br>The list is also sorted alphabetically.
+     *
+     * @param professors professors list to filter
+     * @param guildID    guild id
+     * @return the list of filtered professors
+     */
+    private ArrayList<Professor> filterProfessor(ArrayList<Professor> professors, String guildID) {
         Schedule schedule = scheduleManager.getSchedule(guildID);
         professors.removeIf(p -> p.getDisplayName() == null);
         professors.removeIf(p -> p.getDisplayName().startsWith("CyberLog"));
 
 
         ArrayList<Professor> filteredList = (ArrayList<Professor>) professors.stream()
-                .filter(p -> schedule.getLessons().stream()
+                .filter(p -> schedule.getLessons()
+                        .stream()
                         .anyMatch(p2 -> p2.getProfessor().getDisplayName().equals(p.getDisplayName())))
                 .collect(Collectors.toList());
 
@@ -265,8 +294,17 @@ public class ProfessorCommand extends AbstractScheduleCommand {
 
     }
 
-    private boolean checkProfessorIsUsed(Professor professor, String guildID){
+    /**
+     * Used to find out whether the professor specified in the parameter intervenes in the lessons for the guild
+     * specified in the second parameter.
+     *
+     * @param professor the professor
+     * @param guildID   the guild id
+     * @return true if the professor intervenes in the lessons for the guild
+     */
+    private boolean checkProfessorIsUsed(Professor professor, String guildID) {
         return (scheduleManager.getSchedule(guildID).getLessons().stream()
                 .anyMatch(l -> l.getProfessor().getDisplayName().equals(professor.getDisplayName())));
     }
+
 }

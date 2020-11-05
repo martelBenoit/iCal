@@ -16,6 +16,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractScheduleCommand implements IGuildCommand {
 
+    /**
+     * the logger.
+     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractScheduleCommand.class);
 
     /**

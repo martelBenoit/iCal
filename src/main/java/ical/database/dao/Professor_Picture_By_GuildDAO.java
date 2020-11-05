@@ -11,6 +11,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Professor_Picture_By_GuildDAO class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.9
+ */
 public class Professor_Picture_By_GuildDAO extends DAO<Professor_Picture_By_Guild> {
 
     /**

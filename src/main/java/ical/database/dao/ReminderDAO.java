@@ -14,10 +14,17 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
+ * ReminderDAO class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
  * @since 1.8
  */
 public class ReminderDAO extends DAO<Reminder> {
 
+    /**
+     * the guild DAO instance.
+     */
     private final GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
 
     public ReminderDAO(@Nonnull Connection conn) {
@@ -128,6 +135,13 @@ public class ReminderDAO extends DAO<Reminder> {
         return reminders;
     }
 
+    /**
+     * Find reminder by id.
+     *
+     * @param id the id reminder to find
+     * @return the reminder, null if not found
+     */
+    @Nullable
     public Reminder findById(int id){
 
         try{
@@ -163,26 +177,55 @@ public class ReminderDAO extends DAO<Reminder> {
 
     }
 
-    public ArrayList<Reminder> findByAuthor(User user){
+    /**
+     * Find reminder by author.
+     *
+     * @param user the author
+     * @return list of reminders associated with this author
+     */
+    @Nonnull
+    public ArrayList<Reminder> findByAuthor(@Nonnull User user){
         String query = "SELECT id, name, timestamp, created_at, author, recipient, guild FROM reminder WHERE author = ?";
         return findByUser(user, query);
 
     }
 
-    public ArrayList<Reminder> findByGuild(Guild guild){
+    /**
+     * Find reminder by guild.
+     *
+     * @param guild the guild
+     * @return list of reminders associated with this guild
+     */
+    @Nonnull
+    public ArrayList<Reminder> findByGuild(@Nonnull Guild guild){
 
         String query = "SELECT id, name, timestamp, created_at, author, recipient, guild FROM reminder WHERE guild = ?";
         return findByUser(guild, query);
 
     }
 
-
-    public ArrayList<Reminder> findByRecipient(User user){
+    /**
+     * Find reminder by recipient.
+     * @param user the recipient
+     *
+     * @return list of reminders associated with this recipient
+     */
+    @Nonnull
+    public ArrayList<Reminder> findByRecipient(@Nonnull User user){
         String query = "SELECT id, name, timestamp, created_at, author, recipient, guild FROM reminder WHERE recipient = ?";
         return findByUser(user, query);
     }
 
-    private ArrayList<Reminder> findByUser(ISnowflake snowflake, String query){
+    /**
+     * Generic method to search reminder.
+     * <br>Using snowflake.
+     *
+     * @param snowflake the snowflake
+     * @param query the query
+     * @return list of reminders
+     */
+    @Nonnull
+    private ArrayList<Reminder> findByUser(@Nonnull ISnowflake snowflake, @Nonnull String query){
 
         ResultSet results;
 
@@ -221,6 +264,5 @@ public class ReminderDAO extends DAO<Reminder> {
         return reminders;
 
     }
-
 
 }

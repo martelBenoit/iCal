@@ -6,6 +6,8 @@ import ical.database.entity.Professor;
 import ical.util.Tools;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
  * <br>This class stores all the lessons for a timetable.
  *
  * @author Benoît Martel
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class Schedule extends AbstractSchedule {
@@ -215,6 +217,26 @@ public class Schedule extends AbstractSchedule {
         }
         return ret;
 
+    }
+
+    @Nullable
+    public Lesson getNextLesson(@NotNull Professor professor){
+
+        Lesson ret = null;
+        boolean found = false;
+
+        final Date currentDate = new Date();
+        int i = 0;
+        while (i < this.lessons.size() && !found) {
+            if (this.lessons.get(i).getStartDate().compareTo(currentDate) >= 0) {
+                if(this.lessons.get(i).getProfessor().getName().equals(professor.getName())) {
+                    ret = this.lessons.get(i);
+                    found = true;
+                }
+            }
+            i++;
+        }
+        return ret;
     }
 
     /**

@@ -1,6 +1,8 @@
 package ical.command.commands.tools;
 
 import ical.command.GuildCommandContext;
+import ical.command.IPrivateCommand;
+import ical.command.PrivateCommandContext;
 import ical.command.commands.AbstractScheduleCommand;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @since 1.4
  */
-public class InfoCommand extends AbstractScheduleCommand {
+public class InfoCommand extends AbstractScheduleCommand implements IPrivateCommand {
 
     /**
      * Default constructor.
@@ -30,63 +32,94 @@ public class InfoCommand extends AbstractScheduleCommand {
     }
 
     /**
+     * Constructor for private command.
+     */
+    public InfoCommand(){
+        super(null);
+
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void handle(GuildCommandContext ctx) {
 
-            if (ctx.getArgs().isEmpty() && ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId())) {
-                String idGuild = ctx.getGuild().getId();
-                GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
-                OGuild guild = guildDAO.find(idGuild);
+        if(scheduleManager == null){
+            ctx.getChannel()
+                    .sendMessage("Erreur interne, veuillez contacter mon propriétaire")
+                    .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
+            return;
+        }
 
-                StringBuilder message = new StringBuilder();
-                message.append("**Information sur l'état actuel de ma configuration sur le serveur **\n\n");
+        if (ctx.getArgs().isEmpty() && ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId())) {
+            String idGuild = ctx.getGuild().getId();
+            GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+            OGuild guild = guildDAO.find(idGuild);
 
-                if (guild != null) {
-                    String urlSchedule = guild.getUrlSchedule();
-                    String idDefaultChannel = guild.getIdChannel();
+            StringBuilder message = new StringBuilder();
+            message.append("**Information sur l'état actuel de ma configuration sur le serveur **\n\n");
 
-                    message.append("Planning :\n");
+            if (guild != null) {
+                String urlSchedule = guild.getUrlSchedule();
+                String idDefaultChannel = guild.getIdChannel();
 
-                    if (urlSchedule != null && !urlSchedule.equals(""))
-                        message.append("✅ Lien du planning OK").append("\n");
-                    else
-                        message.append("❌ Lien du planning pas configuré").append("\n");
+                message.append("Planning :\n");
 
-
-                    message.append("\nNotifications :\n");
-
-                    if (idDefaultChannel != null && !idDefaultChannel.equals("")) {
-
-                        message.append("✅ Salon des notifications : <#").append(idDefaultChannel).append(">\n");
-                    } else
-                        message.append("❌ Salon des notifications pas configuré").append("\n");
+                if (urlSchedule != null && !urlSchedule.equals(""))
+                    message.append("✅ Lien du planning OK").append("\n");
+                else
+                    message.append("❌ Lien du planning pas configuré").append("\n");
 
 
-                    if (guild.lessonNotifisEnabled())
-                        message.append("✅");
-                    else
-                        message.append("❎");
-                    message.append(" Notfication prochain cours\n");
+                message.append("\nNotifications :\n");
 
-                    if (guild.modifNotifisEnabled())
-                        message.append("✅");
-                    else
-                        message.append("❎");
-                    message.append(" Notfication modification de cours");
+                if (idDefaultChannel != null && !idDefaultChannel.equals("")) {
 
-                    ctx.getChannel()
-                            .sendMessage(message).queue();
-                }
-            } else if(ctx.getArgs().size() == 1 && ctx.getArgs().get(0).equals("+") && Config.get("owner_id").equals(ctx.getAuthor().getId())){
-                ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(TaskScheduler.info()).queue());
-            }
+                    message.append("✅ Salon des notifications : <#").append(idDefaultChannel).append(">\n");
+                } else
+                    message.append("❌ Salon des notifications pas configuré").append("\n");
 
-            else
+
+                if (guild.lessonNotifisEnabled())
+                    message.append("✅");
+                else
+                    message.append("❎");
+                message.append(" Notfication prochain cours\n");
+
+                if (guild.modifNotifisEnabled())
+                    message.append("✅");
+                else
+                    message.append("❎");
+                message.append(" Notfication modification de cours\n");
+
+                message.append("\nPersonnalisation :\n");
+
+                if (guild.usingSpecificPPGranted())
+                    message.append("✅ Photo de profil personnalisée des professeurs").append("\n");
+                else
+                    message.append("❎ Photo de profil personnalisée des professeurs").append("\n");
+
                 ctx.getChannel()
-                        .sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande")
-                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
+                        .sendMessage(message).queue();
+            }
+        }
+
+        else
+            ctx.getChannel()
+                    .sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande")
+                    .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
+
+    }
+
+    @Override
+    public void handle(PrivateCommandContext ctx) {
+        if(ctx.getArgs().size() == 1 && ctx.getArgs().get(0).equals("+") && Config.get("owner_id").equals(ctx.getAuthor().getId())){
+            ctx.getChannel().sendMessage(TaskScheduler.info()).queue();
+        }
+        else{
+            ctx.getChannel().sendMessage("Mauvaise utilisation de la commande `"+Config.get("prefix")+getName()+"`").queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
+        }
 
     }
 
@@ -106,5 +139,6 @@ public class InfoCommand extends AbstractScheduleCommand {
         return "Affiche l'état actuel de la configuration du bot sur le serveur.\n"+
                 "Utilisation : `"+ Config.get("prefix")+getName()+"`";
     }
+
 
 }

@@ -44,7 +44,7 @@ public class UpdateSchedule implements Runnable {
                 this.scheduleManager.updatePP(e.getKey());
             }
             this.scheduleManager.getRoomSchedule().updateEntries();
-            //LOGGER.info("Schedule update");
+            LOGGER.info("Schedule updated");
             jda.getPresence().setPresence(OnlineStatus.ONLINE, true);
         } catch (ParseException | IOException e) {
             LOGGER.error("Error when updating the schedule",e.fillInStackTrace());

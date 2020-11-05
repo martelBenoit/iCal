@@ -57,8 +57,6 @@ public class MovedLessonDAO extends DAO<MovedLesson> {
             if(ps != null){
                 int affectedRows = ps.executeUpdate();
 
-                System.out.println("affected rows : "+affectedRows);
-
                 if(affectedRows == 0)
                     throw new SQLException("Creating moved lesson failed, no rows affected.");
 

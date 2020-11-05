@@ -10,11 +10,24 @@ import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * ProfessorDAO class.
+ *
+ * @author Benoît Martel
+ * @version 1.1
+ */
 public class ProfessorDAO extends DAO<Professor>{
 
+    /**
+     * the logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfessorDAO.class);
 
-
+    /**
+     * Default constructor.
+     *
+     * @param conn the sql connection
+     */
     public ProfessorDAO(Connection conn) {
         super(conn);
     }
@@ -145,7 +158,14 @@ public class ProfessorDAO extends DAO<Professor>{
         return professor;
     }
 
-    public ArrayList<Professor> searchByValue(String value){
+    /**
+     * Search professors by keyword.
+     *
+     * @param keyword the keyword
+     * @return list of professors matching with the keyword
+     */
+    @Nonnull
+    public ArrayList<Professor> searchByValue(@Nonnull String keyword){
         ResultSet results;
 
         ArrayList<Professor> professors = new ArrayList<>();
@@ -155,8 +175,8 @@ public class ProfessorDAO extends DAO<Professor>{
         try{
             String query = "SELECT id, name, url, display_name FROM professor WHERE UPPER(display_name) LIKE ? OR UPPER(name) LIKE ?";
             PreparedStatement preparedStatement = this.conn.prepareStatement(query);
-            preparedStatement.setString(1,"%"+value.toUpperCase()+"%");
-            preparedStatement.setString(2,"%"+value.toUpperCase()+"%");
+            preparedStatement.setString(1,"%"+keyword.toUpperCase()+"%");
+            preparedStatement.setString(2,"%"+keyword.toUpperCase()+"%");
             results = preparedStatement.executeQuery();
 
             LOGGER.debug(results.getStatement().toString());

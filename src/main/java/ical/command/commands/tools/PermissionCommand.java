@@ -11,6 +11,13 @@ import ical.util.Config;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * PermissionCommand class.
+ *
+ * @author Benoît Martel
+ * @version 1.0
+ * @since 1.9
+ */
 public class PermissionCommand extends AbstractScheduleCommand {
 
     /**
@@ -27,7 +34,7 @@ public class PermissionCommand extends AbstractScheduleCommand {
 
         if (ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId())) {
             if (ctx.getArgs().size() == 2) {
-                if (ctx.getArgs().get(0).equalsIgnoreCase("usingSpecificPP")) {
+                if (ctx.getArgs().get(0).equalsIgnoreCase("pp")) {
                     String right = ctx.getArgs().get(1);
 
                     GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
@@ -94,7 +101,7 @@ public class PermissionCommand extends AbstractScheduleCommand {
     public String getHelp() {
         return "Permet de gérer certaines permissions\n" +
                 "Utilisation :" +
-                "\n1. Choisir d'utiliser les PP personnalisées pour le serveur : `" + Config.get("prefix")+getName()+" usingSpecificPP {grant/revoke}`";
+                "\n1. Choisir d'utiliser les PP personnalisées pour le serveur : `" + Config.get("prefix")+getName()+" pp {grant/revoke}`";
     }
 
 
