@@ -18,6 +18,7 @@ public class Bot {
         ArrayList<GatewayIntent> intents = new ArrayList<>();
         intents.add(GatewayIntent.GUILD_MESSAGES);
         intents.add(GatewayIntent.DIRECT_MESSAGES);
+        intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
         JDABuilder.create(Config.get("JDA_TOKEN"),intents)
                 .addEventListeners(new Listener())
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)

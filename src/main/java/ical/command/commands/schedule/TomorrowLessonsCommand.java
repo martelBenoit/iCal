@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TomorrowLessonsCommand class.
@@ -47,7 +48,9 @@ public class TomorrowLessonsCommand extends AbstractScheduleCommand {
                 }
                 ctx.getChannel().sendMessage(eb.build()).queue();
             } else {
-                ctx.getChannel().sendMessage("Pas de cours demain tu pourras te reposer").queue();
+                ctx.getChannel()
+                        .sendMessage("Pas de cours demain tu pourras te reposer")
+                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             }
         }
 

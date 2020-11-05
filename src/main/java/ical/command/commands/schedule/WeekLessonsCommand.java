@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * LessonWeekCommand class.
@@ -69,12 +70,16 @@ public class WeekLessonsCommand extends AbstractScheduleCommand {
                         }
                     } catch (IOException exception) {
                         LOGGER.error(exception.getMessage(), exception.fillInStackTrace());
-                        ctx.getChannel().sendMessage("Erreur lors de la génération du planning de la semaine").queue();
+                        ctx.getChannel()
+                                .sendMessage("Erreur lors de la génération du planning de la semaine")
+                                .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                     }
 
 
                 } else
-                    ctx.getChannel().sendMessage("Pas de cours prévu cette semaine, repose toi !").queue();
+                    ctx.getChannel()
+                            .sendMessage("Pas de cours prévu cette semaine, repose toi !")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             } else if (ctx.getArgs().size() == 1) {
                 if (ctx.getArgs().get(0).equalsIgnoreCase("-next")) {
 
@@ -101,13 +106,13 @@ public class WeekLessonsCommand extends AbstractScheduleCommand {
                             } else
                                 ctx.getChannel()
                                         .sendMessage("Erreur lors de la génération du planning, ré-essaye plus tard.")
-                                        .queue();
+                                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
 
                         } catch (IOException exception) {
                             LOGGER.error(exception.getMessage(), exception.fillInStackTrace());
                             ctx.getChannel()
                                     .sendMessage("Erreur lors de la génération du planning de la semaine prochaine")
-                                    .queue();
+                                    .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                         }
 
                     } else
@@ -134,16 +139,24 @@ public class WeekLessonsCommand extends AbstractScheduleCommand {
                             }
                         } catch (IOException exception) {
                             LOGGER.error(exception.getMessage(), exception.fillInStackTrace());
-                            ctx.getChannel().sendMessage("Erreur lors de la génération du planning de la semaine").queue();
+                            ctx.getChannel()
+                                    .sendMessage("Erreur lors de la génération du planning de la semaine")
+                                    .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                         }
 
 
                     } else
-                        ctx.getChannel().sendMessage("Pas de cours prévu la semaine n°"+ctx.getArgs().get(0)+", repose toi !").queue();
+                        ctx.getChannel()
+                                .sendMessage("Pas de cours prévu la semaine n°"+ctx.getArgs().get(0)+", repose toi !")
+                                .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                 } else
-                    ctx.getChannel().sendMessage("Option invalide ! Consulte l'aide.").queue();
+                    ctx.getChannel()
+                            .sendMessage("Option invalide ! Consulte l'aide.")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             } else
-                ctx.getChannel().sendMessage("Commande invalide ! Consulte l'aide.").queue();
+                ctx.getChannel()
+                        .sendMessage("Commande invalide ! Consulte l'aide.")
+                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
 
     }
 

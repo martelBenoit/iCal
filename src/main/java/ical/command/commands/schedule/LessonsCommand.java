@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * LessonCommand class.
@@ -35,7 +36,15 @@ public class LessonsCommand extends AbstractScheduleCommand {
     public void handle(GuildCommandContext ctx) {
 
             if (ctx.getArgs().size() == 1) {
-                int day = Integer.parseInt(ctx.getArgs().get(0));
+                int day;
+                try{
+                    day = Integer.parseInt(ctx.getArgs().get(0));
+                }catch (NumberFormatException e){
+                    ctx.getChannel()
+                            .sendMessage("C'est un entier que j'attends en paramètre, ré-essaye \uD83D\uDE09")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
+                    return;
+                }
 
                 final ArrayList<Lesson> lessons = scheduleManager.getSchedule(ctx.getGuild().getId()).getLessons(day);
                 if (lessons.size() > 0) {
@@ -49,9 +58,10 @@ public class LessonsCommand extends AbstractScheduleCommand {
                     }
                     ctx.getChannel().sendMessage(eb.build()).queue();
                 } else
-                    ctx.getChannel().sendMessage("Pas de cours, repose toi !").queue();
+                    ctx.getChannel()
+                            .sendMessage("Pas de cours, repose toi !")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             }
-
 
     }
 

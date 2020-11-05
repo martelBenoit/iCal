@@ -1,6 +1,7 @@
-package ical.command.commands;
+package ical.command.commands.schedule;
 
 import ical.command.GuildCommandContext;
+import ical.command.commands.AbstractScheduleCommand;
 import ical.database.entity.Lesson;
 import ical.database.entity.Room;
 import ical.manager.ScheduleManager;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * RoomCommand class.
@@ -69,12 +71,17 @@ public class RoomCommand extends AbstractScheduleCommand {
                         if (hour >= 0)
                             rooms = getStatusRoomAt(hour);
                         else
-                            ctx.getChannel().sendMessage("C'est pas un entier positif en paramètre, coquin !").queue();
+                            ctx.getChannel()
+                                    .sendMessage("C'est pas un entier positif en paramètre, coquin !")
+                                    .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                     } catch (NumberFormatException e) {
-                        ctx.getChannel().sendMessage("C'est pas un entier positif en paramètre, coquin !").queue();
+                        ctx.getChannel()
+                                .sendMessage("C'est pas un entier positif en paramètre, coquin !")
+                                .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                     }
                 } else {
-                    ctx.getChannel().sendMessage("Paramètre inconnu pour cette commande !").queue();
+                    ctx.getChannel().sendMessage("Paramètre inconnu pour cette commande !")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                 }
 
             } else {
@@ -112,7 +119,9 @@ public class RoomCommand extends AbstractScheduleCommand {
                         ctx.getChannel().sendMessage(eb.build()).queue();
                     }
                 } else {
-                    ctx.getChannel().sendMessage("Paramètre inconnu pour cette commande !").queue();
+                    ctx.getChannel()
+                            .sendMessage("Paramètre inconnu pour cette commande !")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                 }
 
             } else {

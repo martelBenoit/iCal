@@ -17,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Abstract schedule class.
@@ -104,12 +103,15 @@ public abstract class AbstractSchedule {
                 ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
                 Professor professor = professorDAO.find(profName);
                 if (professor == null) {
-                    professor = professorDAO.create(new Professor(profName));
+                    professor = professorDAO.create(new Professor(profName,decompose[decompose.length-1]));
                     LOGGER.info("Add new prof in database : " + professor);
                 }
 
-                if (professor != null)
+                if (professor != null){
+                    professor.setDisplayName(decompose[decompose.length-1]);
+                    professorDAO.update(professor);
                     this.lessons.add(new Lesson(uid, name, dtstart, dtend, description, professor, room));
+                }
                 else {
                     LOGGER.info("Lesson added but error with the professor ");
                     this.lessons.add(new Lesson(uid, name, dtstart, dtend, description, null, room));
@@ -131,6 +133,15 @@ public abstract class AbstractSchedule {
      */
     public TemporalAccessor getCreationDate(){
         return this.creationDate;
+    }
+
+    /**
+     * Get lessons
+     *
+     * @return the lessons
+     */
+    public ArrayList<Lesson> getLessons(){
+        return lessons;
     }
 
 }

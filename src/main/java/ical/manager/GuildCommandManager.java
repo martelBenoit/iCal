@@ -5,12 +5,14 @@ import ical.command.IGuildCommand;
 import ical.command.commands.*;
 import ical.command.commands.reminder.ReminderCommand;
 import ical.command.commands.schedule.*;
+import ical.command.commands.tools.*;
 import ical.util.Config;
-import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -44,6 +46,8 @@ public class GuildCommandManager extends CommandManager {
         addCommand(new RoomCommand(scheduleManager));
         addCommand(new WeekLessonsCommand(scheduleManager));
         addCommand(new ReminderCommand());
+        addCommand(new ProfessorCommand(scheduleManager));
+        addCommand(new PermissionCommand(scheduleManager));
 
     }
 
@@ -69,6 +73,13 @@ public class GuildCommandManager extends CommandManager {
             GuildCommandContext ctx = new GuildCommandContext(event, args);
 
             cmd.handle(ctx);
+
+            try {
+                ctx.getEvent().getMessage().delete().queueAfter(1, TimeUnit.SECONDS);
+
+            } catch (InsufficientPermissionException e1) {
+                LOGGER.error("No permission to delete this message : "+ctx.getEvent().getMessage().getContentRaw());
+            }
         }
     }
 

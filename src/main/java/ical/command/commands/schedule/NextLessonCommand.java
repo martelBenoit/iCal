@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * NextLessonCommand class.
@@ -84,7 +85,9 @@ public class NextLessonCommand extends AbstractScheduleCommand {
                     lessonRemainingTimeDAO.create(lessonRemainingTime);
                 });
             } else {
-                channel.sendMessage("Pas de prochain cours").queue();
+                channel
+                        .sendMessage("Pas de prochain cours")
+                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             }
 
 

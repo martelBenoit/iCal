@@ -9,7 +9,7 @@ import java.util.Objects;
  * Allow to manage the comportment of the bot for the guild.
  *
  * @author Benoît Martel
- * @version 1.1
+ * @version 1.2
  */
 public class OGuild extends Entity{
 
@@ -39,6 +39,11 @@ public class OGuild extends Entity{
     private boolean lessonNotif;
 
     /**
+     * Using specific picture profile
+     */
+    private boolean using_specific_pp;
+
+    /**
      * Constructor.
      *
      * <br>Allow to create an object only with the id of the guild. The id of default channel and the url of the
@@ -65,12 +70,14 @@ public class OGuild extends Entity{
                   String idChannel,
                   String urlSchedule,
                   boolean modifNotif,
-                  boolean lessonNotif) {
+                  boolean lessonNotif,
+                  boolean using_specific_pp) {
         this.idGuild = idGuild;
         this.idChannel = idChannel;
         this.urlSchedule = urlSchedule;
         this.modifNotif = modifNotif;
         this.lessonNotif = lessonNotif;
+        this.using_specific_pp = using_specific_pp;
     }
 
     /**
@@ -155,6 +162,14 @@ public class OGuild extends Entity{
      */
     public void setLessonNotif(boolean enable){
         this.lessonNotif = enable;
+    }
+
+    public boolean usingSpecificPPGranted(){
+        return this.using_specific_pp;
+    }
+
+    public void setUsingSpecificPP(boolean grant){
+        this.using_specific_pp = grant;
     }
 
     /**

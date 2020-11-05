@@ -6,6 +6,7 @@ import ical.database.dao.ReminderDAO;
 import ical.database.entity.OGuild;
 import ical.database.entity.Reminder;
 import ical.util.Config;
+import me.duncte123.botcommons.commands.ICommandContext;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -16,6 +17,9 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +28,7 @@ import java.util.stream.Collectors;
  * <br>Command available for guilds and for private messages.
  *
  * @author Benoît Martel
- * @version 1.0
+ * @version 1.1
  * @since 1.8
  * @see IGuildCommand
  * @see IPrivateCommand
@@ -51,7 +55,10 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             Date date = stringToDate(ctx.getArgs().get(0), ctx.getArgs().get(1));
 
             if(date != null && date.before(new Date())){
-                ctx.getChannel().sendMessage("Je ne pourrai pas te rappeler un évènement déjà passé.. \uD83E\uDD14").queue();
+                ctx.getChannel()
+                        .sendMessage("Je ne pourrai pas te rappeler un évènement déjà passé.. \uD83E\uDD14")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
+
             }
             else{
                 StringBuilder stringBuilder = new StringBuilder();
@@ -64,10 +71,14 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                 else
                     remindText = stringBuilder.toString();
                 if(remindText.length() >= 250)
-                    ctx.getChannel().sendMessage("Le texte de ton rappel est trop long, soit plus concis !").queue();
+                    ctx.getChannel()
+                            .sendMessage("Le texte de ton rappel est trop long, soit plus concis !")
+                            .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
 
                 else if (postReminder(ctx, remindText, date))
-                    ctx.getChannel().sendMessage("Ton rappel personnel a correctement été défini ! \uD83D\uDE42").queue();
+                    ctx.getChannel()
+                            .sendMessage("Ton rappel personnel a correctement été défini ! \uD83D\uDE42")
+                            .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
             }
 
 
@@ -80,18 +91,22 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                 if(reminder != null && reminder.getAuthor().equals(ctx.getAuthor().getId())){
                     boolean res = reminderDAO.delete(reminder);
                     if(res){
-                        ctx.getChannel().sendMessage(reminder.getName()+" a bien été supprimé ! \uD83D\uDE42").queue();
+                        ctx.getChannel().sendMessage(reminder.getName()+" a bien été supprimé ! \uD83D\uDE42")
+                                .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                     }
                     else
-                        ctx.getChannel().sendMessage("❌ Une erreur interne est apparu lors de la suppression de ton rappel..").queue();
+                        ctx.getChannel().sendMessage("❌ Une erreur interne est apparu lors de la suppression de ton rappel..")
+                                .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                 }
                 else
-                    ctx.getChannel().sendMessage("❌ Tu n'as pas de privilèges pour supprimer ce rappel (s'il existe)").queue();
+                    ctx.getChannel().sendMessage("❌ Tu n'as pas de privilèges pour supprimer ce rappel (s'il existe)")
+                            .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
 
 
             }catch (NumberFormatException exception){
                 LOGGER.error(exception.getMessage());
-                ctx.getChannel().sendMessage("❌ L'identifiant pour la supression du rappel n'est pas correct, j'attends un nombre").queue();
+                ctx.getChannel().sendMessage("❌ L'identifiant pour la supression du rappel n'est pas correct, j'attends un nombre")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
             }
         }
 
@@ -105,13 +120,14 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             Collections.sort(reminders);
 
             if(reminders.size() > 0) {
-                for(EmbedBuilder embedBuilder : constructList(reminders,true,printIdentifiant)){
+                for(EmbedBuilder embedBuilder : constructList(reminders,true,printIdentifiant, null)){
                     ctx.getChannel().sendMessage(embedBuilder.build()).queue();
 
                 }
             }
             else
-                ctx.getChannel().sendMessage("Tu n'as pas de rappel").queue();
+                ctx.getChannel().sendMessage("Tu n'as pas de rappel")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
 
         }
 
@@ -127,10 +143,12 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                 ctx.getChannel().sendMessage(text).queue();
             }
             else
-                ctx.getChannel().sendMessage("Tu n'as pas de rappel \uD83D\uDE42").queue();
+                ctx.getChannel().sendMessage("Tu n'as pas de rappel \uD83D\uDE42")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
         }
         else{
-            ctx.getChannel().sendMessage("Tu sembles rencontrer des problèmes avec la commande.. Consulte l'aide ! \uD83D\uDE42").queue();
+            ctx.getChannel().sendMessage("Tu sembles rencontrer des problèmes avec la commande.. Consulte l'aide ! \uD83D\uDE42")
+                    .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
         }
 
     }
@@ -149,7 +167,8 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
             Date date = stringToDate(ctx.getArgs().get(1), ctx.getArgs().get(2));
             if (date != null && date.before(new Date())) {
-                ctx.getChannel().sendMessage("Je ne pourrai pas te rappeler un évènement déjà passé.. \uD83E\uDD14").queue();
+                ctx.getChannel().sendMessage("Je ne pourrai pas te rappeler un évènement déjà passé.. \uD83E\uDD14")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
             } else {
                 String idRecipient = ctx.getArgs().get(0).substring(2, ctx.getArgs().get(0).length() - 1);
 
@@ -168,14 +187,18 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                             remindText = stringBuilder.toString();
 
                         if (remindText.length() >= 250)
-                            channel.sendMessage("Le texte de ton rappel est trop long, soit plus concis ! \uD83D\uDE44").queue();
+                            channel.sendMessage("Le texte de ton rappel est trop long, soit plus concis ! \uD83D\uDE44")
+                                    .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                         else if (postReminder(ctx, remindText, date, idRecipient))
-                            channel.sendMessage("Le rappel a correctement été défini ! \uD83D\uDE42").queue();
+                            channel.sendMessage("Le rappel a correctement été défini ! \uD83D\uDE42")
+                                    .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                     } else {
-                        channel.sendMessage("Je n'ai malheureusement pas le droit d'écrire dans <#" + idRecipient + "> \uD83D\uDE25").queue();
+                        channel.sendMessage("Je n'ai malheureusement pas le droit d'écrire dans <#" + idRecipient + "> \uD83D\uDE25")
+                                .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                     }
                 } else {
-                    channel.sendMessage("Je n'ai malheureusement pas le droit d'écrire dans <#" + idRecipient + "> \uD83D\uDE25").queue();
+                    channel.sendMessage("Je n'ai malheureusement pas le droit d'écrire dans <#" + idRecipient + "> \uD83D\uDE25")
+                            .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                 }
 
             }
@@ -190,11 +213,13 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             }
 
             if(remindText.toString().length() >= 250)
-                channel.sendMessage("Le texte de ton rappel est trop long, soit plus concis ! \uD83D\uDE44").queue();
+                channel.sendMessage("Le texte de ton rappel est trop long, soit plus concis ! \uD83D\uDE44")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
             else if (postReminder(ctx, remindText.toString(), date, ctx.getAuthor().getId()))
-                channel.sendMessage("Ton rappel personnel a correctement été défini ! \uD83D\uDE42").queue();
+                channel.sendMessage("Ton rappel personnel a correctement été défini ! \uD83D\uDE42")
+            .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
 
-        } else if (ctx.getArgs().size() == 2 && ctx.getArgs().get(0).equalsIgnoreCase("delete")) {
+        } else if (ctx.getArgs().size() == 2 && ctx.getArgs().get(0).equalsIgnoreCase("-delete")) {
 
             try{
                 int id_reminder = Integer.parseInt(ctx.getArgs().get(1));
@@ -203,18 +228,22 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
                 if(reminder != null && (reminder.getAuthor().equals(ctx.getAuthor().getId()) || ctx.getAuthor().getId().equals(ctx.getGuild().getOwnerId()))){
                     boolean res = reminderDAO.delete(reminder);
                     if(res){
-                        ctx.getChannel().sendMessage(reminder.getName()+" a bien été supprimé \uD83D\uDE42").queue();
+                        ctx.getChannel().sendMessage(reminder.getName()+" a bien été supprimé \uD83D\uDE42")
+                                .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                     }
                     else
-                        ctx.getChannel().sendMessage("❌ Une erreur interne est apparu lors de la suppression de ton rappel..").queue();
+                        ctx.getChannel().sendMessage("❌ Une erreur interne est apparu lors de la suppression de ton rappel..")
+                                .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
                 }
                 else
-                    ctx.getChannel().sendMessage("❌ Tu n'as pas de privilèges pour supprimer ce rappel (s'il existe)").queue();
+                    ctx.getChannel().sendMessage("❌ Tu n'as pas de privilèges pour supprimer ce rappel (s'il existe)")
+                            .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
 
 
             }catch (NumberFormatException exception){
                 LOGGER.error(exception.getMessage());
-                ctx.getChannel().sendMessage("❌ L'identifiant pour la supression du rappel n'est pas correct, j'attends un nombre").queue();
+                ctx.getChannel().sendMessage("❌ L'identifiant pour la supression du rappel n'est pas correct, j'attends un nombre")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
             }
 
         }
@@ -229,16 +258,18 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
 
             Collections.sort(reminders);
             if (reminders.size() > 0) {
-                for(EmbedBuilder embedBuilder : constructList(reminders,false, printIdentifiant)){
+                for(EmbedBuilder embedBuilder : constructList(reminders,false, printIdentifiant, ctx)){
                     ctx.getChannel().sendMessage(embedBuilder.build()).queue();
                 }
 
             } else
-                ctx.getChannel().sendMessage("Il n'y a pas de rappel sur le serveur \uD83D\uDE42").queue();
+                ctx.getChannel().sendMessage("Il n'y a pas de rappel sur le serveur \uD83D\uDE42")
+                        .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
 
         }
         else{
-            ctx.getChannel().sendMessage("Tu sembles rencontrer des problèmes avec la commande.. Consulte l'aide ! \uD83D\uDE42").queue();
+            ctx.getChannel().sendMessage("Tu sembles rencontrer des problèmes avec la commande.. Consulte l'aide ! \uD83D\uDE42")
+                    .queue((message -> message.delete().queueAfter(10, TimeUnit.SECONDS)));
         }
 
     }
@@ -247,7 +278,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
      * Parse {@code String} object into a {@code Date} object.
      *
      * <br>The date format string must be of this type : {@code dd/MM/yyyy}.
-     * <br>The time format string must be of this type : {@code hh:mm}.
+     * <br>The time format string must be of this type : {@code HH:mm}.
      * @param date the date
      * @param time the time
      * @return {@code Date} object if the parse is successful, null otherwise
@@ -255,7 +286,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
     private Date stringToDate(String date, String time) {
         try{
             String parse = date+" "+time;
-            return new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(parse);
+            return new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(parse);
         }catch (Exception e) {
             return null;
         }
@@ -340,9 +371,10 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
      * @param reminders     the list of reminders to display in the message
      * @param isPrivate     are they private or guild reminder ?
      * @param displayIDs    display the reminder IDs or not?
+     * @param context       the context
      * @return the list of {@code EmbedBuilder} to build the message
      */
-    private ArrayList<EmbedBuilder> constructList(ArrayList<Reminder> reminders, boolean isPrivate, boolean displayIDs){
+    private ArrayList<EmbedBuilder> constructList(ArrayList<Reminder> reminders, boolean isPrivate, boolean displayIDs, ICommandContext context){
 
 
         ArrayList<EmbedBuilder> embedBuilders = new ArrayList<>();
@@ -372,7 +404,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             temp.addField(field);
 
 
-            if(!temp.isValidLength() || temp.getFields().size() > 25) {
+            if(!temp.isValidLength() || temp.getFields().size() > 24) {
                 embedBuilders.add(eb);
                 eb = new EmbedBuilder();
                 eb.setColor(new Color(0x055B89));
@@ -382,6 +414,7 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
             for (Reminder reminder : reminderList) {
 
                 String title    = reminder.getName();
+                title = remplaceIdByName(context, title);
                 String content  = reminder.getTime();
                 if(displayIDs)
                     title = title+" ("+reminder.getId()+")";
@@ -424,6 +457,36 @@ public class ReminderCommand implements IGuildCommand, IPrivateCommand {
         embedBuilders.add(eb);
 
         return embedBuilders;
+    }
+
+    private String remplaceIdByName(ICommandContext context, String text){
+        if(context == null)
+            return text;
+        Pattern p = Pattern.compile("<@!\\d*>") ;
+        Matcher m = p.matcher(text);
+
+        StringBuffer sb =  new StringBuffer() ;
+
+        while (m.find()) {
+            String idRaw = m.group();
+            String idUser = idRaw.substring(3,idRaw.length()-1);
+
+            User user = context.getJDA().retrieveUserById(idUser).complete();
+
+            String name;
+            if(user != null) {
+                name = user.getName();
+                m.appendReplacement(sb, "@"+name);
+            }
+            else {
+                m.appendReplacement(sb, idRaw);
+            }
+
+
+        }
+        m.appendTail(sb) ;
+
+        return sb.toString();
     }
 
 }

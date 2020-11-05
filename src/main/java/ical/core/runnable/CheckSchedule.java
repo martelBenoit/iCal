@@ -5,11 +5,14 @@ import ical.core.Schedule;
 import ical.manager.ScheduleManager;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
+import ical.manager.TaskScheduler;
 import ical.util.ModificationType;
 import ical.util.Notification;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +22,8 @@ public class CheckSchedule implements Runnable {
 
     private ScheduleManager scheduleManager;
     private JDA jda;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckSchedule.class);
 
     public CheckSchedule(JDA jda, ScheduleManager scheduleManager) {
         this.scheduleManager = scheduleManager;
@@ -37,6 +42,8 @@ public class CheckSchedule implements Runnable {
             GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
             OGuild guild = guildDAO.find(idGuild);
 
+
+
             // On vérifie que l'on a bien récupéré l'objet de la base de données
             if (guild != null) {
 
@@ -52,15 +59,17 @@ public class CheckSchedule implements Runnable {
                         if (guild.lessonNotifisEnabled()) {
                             if (nextLessons.get(0).timeRemainingInSeconds() <= 900){
                                 if (!schedule.hasAlreadyBeenNotified()) {
-                                    channel.sendTyping().queue();
-                                    schedule.setNotified(true);
                                     MessageEmbed message = Notification.prepareNotificationNextLessons(nextLessons);
-                                    channel.sendMessage(message).queue(/*(messageEmbed -> {
-                                        messageEmbed.delete().queueAfter(
-                                                nextLessons.get(0).timeRemainingInSeconds()*2,
+                                    if(message != null) {
+                                        channel.sendMessage(message).queue((messageEmbed -> messageEmbed.delete().queueAfter(
+                                                nextLessons.get(0).timeRemainingInSeconds() * 2,
                                                 TimeUnit.SECONDS
-                                        );
-                                    })*/);
+                                        )));
+                                        schedule.setNotified(true);
+                                    }
+                                    else
+                                        LOGGER.error("Error when generating the message for the course reminder");
+
 
                                 }
                             }

@@ -2,6 +2,7 @@ package ical.database.entity;
 
 import ical.database.DAOFactory;
 import ical.database.dao.ProfessorDAO;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -11,9 +12,9 @@ import javax.annotation.Nonnull;
  * <br>The Professor entity.
  *
  * @author Benoît Martel
- * @version 1.0
+ * @version 1.1
  */
-public class Professor extends Entity{
+public class Professor extends Entity implements Comparable{
 
     /**
      * the id of the professor.
@@ -28,19 +29,26 @@ public class Professor extends Entity{
     /**
      * the url of the image of the professor.
      */
-    private final String url;
+    private String url;
+
+    /**
+     * the displayed professor name
+     */
+    private String displayName;
 
     /**
      * Constructor.
      *
-     * @param id the id of the professor
-     * @param name the name of the professor
-     * @param url the url of the image of the professor
+     * @param id            the id of the professor
+     * @param name          the name of the professor
+     * @param url           the url of the image of the professor
+     * @param displayName  the embellished professor name
      */
-    public Professor(int id, @Nonnull String name, @Nonnull String url){
+    public Professor(int id, @Nonnull String name, @Nonnull String url, @Nonnull String displayName){
         this.id = id;
         this.name = name;
         this.url = url;
+        this.displayName = displayName;
     }
 
     /**
@@ -50,10 +58,12 @@ public class Professor extends Entity{
      * of an image.
      * <br>If the professor already exists in the database then we recover the image otherwise it is one by default.
      *
-     * @param name the name of the professor
+     * @param name          the name of the professor
+     * @param displayName   the embellished professor name
      */
-    public Professor(@Nonnull String name){
+    public Professor(@Nonnull String name, @Nonnull String displayName){
         this.name = name;
+        this.displayName = displayName;
 
         this.id = -1;
 
@@ -94,6 +104,15 @@ public class Professor extends Entity{
     }
 
     /**
+     * Get the embellished professor name
+     *
+     * @return the embellished professor name
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
      * Set the id of the professor.
      *
      * @param id the id of the professor
@@ -103,12 +122,42 @@ public class Professor extends Entity{
     }
 
     /**
+     * Set the url of the professor.
+     *
+     * @param id the url of the professor
+     */
+    public void setUrl(String url){
+        this.url = url;
+    }
+
+    /**
+     * Set the embellished professor name
+     *
+     * @param displayName  the embellished professor name
+     */
+    public void setDisplayName(String displayName){
+        this.displayName = displayName;
+    }
+
+    /**
      * Display the parameters of this professor.
      *
      * @return the string contains the parameters of this professor
      */
     @Override
     public String toString() {
-        return "professor[id="+this.id+", name="+this.name+", url="+this.url+"]\n";
+        return "professor[id="+this.id+", name="+this.name+", url="+this.url+", name="+this.displayName +"]\n";
     }
+
+    @Override
+    public int compareTo(@NotNull Object professor) {
+        if(professor instanceof Professor)
+            return ((Professor) professor).name.toUpperCase().compareTo(this.name.toUpperCase());
+        else
+            return -1;
+
+
+    }
+
+
 }

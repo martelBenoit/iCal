@@ -63,7 +63,7 @@ public class GuildDAO extends DAO<OGuild> {
         try{
             String query =
                     "UPDATE guild " +
-                    "SET idchannel = ?, urlplanning = ?, modifnotif = ?, lessonnotif = ? " +
+                    "SET idchannel = ?, urlplanning = ?, modifnotif = ?, lessonnotif = ?, use_specific_pp_professor = ?" +
                     "WHERE idguild = ?";
             PreparedStatement ps = this.conn.prepareStatement(query);
 
@@ -71,7 +71,8 @@ public class GuildDAO extends DAO<OGuild> {
             ps.setString(2,obj.getUrlSchedule());
             ps.setBoolean(3,obj.modifNotifisEnabled());
             ps.setBoolean(4,obj.lessonNotifisEnabled());
-            ps.setString(5, obj.getIdGuild());
+            ps.setBoolean(5,obj.usingSpecificPPGranted());
+            ps.setString(6, obj.getIdGuild());
 
             res = ps.executeUpdate();
 
@@ -88,7 +89,7 @@ public class GuildDAO extends DAO<OGuild> {
         OGuild guild = null;
 
         try{
-            String query = "SELECT idguild, idchannel, urlplanning, modifnotif, lessonnotif " +
+            String query = "SELECT idguild, idchannel, urlplanning, modifnotif, lessonnotif, use_specific_pp_professor " +
                            "FROM guild " +
                            "WHERE idGuild = ?";
 
@@ -102,7 +103,8 @@ public class GuildDAO extends DAO<OGuild> {
                         result.getString(2),
                         result.getString(3),
                         result.getBoolean(4),
-                        result.getBoolean(5));
+                        result.getBoolean(5),
+                        result.getBoolean(6));
         } catch (SQLException e){
             LOGGER.error("Error while searching the guild : "+idGuild,e);
             guild = null;
@@ -120,7 +122,7 @@ public class GuildDAO extends DAO<OGuild> {
         ArrayList<OGuild> guilds = new ArrayList<>();
 
         try{
-            String query = "SELECT idguild, idchannel, urlplanning, modifnotif, lessonnotif FROM guild";
+            String query = "SELECT idguild, idchannel, urlplanning, modifnotif, lessonnotif, use_specific_pp_professor FROM guild";
             results = this.conn.createStatement().executeQuery(query);
 
             while(results.next()){
@@ -129,7 +131,8 @@ public class GuildDAO extends DAO<OGuild> {
                         results.getString(2),
                         results.getString(3),
                         results.getBoolean(4),
-                        results.getBoolean(5)));
+                        results.getBoolean(5),
+                        results.getBoolean(6)));
             }
 
         }catch(SQLException e){

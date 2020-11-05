@@ -1,6 +1,9 @@
 package ical.database.dao;
 
+
 import ical.database.entity.Professor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -8,6 +11,8 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class ProfessorDAO extends DAO<Professor>{
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfessorDAO.class);
 
 
     public ProfessorDAO(Connection conn) {
@@ -20,10 +25,11 @@ public class ProfessorDAO extends DAO<Professor>{
         Professor professor = null;
 
         try{
-            String query = "INSERT INTO professor(name, url) VALUES (?,?)";
+            String query = "INSERT INTO professor(name, url, display_name) VALUES (?,?,?)";
             PreparedStatement ps = this.conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1,obj.getName());
             ps.setString(2,obj.getUrl());
+            ps.setString(3,obj.getDisplayName());
 
             int affectedRows = ps.executeUpdate();
 
@@ -53,7 +59,30 @@ public class ProfessorDAO extends DAO<Professor>{
 
     @Override
     public boolean update(@Nonnull Professor obj) {
-        return false;
+
+        boolean updated = false;
+
+        try{
+            String query = "UPDATE professor SET name = ?, url = ?, display_name = ? WHERE id = ?";
+            PreparedStatement ps = this.conn.prepareStatement(query);
+            ps.setString(1,obj.getName());
+            ps.setString(2,obj.getUrl());
+            ps.setString(3,obj.getDisplayName());
+            ps.setInt(4,obj.getId());
+
+            int affectedRows = ps.executeUpdate();
+
+            if(affectedRows == 0)
+                throw new SQLException("Updating professor failed, no rows affected.");
+            else
+                updated = true;
+
+
+
+        } catch (SQLException e){
+            LOGGER.error(e.getMessage());
+        }
+        return updated;
     }
 
     @Nonnull
@@ -66,14 +95,15 @@ public class ProfessorDAO extends DAO<Professor>{
         Professor professor;
 
         try{
-            String query = "SELECT id, name, url FROM professor";
+            String query = "SELECT id, name, url, display_name FROM professor";
             results = this.conn.createStatement().executeQuery(query);
 
             while(results.next()){
                 professor = new Professor(
                         results.getInt(1),
                         results.getString(2),
-                        results.getString(3)
+                        results.getString(3),
+                        results.getString(4)
                 );
                 professors.add(professor);
 
@@ -92,7 +122,7 @@ public class ProfessorDAO extends DAO<Professor>{
         Professor professor = null;
 
         try{
-            String query = "SELECT id, name, url FROM professor WHERE name = ?";
+            String query = "SELECT id, name, url, display_name FROM professor WHERE name = ?";
             PreparedStatement preparedStatement = this.conn.prepareStatement(query);
             preparedStatement.setString(1,name);
             results = preparedStatement.executeQuery();
@@ -102,7 +132,8 @@ public class ProfessorDAO extends DAO<Professor>{
                 professor = new Professor(
                         results.getInt(1),
                         results.getString(2),
-                        results.getString(3)
+                        results.getString(3),
+                        results.getString(4)
                 );
             }
 
@@ -114,6 +145,40 @@ public class ProfessorDAO extends DAO<Professor>{
         return professor;
     }
 
+    public ArrayList<Professor> searchByValue(String value){
+        ResultSet results;
+
+        ArrayList<Professor> professors = new ArrayList<>();
+        Professor professor;
+
+
+        try{
+            String query = "SELECT id, name, url, display_name FROM professor WHERE UPPER(display_name) LIKE ? OR UPPER(name) LIKE ?";
+            PreparedStatement preparedStatement = this.conn.prepareStatement(query);
+            preparedStatement.setString(1,"%"+value.toUpperCase()+"%");
+            preparedStatement.setString(2,"%"+value.toUpperCase()+"%");
+            results = preparedStatement.executeQuery();
+
+            LOGGER.debug(results.getStatement().toString());
+
+            while(results.next()){
+
+                professor = new Professor(
+                        results.getInt(1),
+                        results.getString(2),
+                        results.getString(3),
+                        results.getString(4)
+                );
+                professors.add(professor);
+
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        return professors;
+    }
+
     @Nullable
     public Professor findById(int id){
         ResultSet results;
@@ -121,7 +186,7 @@ public class ProfessorDAO extends DAO<Professor>{
         Professor professor = null;
 
         try{
-            String query = "SELECT id, name, url FROM professor WHERE id = ?";
+            String query = "SELECT id, name, url, display_name FROM professor WHERE id = ?";
             PreparedStatement preparedStatement = this.conn.prepareStatement(query);
             preparedStatement.setInt(1,id);
             results = preparedStatement.executeQuery();
@@ -131,7 +196,8 @@ public class ProfessorDAO extends DAO<Professor>{
                 professor = new Professor(
                         results.getInt(1),
                         results.getString(2),
-                        results.getString(3)
+                        results.getString(3),
+                        results.getString(4)
                 );
             }
 

@@ -2,6 +2,7 @@ package ical.manager;
 
 import ical.command.IPrivateCommand;
 import ical.command.PrivateCommandContext;
+import ical.command.commands.tools.ClearCommand;
 import ical.command.commands.HelpCommand;
 import ical.command.commands.reminder.ReminderCommand;
 import ical.util.Config;
@@ -31,6 +32,7 @@ public class PrivateCommandManager extends CommandManager{
     public PrivateCommandManager(){
         addCommand(new ReminderCommand());
         addCommand(new HelpCommand(this));
+        addCommand(new ClearCommand());
 
     }
 

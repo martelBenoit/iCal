@@ -1,11 +1,15 @@
-package ical.command.commands;
+package ical.command.commands.tools;
 
 import ical.command.GuildCommandContext;
+import ical.command.commands.AbstractScheduleCommand;
 import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
 import ical.manager.ScheduleManager;
+import ical.manager.TaskScheduler;
 import ical.util.Config;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * InfoCommand class.
@@ -31,7 +35,7 @@ public class InfoCommand extends AbstractScheduleCommand {
     @Override
     public void handle(GuildCommandContext ctx) {
 
-            if (ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId())) {
+            if (ctx.getArgs().isEmpty() && ctx.getEvent().getGuild().getOwnerId().equals(ctx.getEvent().getAuthor().getId())) {
                 String idGuild = ctx.getGuild().getId();
                 GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
                 OGuild guild = guildDAO.find(idGuild);
@@ -72,10 +76,17 @@ public class InfoCommand extends AbstractScheduleCommand {
                         message.append("❎");
                     message.append(" Notfication modification de cours");
 
-                    ctx.getChannel().sendMessage(message).queue();
+                    ctx.getChannel()
+                            .sendMessage(message).queue();
                 }
-            } else
-                ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
+            } else if(ctx.getArgs().size() == 1 && ctx.getArgs().get(0).equals("+") && Config.get("owner_id").equals(ctx.getAuthor().getId())){
+                ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(TaskScheduler.info()).queue());
+            }
+
+            else
+                ctx.getChannel()
+                        .sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande")
+                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
 
     }
 

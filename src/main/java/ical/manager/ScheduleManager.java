@@ -2,6 +2,14 @@ package ical.manager;
 
 import ical.core.RoomSchedule;
 import ical.core.Schedule;
+import ical.database.DAOFactory;
+import ical.database.dao.GuildDAO;
+import ical.database.dao.ProfessorDAO;
+import ical.database.dao.Professor_Picture_By_GuildDAO;
+import ical.database.entity.Lesson;
+import ical.database.entity.OGuild;
+import ical.database.entity.Professor;
+import ical.database.entity.Professor_Picture_By_Guild;
 
 import java.util.HashMap;
 
@@ -47,11 +55,11 @@ public class ScheduleManager {
     /**
      * Get the schedule for the specified guild.
      *
-     * @param idGuild the id of the guild to get his schedule
+     * @param guildID the id of the guild to get his schedule
      * @return the schedule of the guild
      */
-    public Schedule getSchedule(String idGuild){
-        return this.schedules.get(idGuild);
+    public Schedule getSchedule(String guildID){
+        return this.schedules.get(guildID);
     }
 
     /**
@@ -77,6 +85,36 @@ public class ScheduleManager {
 
     public RoomSchedule getRoomSchedule(){
         return roomSchedule;
+    }
+
+    public void updatePP(String idGuild){
+
+        Schedule schedule = getSchedule(idGuild);
+        GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
+        ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
+        Professor_Picture_By_GuildDAO professorPictureByGuildDAO = (Professor_Picture_By_GuildDAO) DAOFactory.getProfessorPictureByGuild();
+
+        OGuild guild = guildDAO.find(idGuild);
+        if(guild != null){
+            if(guild.usingSpecificPPGranted()){
+                for(Lesson lesson : schedule.getLessons()){
+                    Professor actualProfessor = lesson.getProfessor();
+                    Professor_Picture_By_Guild professorPictureByGuild = professorPictureByGuildDAO.findByGuildAndProfessor(guild,actualProfessor);
+                    if(professorPictureByGuild != null){
+                        actualProfessor.setUrl(professorPictureByGuild.getUrl());
+                    }
+                }
+            }
+            else{
+                for(Lesson lesson : schedule.getLessons()){
+                    Professor actualProfessor = lesson.getProfessor();
+                    Professor defaultProfessor = professorDAO.findById(actualProfessor.getId());
+                    if(defaultProfessor != null){
+                        actualProfessor.setUrl(defaultProfessor.getUrl());
+                    }
+                }
+            }
+        }
     }
 
 }

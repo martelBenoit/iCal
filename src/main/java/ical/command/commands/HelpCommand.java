@@ -5,6 +5,7 @@ import ical.manager.CommandManager;
 import ical.manager.GuildCommandManager;
 import ical.util.Config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,20 +42,39 @@ public class HelpCommand implements IGuildCommand, IPrivateCommand {
 
             if (args.isEmpty()) {
 
+                ArrayList<StringBuilder> messages = new ArrayList<>();
+
                 StringBuilder builder = new StringBuilder();
+                StringBuilder temp;
+
 
                 builder.append("__**Liste des commandes du bot iCal**__\n\n");
 
                 for (ICommand command : manager.getCommands()) {
+                    temp = new StringBuilder();
                     if (!command.getName().equalsIgnoreCase("help")) {
-                        builder.append('`').append(command.getName()).append("`\n");
-                        builder.append(command.getHelp());
-                        builder.append("\n\n");
+                        temp.append('`').append(command.getName()).append("`\n");
+                        temp.append(command.getHelp());
+                        temp.append("\n\n");
+                    }
+                    if(builder.length()+temp.length() > 2000){
+                        messages.add(builder);
+                        builder = new StringBuilder();
+                        builder.append("\n");
+                        builder.append(temp);
+                    }
+                    else{
+                        builder.append(temp);
                     }
 
                 }
+                messages.add(builder);
 
-                ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(builder.toString()).queue());
+                for(StringBuilder stringBuilder : messages){
+                    ctx.getEvent().getAuthor().openPrivateChannel().queue((cha) -> cha.sendMessage(stringBuilder.toString()).queue());
+                }
+
+
 
             }
 

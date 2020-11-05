@@ -9,14 +9,17 @@ import ical.util.Config;
 
 import me.duncte123.botcommons.BotCommons;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,32 +33,34 @@ public class Listener extends ListenerAdapter {
     private final ScheduleManager scheduleManager = new ScheduleManager();
     private final GuildCommandManager guildCommandManager = new GuildCommandManager(scheduleManager);
     private final PrivateCommandManager privateCommandManager = new PrivateCommandManager();
-    private final TaskScheduler taskScheduler = new TaskScheduler();
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
 
-        taskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
-        taskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager,event.getJDA()),5);
-        taskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
-        taskScheduler.runMinutelySpecial(
+        TaskScheduler.runMinutely("CheckSchedule", new CheckSchedule(event.getJDA(),scheduleManager));
+        TaskScheduler.runPeriod("UpdateSchedule",new UpdateSchedule(scheduleManager,event.getJDA()),5);
+        TaskScheduler.runAtMidnight("UpdateAvatar",new UpdateAvatar(event.getJDA()));
+        TaskScheduler.runMinutelySpecial(
                 "UpdateLessonRemainingTimeMessage",
                 new UpdateRemainingTimeLessonMessage(event.getJDA())
         );
-        taskScheduler.runAt8H5MEveryMonday(
+        TaskScheduler.runAt8H5MEveryMonday(
                 "WeekInformationPlanning",
                 new WeekInformationPlanning(event.getJDA(),scheduleManager)
         );
-        taskScheduler.runMinutely("CheckReminder",new CheckReminder(event.getJDA()));
+        TaskScheduler.runMinutely("CheckReminder",new CheckReminder(event.getJDA()));
 
         //Run synchronously instead of async with waiter
         new UpdateAvatar(event.getJDA()).run();
 
+        LOGGER.info("Retrieving guilds and initializing schedules...");
         GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
         ArrayList<OGuild> guilds = guildDAO.findAll();
         for(OGuild guild : guilds){
             scheduleManager.addSchedule(guild.getIdGuild(),new Schedule(guild.getUrlSchedule()));
+            scheduleManager.updatePP(guild.getIdGuild());
         }
+        LOGGER.info("Initialization completed ! ");
 
         LOGGER.info("Configuration done !");
         LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());
@@ -171,4 +176,21 @@ public class Listener extends ListenerAdapter {
 
     }
 
+
+    @Override
+    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+
+        try{
+            Message message = event.retrieveMessage().complete();
+            message.getAuthor();
+            if(event.getJDA().getSelfUser().getIdLong() == message.getAuthor().getIdLong()){
+                String unicodeCross = "U+274c";
+                if(event.getReaction().getReactionEmote().getAsCodepoints().equals(unicodeCross))
+                    message.delete().queue();
+            }
+        }catch(Exception e){
+            LOGGER.error(e.getMessage());
+        }
+
+    }
 }

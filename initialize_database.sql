@@ -80,3 +80,21 @@ create table lesson_remaining_time
 create unique index lesson_remaining_time_id_message_uindex
     on lesson_remaining_time (id_message);
 
+alter table professor
+    add display_name varchar(255);
+
+alter table guild
+    add use_specific_pp_professor boolean default true;
+
+create table professor_picture_by_guild
+(
+    id_guild            varchar(255)
+        constraint guild_fk
+            references guild,
+    id_professor        integer
+        constraint professor_fk
+            references professor,
+    url                 text,
+    modification_author varchar(255),
+    last_modification   timestamp default CURRENT_TIMESTAMP
+);

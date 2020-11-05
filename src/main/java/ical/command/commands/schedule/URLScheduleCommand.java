@@ -10,6 +10,7 @@ import ical.util.Config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * URLScheduleCommand class.
@@ -50,19 +51,29 @@ public class URLScheduleCommand extends AbstractScheduleCommand {
                             guild.setUrlSchedule(urlString);
                             this.scheduleManager.getSchedule(ctx.getGuild().getId()).setURL(url);
                             if (guildDAO.update(guild))
-                                ctx.getChannel().sendMessage("✅ Mise à jour du lien du planning réalisée !").queue();
+                                ctx.getChannel()
+                                        .sendMessage("✅ Mise à jour du lien du planning réalisée !")
+                                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                             else
-                                ctx.getChannel().sendMessage("❌ Ça n'a pas fonctionné..").queue();
+                                ctx.getChannel()
+                                        .sendMessage("❌ Ça n'a pas fonctionné..")
+                                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
 
                         }
 
                     } catch (MalformedURLException e) {
-                        ctx.getChannel().sendMessage("❌ Ton lien n'est pas valide !").queue();
+                        ctx.getChannel()
+                                .sendMessage("❌ Ton lien n'est pas valide !")
+                                .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                     }
                 } else
-                    ctx.getChannel().sendMessage("❌ Tu dois renseigner un lien avec cette commande").queue();
+                    ctx.getChannel()
+                            .sendMessage("❌ Tu dois renseigner un lien avec cette commande")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
             else
-                ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
+                ctx.getChannel()
+                        .sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande")
+                        .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
         }
 
 

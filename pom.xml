@@ -6,7 +6,7 @@
 
     <groupId>com.github.martelBenoit</groupId>
     <artifactId>iCal</artifactId>
-    <version>1.8.2</version>
+    <version>1.8.3</version>
 
     <packaging>jar</packaging>
 
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.0_197</version>
+            <version>4.2.0_214</version>
         </dependency>
         <dependency>
             <groupId>com.jagrosh</groupId>

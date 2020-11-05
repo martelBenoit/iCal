@@ -109,5 +109,16 @@ public class DAOFactory {
         return new ReminderDAO(conn);
     }
 
+    /**
+     * Get the Professor Picture By Guild DAO
+     *
+     * @return the Professor Picture By Guild DAO
+     */
+    @NotNull
+    @Contract(" -> new")
+    public static DAO<?> getProfessorPictureByGuild(){
+        return new Professor_Picture_By_GuildDAO(conn);
+    }
+
 
 }

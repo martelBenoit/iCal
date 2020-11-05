@@ -2,6 +2,7 @@ package ical.core;
 
 import ical.database.entity.Lesson;
 import ical.database.entity.MovedLesson;
+import ical.database.entity.Professor;
 import ical.util.Tools;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -12,6 +13,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Schedule class.
@@ -320,6 +322,18 @@ public class Schedule extends AbstractSchedule {
     }
 
     /**
+     * Retrieve all the lessons scheduled with the professor passed as a parameter
+     * @param professor the professor
+     * @return the lessons list with the professor
+     */
+    public List<Lesson> getLessonWithProfessor(Professor professor){
+        if(professor != null && professor.getDisplayName() != null){
+            return lessons.stream().filter(l -> l.getProfessor().getDisplayName().equals(professor.getDisplayName()) && l.timeRemainingInSeconds() > 0).collect(Collectors.toList());
+        }
+        else return new ArrayList<>();
+    }
+
+    /**
      * Check if the guild has already been notified.
      *
      * @return true if the guild has already been notified, else otherwise
@@ -343,5 +357,6 @@ public class Schedule extends AbstractSchedule {
     public void resetPreviousLessons(){
         this.previousLessons = this.lessons;
     }
+
 
 }

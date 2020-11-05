@@ -2,6 +2,8 @@ package ical.command.commands;
 
 import ical.command.IGuildCommand;
 import ical.manager.ScheduleManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AbstractScheduleCommand class.
@@ -13,6 +15,8 @@ import ical.manager.ScheduleManager;
  * @since 1.0
  */
 public abstract class AbstractScheduleCommand implements IGuildCommand {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractScheduleCommand.class);
 
     /**
      * the schedule manager

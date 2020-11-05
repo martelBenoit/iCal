@@ -1,4 +1,4 @@
-package ical.command.commands;
+package ical.command.commands.tools;
 
 import ical.command.GuildCommandContext;
 import ical.command.IGuildCommand;
@@ -6,6 +6,8 @@ import ical.database.DAOFactory;
 import ical.database.dao.GuildDAO;
 import ical.database.entity.OGuild;
 import ical.util.Config;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * DefaultChannelCommand class.
@@ -31,15 +33,19 @@ public class DefaultChannelCommand implements IGuildCommand {
                     if (guild != null) {
                         guild.setIdChannel(ctx.getChannel().getId());
                         if (guildDAO.update(guild))
-                            ctx.getChannel().sendMessage("✅ Mise à jour du salon par défaut effectuée !").queue();
+                            ctx.getChannel()
+                                    .sendMessage("✅ Mise à jour du salon par défaut effectuée !")
+                                    .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
                         else
                             ctx.getChannel()
                                     .sendMessage("❌ La prise en compte du nouveau salon par défaut n'a pas fonctionnée")
-                                    .queue();
+                                    .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
 
                     }
                 } else
-                    ctx.getChannel().sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande").queue();
+                    ctx.getChannel()
+                            .sendMessage("❌ Petit coquin tu n'es pas autorisé à exécuter cette commande")
+                            .queue((message -> message.delete().queueAfter(5, TimeUnit.SECONDS)));
         }
 
 

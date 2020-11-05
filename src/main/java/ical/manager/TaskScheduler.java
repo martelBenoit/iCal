@@ -8,8 +8,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,7 +31,8 @@ public class TaskScheduler {
     /**
      * Executor service
      */
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(15);
+    private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(20);
+
 
     /**
      * Create a task that starts every minute.
@@ -39,7 +42,7 @@ public class TaskScheduler {
      * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void runMinutelySpecial(String name, Runnable runnable) {
+    public static void runMinutelySpecial(String name, Runnable runnable) {
         LocalDateTime dateNextRun = LocalDate.now().atTime(LocalDateTime.now().getHour(),LocalDateTime.now().getMinute(),0);
         dateNextRun = dateNextRun.plusSeconds(50);
 
@@ -54,7 +57,7 @@ public class TaskScheduler {
      * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void runMinutely(String name, Runnable runnable) {
+    public static void runMinutely(String name, Runnable runnable) {
         LocalDateTime dateNextRun = LocalDate.now().atTime(LocalDateTime.now().getHour(),LocalDateTime.now().getMinute(),0);
         dateNextRun = dateNextRun.plusMinutes(1);
 
@@ -71,7 +74,7 @@ public class TaskScheduler {
      * @param runnable the runnable object to launch
      * @param period   the period in minutes
      */
-    public void runPeriod(String name, Runnable runnable, int period) {
+    public static void runPeriod(String name, Runnable runnable, int period) {
 
         if (period > 0 && period < 60) {
             LOGGER.info("Task '" + name + "' will run every " + period + " minute(s).");
@@ -86,7 +89,7 @@ public class TaskScheduler {
      * @param name     the name of the task
      * @param runnable the runnable object to launch
      */
-    public void runAtMidnight(String name, Runnable runnable) {
+    public static void runAtMidnight(String name, Runnable runnable) {
 
         long delayTime;
         final long initialDelay = LocalDateTime.now().until(
@@ -103,7 +106,7 @@ public class TaskScheduler {
         executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
     }
 
-    public void runAt8H5MEveryMonday(String name, Runnable runnable) {
+    public static void runAt8H5MEveryMonday(String name, Runnable runnable) {
 
 
         LocalDateTime dateNextRun = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 5, 0);
@@ -116,22 +119,20 @@ public class TaskScheduler {
         executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toSeconds(7), TimeUnit.SECONDS);
     }
 
-    /**
-     * Create a task that starts only one time.
-     *
-     * @param name     the name of the task
-     * @param runnable the runnable object to launch
-     */
-    public void runOneTime(String name, Runnable runnable) {
-        LOGGER.info("Running '" + name);
-        executorService.execute(runnable);
-    }
 
-    /**
-     * Shutdown the executor and cancel any running task
-     */
-    public void shutdown(){
-        executorService.shutdownNow();
+    public static String info(){
+        StringBuilder ret = new StringBuilder();
+        if (executorService instanceof ScheduledThreadPoolExecutor) {
+            ScheduledThreadPoolExecutor implementation = (ScheduledThreadPoolExecutor) executorService;
+            ret.append("Nombre de thread actif :\t\t\t\t\t\t\t").append(implementation.getActiveCount()).append("\n");
+            ret.append("Nombre d'élément dans la queue :\t").append(implementation.getQueue().size()).append("\n");
+            ret.append("Contenu de la queue :\n");
+            for(Object o : implementation.getQueue().toArray()){
+                ret.append("\t").append(o.toString()).append("\n");
+            }
+
+        }
+        return ret.toString();
     }
 
 }
