@@ -169,8 +169,10 @@ public class ProfessorCommand extends AbstractScheduleCommand {
 
                                 message.delete().queueAfter(2, TimeUnit.MINUTES, (success) -> isChecked.set(true), (failure) -> isChecked.set(true));
 
-                                String unicodeNo = "U+1ff4e";
+                                String unicodeNo = "U+1f44e";
                                 String unicodeYes = "U+1f44d";
+                                message.addReaction(unicodeYes).queue();
+                                message.addReaction(unicodeNo).queue();
                                 Message m;
 
                                 while (!isChecked.get()) {
@@ -204,7 +206,7 @@ public class ProfessorCommand extends AbstractScheduleCommand {
                                                     }
                                                 }
                                                 // Récupération de la réaction NO
-                                                else if (reaction.getReactionEmote().getAsCodepoints().equals(unicodeNo)) {
+                                                if (reaction.getReactionEmote().getAsCodepoints().equals(unicodeNo)) {
                                                     if (reaction.retrieveUsers().stream().anyMatch(u -> u.getIdLong() == ctx.getGuild().getOwnerIdLong())) {
                                                         ctx.getChannel().sendMessage("Changement de photo de profil pour " + professor.getDisplayName() + " annulé")
                                                                 .queue((reply -> reply.delete().queueAfter(5, TimeUnit.SECONDS)));
