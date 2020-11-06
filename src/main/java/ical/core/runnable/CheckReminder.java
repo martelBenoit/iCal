@@ -48,37 +48,40 @@ public class CheckReminder implements Runnable {
     @Override
     public void run() {
 
-        for(Reminder reminder : reminderDAO.findAll()){
-            if(reminder.timeRemainingInSeconds() <= 0){
-                try{
-                    String message = "**Votre rappel :** "+reminder.getName();
-                    if(reminder.getGuild() == null){
-                        jda.openPrivateChannelById(reminder.getRecipient()).queue((privateChannel -> privateChannel.sendMessage(message).queue()));
-                        if(!reminderDAO.delete(reminder))
-                            LOGGER.error("Error when deleting reminder "+reminder.getId());
-                    }
-                    else{
-                        Guild guild = jda.getGuildById(reminder.getGuild().getIdGuild());
-                        if(guild != null){
-                            TextChannel channel = guild.getTextChannelById(reminder.getRecipient());
-                            if(channel != null) {
-                                channel.sendMessage(message).queue();
-                                if(!reminderDAO.delete(reminder))
-                                    LOGGER.error("Error when deleting reminder "+reminder.getId());
-                            }
-                            else
-                                LOGGER.error("Channel "+reminder.getRecipient()+ "doesn't exist");
-                        }
-                        else
-                            LOGGER.error("Guild "+reminder.getGuild().getIdGuild()+ "doesn't exist");
+        try {
 
+            for (Reminder reminder : reminderDAO.findAll()) {
+                if (reminder.timeRemainingInSeconds() <= 0) {
+                    try {
+                        String message = "**Votre rappel :** " + reminder.getName();
+                        if (reminder.getGuild() == null) {
+                            jda.openPrivateChannelById(reminder.getRecipient()).queue((privateChannel -> privateChannel.sendMessage(message).queue()));
+                            if (!reminderDAO.delete(reminder))
+                                LOGGER.error("Error when deleting reminder " + reminder.getId());
+                        } else {
+                            Guild guild = jda.getGuildById(reminder.getGuild().getIdGuild());
+                            if (guild != null) {
+                                TextChannel channel = guild.getTextChannelById(reminder.getRecipient());
+                                if (channel != null) {
+                                    channel.sendMessage(message).queue();
+                                    if (!reminderDAO.delete(reminder))
+                                        LOGGER.error("Error when deleting reminder " + reminder.getId());
+                                } else
+                                    LOGGER.error("Channel " + reminder.getRecipient() + "doesn't exist");
+                            } else
+                                LOGGER.error("Guild " + reminder.getGuild().getIdGuild() + "doesn't exist");
+
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage());
+                        if (!reminderDAO.delete(reminder))
+                            LOGGER.error("Error when deleting reminder " + reminder.getId());
                     }
-                }catch (Exception e){
-                    LOGGER.error(e.getMessage());
-                    if(!reminderDAO.delete(reminder))
-                        LOGGER.error("Error when deleting reminder "+reminder.getId());
                 }
             }
+
+        }catch(Exception e){
+            LOGGER.error(e.getMessage(),e.fillInStackTrace());
         }
 
     }

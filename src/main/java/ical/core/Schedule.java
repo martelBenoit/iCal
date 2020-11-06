@@ -242,6 +242,7 @@ public class Schedule extends AbstractSchedule {
     /**
      * Get the list of lessons for the week.
      *
+     * @param weekNumber the week number
      * @return the list of lessons for the week
      */
     public ArrayList<Lesson> getWeekLessons(final int weekNumber){

@@ -3,7 +3,7 @@ package ical.database.entity;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Room class. Implements {@link Comparable<Room>}
+ * Room class. Implements {@link Room}
  *
  * @author Benoît Martel
  * @version 1.0

@@ -11,8 +11,30 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 
+/**
+ * Bot class.
+ * <br>The launcher class.
+ *
+ * @author Benoît Martel
+ * @version 1.1
+ * @since 1.0
+ */
 public class Bot {
 
+    /**
+     * Main method.
+     * <br>This method initializes and launches the bot with the following {@link GatewayIntent}:
+     * <br>
+     *     <ul>
+     *         <li>{@code GUILD_MESSAGES}</li>
+     *         <li>{@code DIRECT_MESSAGES}</li>
+     *         <li>{@code GUILD_MESSAGE_REACTIONS}</li>
+     *     </ul>
+     * <br>Use {@link Listener}
+     * <br>The {@code JDA_TOKEN} is in the configuration file.
+     * @param args no args required
+     * @throws LoginException throw login exception
+     */
     public static void main(String[] args) throws LoginException {
         ConnectionSingleton.getInstance();
         ArrayList<GatewayIntent> intents = new ArrayList<>();

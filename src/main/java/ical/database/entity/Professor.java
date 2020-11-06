@@ -124,7 +124,7 @@ public class Professor extends Entity implements Comparable{
     /**
      * Set the url of the professor.
      *
-     * @param id the url of the professor
+     * @param url the url of the professor
      */
     public void setUrl(String url){
         this.url = url;

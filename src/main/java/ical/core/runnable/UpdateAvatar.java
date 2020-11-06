@@ -25,18 +25,24 @@ public class UpdateAvatar implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.info("Avatar updating..");
-        try {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            ImageIO.write(todayImage(), "png", output);
-            byte[] imageInByte = output.toByteArray();
+        try{
 
-            jda.getSelfUser().getManager().setAvatar(Icon.from(imageInByte)).complete();
-            LOGGER.info("Successfully updated avatar ");
+            LOGGER.info("Avatar updating..");
+            try {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                ImageIO.write(todayImage(), "png", output);
+                byte[] imageInByte = output.toByteArray();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("Failed to update avatar");
+                jda.getSelfUser().getManager().setAvatar(Icon.from(imageInByte)).complete();
+                LOGGER.info("Successfully updated avatar ");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                LOGGER.error("Failed to update avatar");
+            }
+
+        }catch(Exception e){
+            LOGGER.error(e.getMessage(),e.fillInStackTrace());
         }
 
     }

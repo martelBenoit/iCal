@@ -18,7 +18,7 @@ import java.util.Random;
  *      2. {@code Colorize.get(String)} - returns a hex color of a spacified name.
  *         If the color doesn't exist in the class - returns {@code null}.
  *      3. {@code Colorize.checkColorAvailability(String)} - returns a {@code boolean} value that
- *         represents color's availability: <tt>true</tt> - if available, <tt>false</tt> - if not.
+ *         represents color's availability: <b>true</b> - if available, <b>false</b> - if not.
  * </p>
  */
 public class Colorize {
@@ -59,7 +59,8 @@ public class Colorize {
     /**
      * Returns a random hex color string.
      *
-     * @return Random hex <tt>String</tt> color representation.
+     * @param seed the seed
+     * @return Random hex <b>String</b> color representation.
      */
     public static String get(long seed) {
         Random generator = new Random();
@@ -90,7 +91,7 @@ public class Colorize {
      * Returns a hex color string
      *
      * @param colorName the name of the needed color.
-     * @return Hex <tt>String</tt> color representation if it exists, and {@code null} if the color doesn't exist in the
+     * @return Hex <b>String</b> color representation if it exists, and {@code null} if the color doesn't exist in the
      * class.
      */
     public static String get(String colorName) {

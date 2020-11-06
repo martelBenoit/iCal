@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Lesson entity class. Implements {@link Comparable<Lesson>}.
+ * Lesson entity class. Implements {@link Lesson}.
  *
  * <br>This class represents a lesson.
  * @author Benoît Martel

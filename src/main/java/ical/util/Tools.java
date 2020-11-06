@@ -77,7 +77,10 @@ public class Tools {
     }
 
     /**
-     * Get a random nice color
+     * Get a random nice color.
+     *
+     * @param seed the seed
+     * @param multiple a multiple 
      * @return a random nice color
      */
     public static Color getRandomColor(long seed, int multiple){
@@ -96,7 +99,5 @@ public class Tools {
         }
         return hash;
     }
-
-
 
 }

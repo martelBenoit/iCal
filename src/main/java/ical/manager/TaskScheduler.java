@@ -3,16 +3,14 @@ package ical.manager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Arrays;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
+import java.util.concurrent.*;
 
 /**
  * Class TaskScheduler.<br>
@@ -108,30 +106,43 @@ public class TaskScheduler {
 
     public static void runAt8H5MEveryMonday(String name, Runnable runnable) {
 
-
         LocalDateTime dateNextRun = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atTime(8, 5, 0);
         long delayTime = LocalDateTime.now().until(dateNextRun, ChronoUnit.SECONDS);
 
         LOGGER.info("Task '" + name + "' will run at " + dateNextRun + " in " + delayTime / 60 / 60 + " hour(s)");
         LOGGER.info("Second execution scheduled at : " + LocalDateTime.now().plusSeconds(delayTime + TimeUnit.DAYS.toSeconds(7)));
-
-
+        
         executorService.scheduleAtFixedRate(runnable, delayTime, TimeUnit.DAYS.toSeconds(7), TimeUnit.SECONDS);
     }
 
 
     public static String info(){
         StringBuilder ret = new StringBuilder();
-        if (executorService instanceof ScheduledThreadPoolExecutor) {
-            ScheduledThreadPoolExecutor implementation = (ScheduledThreadPoolExecutor) executorService;
-            ret.append("Nombre de thread actif :\t\t\t\t\t\t\t").append(implementation.getActiveCount()).append("\n");
-            ret.append("Nombre d'élément dans la queue :\t").append(implementation.getQueue().size()).append("\n");
-            ret.append("Contenu de la queue :\n");
-            for(Object o : implementation.getQueue().toArray()){
-                ret.append("\t").append(o.toString()).append("\n");
-            }
+        try{
+            if (executorService instanceof ScheduledThreadPoolExecutor) {
+                ScheduledThreadPoolExecutor implementation = (ScheduledThreadPoolExecutor) executorService;
+                ret.append("Nombre de thread actif         :\t").append(implementation.getActiveCount()).append("\n");
+                ret.append("Nombre d'élément dans la queue :\t").append(implementation.getQueue().size()).append("\n");
+                ret.append("Contenu de la queue            :\n");
 
+                for(Object task : implementation.getQueue()){
+
+                    Field callableField = task.getClass().getSuperclass().getDeclaredField("callable");
+                    callableField.setAccessible(true);
+                    Object callable = callableField.get(task);
+
+                    Field runnableField = callable.getClass().getDeclaredField("task");
+                    runnableField.setAccessible(true);
+                    Object runnable = runnableField.get(callable);
+
+                    ret.append("\t").append(runnable.getClass().getCanonicalName()).append("\n");
+                }
+
+            }
+        }catch(NoSuchFieldException | IllegalAccessException exception){
+            LOGGER.error(exception.getMessage(),exception.fillInStackTrace());
         }
+
         return ret.toString();
     }
 

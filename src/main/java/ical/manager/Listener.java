@@ -34,6 +34,7 @@ public class Listener extends ListenerAdapter {
     private final GuildCommandManager guildCommandManager = new GuildCommandManager(scheduleManager);
     private final PrivateCommandManager privateCommandManager = new PrivateCommandManager();
 
+
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
 
@@ -66,8 +67,6 @@ public class Listener extends ListenerAdapter {
         LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());
 
     }
-
-
 
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event){

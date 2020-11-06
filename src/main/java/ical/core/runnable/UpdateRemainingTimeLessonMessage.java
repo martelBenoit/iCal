@@ -23,59 +23,60 @@ public class UpdateRemainingTimeLessonMessage implements Runnable {
 
     @Override
     public void run() {
+        try {
 
-        LessonRemainingTimeDAO lessonRemainingTimeDAO = (LessonRemainingTimeDAO) DAOFactory.getLesson_Remaining_Time();
-        for(LessonRemainingTime lessonRemainingTime : lessonRemainingTimeDAO.findAll()){
-            TextChannel channel = jda.getTextChannelById(lessonRemainingTime.getId_channel());
-            if(channel != null){
-                channel.retrieveMessageById(lessonRemainingTime.getId_message()).queue( (message) -> {
-                    if (message.getEmbeds().size() == 1) {
-                        EmbedBuilder em = new EmbedBuilder(message.getEmbeds().get(0));
-                        if(lessonRemainingTime.getLesson().timeRemainingInSeconds() <= 0){
-                            lessonRemainingTimeDAO.delete(lessonRemainingTime);
-                            channel.deleteMessageById(lessonRemainingTime.getId_message()).queue();
+            LessonRemainingTimeDAO lessonRemainingTimeDAO = (LessonRemainingTimeDAO) DAOFactory.getLesson_Remaining_Time();
+            for (LessonRemainingTime lessonRemainingTime : lessonRemainingTimeDAO.findAll()) {
+                TextChannel channel = jda.getTextChannelById(lessonRemainingTime.getId_channel());
+                if (channel != null) {
+                    channel.retrieveMessageById(lessonRemainingTime.getId_message()).queue((message) -> {
+                        if (message.getEmbeds().size() == 1) {
+                            EmbedBuilder em = new EmbedBuilder(message.getEmbeds().get(0));
+                            if (lessonRemainingTime.getLesson().timeRemainingInSeconds() <= 0) {
+                                lessonRemainingTimeDAO.delete(lessonRemainingTime);
+                                channel.deleteMessageById(lessonRemainingTime.getId_message()).queue();
+                            } else {
+                                if (message.getEmbeds().get(0).getTitle().contains("Plusieurs")) {
+                                    em.setTitle(
+                                            "  Plusieurs cours à venir dans "
+                                                    + lessonRemainingTime.getLesson().timeRemaining(),
+                                            null
+                                    );
+                                } else
+                                    em.setTitle(
+                                            "  "
+                                                    + lessonRemainingTime.getLesson().getName()
+                                                    + "  dans "
+                                                    + lessonRemainingTime.getLesson().timeRemaining(),
+                                            null
+                                    );
+                                channel.editMessageById(lessonRemainingTime.getId_message(), em.build()).queue();
+                            }
                         }
-                        else{
-                            if (message.getEmbeds().get(0).getTitle().contains("Plusieurs")) {
-                                em.setTitle(
-                                        "  Plusieurs cours à venir dans "
-                                                + lessonRemainingTime.getLesson().timeRemaining(),
-                                        null
-                                );
-                            } else
-                                em.setTitle(
-                                        "  "
-                                                + lessonRemainingTime.getLesson().getName()
-                                                + "  dans "
-                                                + lessonRemainingTime.getLesson().timeRemaining(),
-                                        null
-                                );
-                            channel.editMessageById(lessonRemainingTime.getId_message(), em.build()).queue();
+                    }, (failure) -> {
+                        // if the retrieve request failed this will be called (also async)
+                        if (failure instanceof ErrorResponseException) {
+                            ErrorResponseException ex = (ErrorResponseException) failure;
+                            if (ex.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                                // this means the message doesn't exist
+                                LOGGER.error("Message already deleted on discord");
+                            } else {
+                                LOGGER.error(ex.getErrorResponse().getMeaning());
+                            }
+                        } else {
+                            LOGGER.error("Error while searching for message", failure.fillInStackTrace());
                         }
-                    }
-                },(failure) -> {
-                    // if the retrieve request failed this will be called (also async)
-                    if (failure instanceof ErrorResponseException) {
-                        ErrorResponseException ex = (ErrorResponseException) failure;
-                        if (ex.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
-                            // this means the message doesn't exist
-                            LOGGER.error("Message already deleted on discord");
-                        }
-                        else{
-                            LOGGER.error(ex.getErrorResponse().getMeaning());
-                        }
-                    }
-                    else{
-                        LOGGER.error("Error while searching for message",failure.fillInStackTrace());
-                    }
-                    if(!lessonRemainingTimeDAO.delete(lessonRemainingTime))
-                        LOGGER.error("Impossible to delete the record in the database");
-                });
+                        if (!lessonRemainingTimeDAO.delete(lessonRemainingTime))
+                            LOGGER.error("Impossible to delete the record in the database");
+                    });
 
+                } else
+                    LOGGER.error("Channel id is'nt valid !");
             }
 
-            else
-                LOGGER.error("Channel id is'nt valid !");
+
+        }catch(Exception e){
+            LOGGER.error(e.getMessage(),e.fillInStackTrace());
         }
 
     }

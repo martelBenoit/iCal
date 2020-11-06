@@ -6,7 +6,7 @@
 
     <groupId>com.github.martelBenoit</groupId>
     <artifactId>iCal</artifactId>
-    <version>1.9.1</version>
+    <version>1.9.2</version>
 
     <packaging>jar</packaging>
 
@@ -118,7 +118,6 @@
             <artifactId>botCommons</artifactId>
             <version>1.0.88</version>
         </dependency>
-
     </dependencies>
 
 

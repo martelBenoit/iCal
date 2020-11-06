@@ -14,8 +14,9 @@ import java.util.ArrayList;
  * DAO abstract class.
  *
  * <br> This class is used as a template to create the DAOs for the entities present in the database.
- * @param <T>
+* @param <T> the entity object used for the DAO
  */
+
 public abstract class DAO<T extends Entity> {
 
     /**

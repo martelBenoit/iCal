@@ -65,6 +65,7 @@ public class OGuild extends Entity{
      * @param urlSchedule the url of the schedule
      * @param modifNotif the boolean which indicates whether lessons modifications notifications are active or not
      * @param lessonNotif the boolean which indicates whether lesson notifications are active or not
+     * @param using_specific_pp the boolean which indicates whether specific pp are used or not
      */
     public OGuild(@Nonnull String idGuild,
                   String idChannel,
