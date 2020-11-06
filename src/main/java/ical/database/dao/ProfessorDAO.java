@@ -1,6 +1,5 @@
 package ical.database.dao;
 
-
 import ical.database.entity.Professor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
  * ProfessorDAO class.
  *
  * @author Benoît Martel
- * @version 1.1
+ * @version 1.2
  */
 public class ProfessorDAO extends DAO<Professor>{
 
@@ -224,6 +223,30 @@ public class ProfessorDAO extends DAO<Professor>{
 
         }catch(SQLException e){
             e.printStackTrace();
+        }
+
+        return professor;
+    }
+
+    /**
+     * Retrieve the professor by id or keyword.
+     * <br>Return the professor only if only one match with the parameter.
+     *
+     * @param param an id or a keyword
+     * @return the professor found or null
+     */
+    public Professor getProfessorFromParam(String param){
+
+        Professor professor = null;
+        try{
+            int id_prof = Integer.parseInt(param);
+            professor = findById(id_prof);
+
+        }catch (NumberFormatException e){
+            ArrayList<Professor> professors = searchByValue(param);
+            if(professors.size() == 1){
+                professor = professors.get(0);
+            }
         }
 
         return professor;

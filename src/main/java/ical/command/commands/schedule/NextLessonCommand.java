@@ -87,19 +87,7 @@ public class NextLessonCommand extends AbstractScheduleCommand {
             else if(ctx.getArgs().size() == 1){
 
                 ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
-
-                String param = ctx.getArgs().get(0);
-                Professor professor = null;
-                try{
-                    int id_prof = Integer.parseInt(param);
-                    professor = professorDAO.findById(id_prof);
-
-                }catch (NumberFormatException e){
-                    ArrayList<Professor> professors = professorDAO.searchByValue(param);
-                    if(professors.size() == 1){
-                        professor = professors.get(0);
-                    }
-                }
+                Professor professor = professorDAO.getProfessorFromParam(ctx.getArgs().get(0));
 
                 if(professor != null){
                     Lesson lesson = scheduleManager.getSchedule(ctx.getGuild().getId()).getNextLesson(professor);
