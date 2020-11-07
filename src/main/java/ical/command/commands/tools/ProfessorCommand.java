@@ -217,8 +217,6 @@ public class ProfessorCommand extends AbstractScheduleCommand {
                                             }
 
                                         }
-
-                                        Thread.sleep(1000);
                                     } catch (ErrorResponseException errorResponseException) {
                                         isChecked.set(true);
                                     } catch (Exception e) {

@@ -5,10 +5,12 @@ import ical.command.commands.AbstractScheduleCommand;
 import ical.database.entity.Lesson;
 import ical.manager.ScheduleManager;
 import ical.util.Config;
+import ical.util.Tools;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,7 +48,25 @@ public class TodayLessonsCommand extends AbstractScheduleCommand {
                     eb.addField("\u200b\n*Fin du cours*", lesson.getEndTime(), true);
                     eb.addBlankField(false);
                 }
-                ctx.getChannel().sendMessage(eb.build()).queue();
+
+                Lesson lesson = lessons.stream().max(Comparator.comparing(Lesson::getStartTime)).orElse(null);
+                if(lesson != null){
+                    try{
+                        int timeRemaining = Tools.timeRemainingInSeconds(lesson.getStartDate());
+                        ctx.getChannel()
+                                .sendMessage(eb.build())
+                                .queue(
+                                        (message -> message.delete().queueAfter(timeRemaining, TimeUnit.SECONDS))
+                                );
+                    }catch (Exception e){
+                        ctx.getChannel().sendMessage(eb.build()).queue();
+                    }
+
+                }
+                else{
+                    ctx.getChannel().sendMessage(eb.build()).queue();
+                }
+
             } else {
                 ctx.getChannel()
                         .sendMessage("Pas de cours aujourd'hui, repose toi !")

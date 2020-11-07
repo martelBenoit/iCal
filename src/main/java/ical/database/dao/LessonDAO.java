@@ -2,7 +2,6 @@ package ical.database.dao;
 
 import ical.database.DAOFactory;
 import ical.database.entity.Lesson;
-import ical.database.entity.OGuild;
 import ical.database.entity.Professor;
 
 import javax.annotation.Nonnull;

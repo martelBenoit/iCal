@@ -22,7 +22,7 @@ public abstract class DAO<T extends Entity> {
     /**
      * the sql connection.
      */
-    protected Connection conn;
+    protected final Connection conn;
 
     /**
      * the logger.

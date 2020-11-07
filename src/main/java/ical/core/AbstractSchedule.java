@@ -40,7 +40,7 @@ public abstract class AbstractSchedule {
     /**
      * the lessons list.
      */
-    protected ArrayList<Lesson> lessons = new ArrayList<>();
+    private final ArrayList<Lesson> lessons = new ArrayList<>();
 
     /**
      * the date format.
@@ -79,7 +79,7 @@ public abstract class AbstractSchedule {
      */
     protected void fillSchedule(Calendar calendar) throws ParseException {
 
-        this.lessons = new ArrayList<>();
+        this.lessons.clear();
 
         for (Component cours : calendar.getComponents("VEVENT")) {
             String name = cours.getProperty("SUMMARY").getValue();
@@ -92,12 +92,12 @@ public abstract class AbstractSchedule {
             // On récupère les informations utiles contenues dans le champs description.
             int index = description.indexOf("Export\u00e9");
             description = description.substring(1, index - 2);
-            String[] decompose = description.split("[\\r\\n|\\r|\\n]+");
+            String[] decompose = description.split("[\\r|\\n]+");
 
             if(decompose.length >= 1) {
                 String profName = (
                         decompose[decompose.length - 1]
-                        .replaceAll("[\\s|^\\W]", "")
+                                .replaceAll("[\\s|^\\W]", "")
                 ).replaceAll("\\.", "");
 
                 ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
@@ -140,7 +140,7 @@ public abstract class AbstractSchedule {
      *
      * @return the lessons
      */
-    public ArrayList<Lesson> getLessons(){
+    public synchronized ArrayList<Lesson> getLessons(){
         return lessons;
     }
 

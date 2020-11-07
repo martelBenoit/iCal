@@ -3,7 +3,6 @@ package ical.command.commands.schedule;
 import ical.command.GuildCommandContext;
 import ical.command.commands.AbstractScheduleCommand;
 import ical.database.DAOFactory;
-import ical.database.dao.DAO;
 import ical.database.dao.LessonRemainingTimeDAO;
 import ical.database.dao.ProfessorDAO;
 import ical.database.entity.Lesson;

@@ -55,7 +55,7 @@ public class Lesson extends Entity implements Comparable<Lesson>{
     /**
      * Lesson room.
      */
-    private String room;
+    private final String room;
 
 
 

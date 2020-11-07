@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.Date;
 import java.util.Calendar;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -98,6 +97,18 @@ public class Tools {
             hash = 31L*hash + c;
         }
         return hash;
+    }
+
+    public static int timeRemainingInSeconds(@NotNull Date futureDate) throws Exception {
+        if(futureDate.after(new Date())) {
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTime(futureDate);
+            return (int) TimeUnit.MILLISECONDS.toSeconds(calendar.getTimeInMillis() - System.currentTimeMillis());
+        }
+        else{
+            throw new Exception("The date in parameter has already been passed");
+        }
+
     }
 
 }

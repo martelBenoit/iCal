@@ -31,7 +31,7 @@ public class Schedule extends AbstractSchedule {
     /**
      * the previous lessons list.
      */
-    private ArrayList<Lesson> previousLessons = new ArrayList<>();
+    private final ArrayList<Lesson> previousLessons = new ArrayList<>();
 
     /**
      * notification indicator.
@@ -65,7 +65,8 @@ public class Schedule extends AbstractSchedule {
                 net.fortuna.ical4j.model.Calendar calendar = new CalendarBuilder().build(this.url.openStream());
                 fillSchedule(calendar);
                 creationDate = Instant.ofEpochMilli(System.currentTimeMillis());
-                this.previousLessons = this.lessons;
+                this.previousLessons.clear();
+                this.previousLessons.addAll(getLessons());
             } catch (ParseException | IOException exception){
                 LOGGER.error(exception.getMessage(),exception);
             } catch (ParserException parser){
@@ -88,11 +89,15 @@ public class Schedule extends AbstractSchedule {
 
         // On vérfie que l'url n'est pas null
         if(this.url != null){
-            this.previousLessons = this.lessons;
+
+            ArrayList<Lesson> temp = new ArrayList<>(getLessons());
 
             net.fortuna.ical4j.model.Calendar calendar = new CalendarBuilder().build(this.url.openStream());
             fillSchedule(calendar);
             creationDate = Instant.ofEpochMilli(System.currentTimeMillis());
+
+            this.previousLessons.clear();
+            this.previousLessons.addAll(temp);
 
         }
 
@@ -108,7 +113,7 @@ public class Schedule extends AbstractSchedule {
         try{
             net.fortuna.ical4j.model.Calendar calendar = new CalendarBuilder().build(this.url.openStream());
             fillSchedule(calendar);
-            this.previousLessons = this.lessons;
+            resetPreviousLessons();
             creationDate = Instant.ofEpochMilli(System.currentTimeMillis());
         } catch(ParseException | IOException | ParserException e){
             LOGGER.error(e.getMessage());
@@ -123,7 +128,7 @@ public class Schedule extends AbstractSchedule {
      */
     public ArrayList<MovedLesson> getAddedLessons(){
         ArrayList<MovedLesson> addedLessons = new ArrayList<>();
-        for(Lesson lesson : this.lessons)
+        for(Lesson lesson : this.getLessons())
             if(!previousLessons.contains(lesson))
                 if(Tools.verifyWatchUp(lesson))
                     addedLessons.add(new MovedLesson(null,lesson));
@@ -139,7 +144,7 @@ public class Schedule extends AbstractSchedule {
     public ArrayList<MovedLesson> getRemovedLessons(){
         ArrayList<MovedLesson> removedLessons = new ArrayList<>();
         for(Lesson lesson : previousLessons)
-            if(!this.lessons.contains(lesson))
+            if(!this.getLessons().contains(lesson))
                 if(Tools.verifyWatchUp(lesson))
                     removedLessons.add(new MovedLesson(lesson,null));
 
@@ -155,7 +160,7 @@ public class Schedule extends AbstractSchedule {
 
         ArrayList<MovedLesson> movedLessons = new ArrayList<>();
         for(Lesson aPreviousLesson : previousLessons){
-            for(Lesson anActualLesson : lessons){
+            for(Lesson anActualLesson : getLessons()){
                 if(aPreviousLesson.equals(anActualLesson))
                     if(!aPreviousLesson.sameLessonsAndSameDate(anActualLesson))
                         if(Tools.verifyWatchUp(aPreviousLesson))
@@ -175,7 +180,7 @@ public class Schedule extends AbstractSchedule {
     public ArrayList<Lesson> getLessons(final int toDayNumber) {
         final Date dateToCompare = Tools.addDaysToTodayDate(toDayNumber);
         final ArrayList<Lesson> lessonsDays = new ArrayList<>();
-        for (final Lesson lesson : this.lessons) {
+        for (final Lesson lesson : this.getLessons()) {
             if (Tools.getDateWithTimeToZero(lesson.getStartDate()).compareTo(dateToCompare) == 0) {
                 lessonsDays.add(lesson);
             }
@@ -199,9 +204,9 @@ public class Schedule extends AbstractSchedule {
         ArrayList<Lesson> ret = new ArrayList<>();
 
         final Date currentDate = new Date();
-        while (i < this.lessons.size() && !found) {
-            if (this.lessons.get(i).getStartDate().compareTo(currentDate) >= 0) {
-                firstLesson = this.lessons.get(i);
+        while (i < this.getLessons().size() && !found) {
+            if (this.getLessons().get(i).getStartDate().compareTo(currentDate) >= 0) {
+                firstLesson = this.getLessons().get(i);
                 found = true;
             }
             i++;
@@ -209,9 +214,9 @@ public class Schedule extends AbstractSchedule {
 
         if(found){
             ret.add(firstLesson);
-            while(i < this.lessons.size()){
-                if(this.lessons.get(i).getStartDate().equals(firstLesson.getStartDate()))
-                    ret.add(this.lessons.get(i));
+            while(i < this.getLessons().size()){
+                if(this.getLessons().get(i).getStartDate().equals(firstLesson.getStartDate()))
+                    ret.add(this.getLessons().get(i));
                 i++;
             }
         }
@@ -227,10 +232,10 @@ public class Schedule extends AbstractSchedule {
 
         final Date currentDate = new Date();
         int i = 0;
-        while (i < this.lessons.size() && !found) {
-            if (this.lessons.get(i).getStartDate().compareTo(currentDate) >= 0) {
-                if(this.lessons.get(i).getProfessor().getName().equals(professor.getName())) {
-                    ret = this.lessons.get(i);
+        while (i < this.getLessons().size() && !found) {
+            if (this.getLessons().get(i).getStartDate().compareTo(currentDate) >= 0) {
+                if(this.getLessons().get(i).getProfessor().getName().equals(professor.getName())) {
+                    ret = this.getLessons().get(i);
                     found = true;
                 }
             }
@@ -251,7 +256,7 @@ public class Schedule extends AbstractSchedule {
 
         Calendar cal = Calendar.getInstance();
 
-        for(Lesson lesson : lessons){
+        for(Lesson lesson : getLessons()){
             cal.setTime(lesson.getStartDate());
             if(cal.get(Calendar.WEEK_OF_YEAR) == weekNumber)
                 res.add(lesson);
@@ -280,7 +285,7 @@ public class Schedule extends AbstractSchedule {
 
         Calendar cal = Calendar.getInstance();
 
-        for(Lesson lesson : lessons){
+        for(Lesson lesson : getLessons()){
             cal.setTime(lesson.getStartDate());
             int day = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
 
@@ -312,7 +317,7 @@ public class Schedule extends AbstractSchedule {
 
         Calendar cal = Calendar.getInstance();
 
-        for(Lesson lesson : lessons){
+        for(Lesson lesson : getLessons()){
             cal.setTime(lesson.getStartDate());
             int day = (int)(TimeUnit.MILLISECONDS.toDays(cal.getTimeInMillis()-actual.getTimeInMillis()));
 
@@ -336,7 +341,7 @@ public class Schedule extends AbstractSchedule {
 
         final Date currentDate = new Date();
 
-        for(Lesson lesson : this.lessons){
+        for(Lesson lesson : this.getLessons()){
             if(lesson.getStartDate().compareTo(currentDate) <= 0 && lesson.getEndDate().compareTo(currentDate) >= 0)
                 ret.add(lesson);
         }
@@ -351,7 +356,7 @@ public class Schedule extends AbstractSchedule {
      */
     public List<Lesson> getLessonWithProfessor(Professor professor){
         if(professor != null && professor.getDisplayName() != null){
-            return lessons.stream().filter(l -> l.getProfessor().getDisplayName().equals(professor.getDisplayName()) && l.timeRemainingInSeconds() > 0).collect(Collectors.toList());
+            return getLessons().stream().filter(l -> l.getProfessor().getDisplayName().equals(professor.getDisplayName()) && l.timeRemainingInSeconds() > 0).collect(Collectors.toList());
         }
         else return new ArrayList<>();
     }
@@ -378,7 +383,8 @@ public class Schedule extends AbstractSchedule {
      * Reset previous lessons with the actual lessons.
      */
     public void resetPreviousLessons(){
-        this.previousLessons = this.lessons;
+        this.previousLessons.clear();
+        this.previousLessons.addAll(getLessons());
     }
 
 

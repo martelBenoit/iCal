@@ -1,6 +1,5 @@
 package ical.database.dao;
 
-import ical.database.DAOFactory;
 import ical.database.entity.OGuild;
 import ical.database.entity.Professor;
 import ical.database.entity.Professor_Picture_By_Guild;
@@ -69,17 +68,17 @@ public class Professor_Picture_By_GuildDAO extends DAO<Professor_Picture_By_Guil
             ps.setString(1,guild.getIdGuild());
             ps.setInt(2,professor.getId());
 
-            GuildDAO guildDAO = (GuildDAO) DAOFactory.getGuildDAO();
-            ProfessorDAO professorDAO = (ProfessorDAO) DAOFactory.getProfessorDAO();
-
             result = ps.executeQuery();
-            if(result.next())
+            if(result.next()){
+
                 ret = new Professor_Picture_By_Guild(
-                        guildDAO.find(result.getString(1)),
-                        professorDAO.findById(result.getInt(2)),
+                        guild,
+                        professor,
                         result.getString(3),
                         result.getString(4),
                         result.getTimestamp(5));
+            }
+
         } catch (SQLException e){
             LOGGER.error("Error while searching the Professor_Picture_By_Guild : "+guild.getIdGuild()+", "+professor.getId(),e);
             ret = null;
@@ -133,10 +132,15 @@ public class Professor_Picture_By_GuildDAO extends DAO<Professor_Picture_By_Guil
 
     }
 
+    /**
+     * Find all Professor Picture By Guild
+     * @deprecated
+     * @return new empty list.
+     */
     @NotNull
     @Override
     public ArrayList<Professor_Picture_By_Guild> findAll() {
-        return null;
+      return new ArrayList<>();
     }
 
 }

@@ -6,6 +6,7 @@ import ical.command.commands.tools.ClearCommand;
 import ical.command.commands.HelpCommand;
 import ical.command.commands.reminder.ReminderCommand;
 import ical.command.commands.tools.InfoCommand;
+import ical.command.commands.tools.SecretCommand;
 import ical.util.Config;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
@@ -35,6 +36,7 @@ public class PrivateCommandManager extends CommandManager{
         addCommand(new HelpCommand(this));
         addCommand(new ClearCommand());
         addCommand(new InfoCommand());
+        addCommand(new SecretCommand());
 
     }
 

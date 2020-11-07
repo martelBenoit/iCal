@@ -6,6 +6,7 @@ import ical.database.entity.Lesson;
 import ical.graphic.Timetable;
 import ical.manager.ScheduleManager;
 import ical.util.Config;
+import ical.util.Tools;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -66,7 +68,25 @@ public class WeekLessonsCommand extends AbstractScheduleCommand {
                                     "https://www-ensibs.univ-ubs.fr/skins/ENSIBS/resources/img/logo.png"
                             );
 
-                            ctx.getChannel().sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                            Lesson lesson = lessons.stream().max(Comparator.comparing(Lesson::getStartTime)).orElse(null);
+                            if(lesson != null){
+                                try{
+                                    int timeRemaining = Tools.timeRemainingInSeconds(lesson.getEndDate());
+                                    ctx.getChannel()
+                                            .sendMessage(eb.build()).addFile(inputStream, nameImg)
+                                            .queue(
+                                                    (message -> message.delete().queueAfter(timeRemaining, TimeUnit.SECONDS))
+                                            );
+                                }catch (Exception e){
+                                    ctx.getChannel().sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+
+                                }
+
+                            }
+                            else{
+                                ctx.getChannel().sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                            }
+
                         }
                     } catch (IOException exception) {
                         LOGGER.error(exception.getMessage(), exception.fillInStackTrace());

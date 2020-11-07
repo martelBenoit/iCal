@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * @author Benoît Martel
  * @version 1.1
  */
-public class Professor extends Entity implements Comparable{
+public class Professor extends Entity implements Comparable<Professor>{
 
     /**
      * the id of the professor.
@@ -150,14 +150,8 @@ public class Professor extends Entity implements Comparable{
     }
 
     @Override
-    public int compareTo(@NotNull Object professor) {
-        if(professor instanceof Professor)
-            return ((Professor) professor).name.toUpperCase().compareTo(this.name.toUpperCase());
-        else
-            return -1;
-
-
+    public int compareTo(@NotNull Professor professor) {
+            return professor.getName().toUpperCase().compareTo(this.name.toUpperCase());
     }
-
 
 }

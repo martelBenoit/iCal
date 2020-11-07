@@ -66,15 +66,6 @@ public class Room implements Comparable<Room> {
     }
 
     /**
-     * Set the room name.
-     *
-     * @param name the room name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
      * Check if this room is available.
      *
      * @return true if the room is available, false otherwise

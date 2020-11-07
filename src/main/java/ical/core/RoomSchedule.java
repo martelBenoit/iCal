@@ -58,7 +58,7 @@ public class RoomSchedule extends AbstractSchedule {
 
         ArrayList<Lesson> res = new ArrayList<>();
 
-        for(Lesson lesson : this.lessons){
+        for(Lesson lesson : this.getLessons()){
 
             if(lesson.getStartDate().compareTo(now) < 0 && lesson.getEndDate().compareTo(now) > 0){
                 res.add(lesson);
@@ -76,7 +76,7 @@ public class RoomSchedule extends AbstractSchedule {
 
         ArrayList<Lesson> res = new ArrayList<>();
 
-        for(Lesson lesson : this.lessons){
+        for(Lesson lesson : this.getLessons() ){
 
             if(lesson.getStartDate().compareTo(date) < 0 && lesson.getEndDate().compareTo(date) > 0){
                 res.add(lesson);

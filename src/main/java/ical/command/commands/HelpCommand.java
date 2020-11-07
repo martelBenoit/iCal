@@ -2,7 +2,6 @@ package ical.command.commands;
 
 import ical.command.*;
 import ical.manager.CommandManager;
-import ical.manager.GuildCommandManager;
 import ical.util.Config;
 
 import java.util.ArrayList;

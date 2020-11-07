@@ -7,6 +7,7 @@ import ical.database.entity.Lesson;
 import ical.database.entity.OGuild;
 import ical.graphic.Timetable;
 import ical.manager.ScheduleManager;
+import ical.util.Tools;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -18,6 +19,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class WeekInformationPlanning implements Runnable {
 
@@ -80,7 +82,24 @@ public class WeekInformationPlanning implements Runnable {
                                             );
 
                                             try {
-                                                channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                                                Lesson lesson = lessons.stream().max(Comparator.comparing(Lesson::getStartTime)).orElse(null);
+                                                if(lesson != null){
+                                                    try{
+                                                        int timeRemaining = Tools.timeRemainingInSeconds(lesson.getEndDate());
+                                                        channel
+                                                                .sendMessage(eb.build()).addFile(inputStream, nameImg)
+                                                                .queue(
+                                                                        (message -> message.delete().queueAfter(timeRemaining, TimeUnit.SECONDS))
+                                                                );
+                                                    }catch (Exception ex){
+                                                        channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+
+                                                    }
+
+                                                }
+                                                else{
+                                                    channel.sendMessage(eb.build()).addFile(inputStream, nameImg).queue();
+                                                }
                                                 LOGGER.info("[" + idGuild + "] Sent !");
 
 

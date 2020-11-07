@@ -1,14 +1,6 @@
 package ical.core.runnable;
 
 import ical.core.Schedule;
-import ical.database.DAOFactory;
-import ical.database.dao.GuildDAO;
-import ical.database.dao.ProfessorDAO;
-import ical.database.dao.Professor_Picture_By_GuildDAO;
-import ical.database.entity.Lesson;
-import ical.database.entity.OGuild;
-import ical.database.entity.Professor;
-import ical.database.entity.Professor_Picture_By_Guild;
 import ical.manager.ScheduleManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -22,12 +14,11 @@ import java.util.Map;
 
 public class UpdateSchedule implements Runnable {
 
-    private ScheduleManager scheduleManager;
+    private final ScheduleManager scheduleManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateSchedule.class);
 
-    private JDA jda;
-
+    private final JDA jda;
 
     public UpdateSchedule(ScheduleManager scheduleManager, JDA jda){
         this.scheduleManager = scheduleManager;
@@ -40,8 +31,10 @@ public class UpdateSchedule implements Runnable {
         try {
             for (Map.Entry<String, Schedule> e : this.scheduleManager.getSchedules().entrySet()) {
                 Schedule schedule = e.getValue();
-                schedule.updateEntries();
-                this.scheduleManager.updatePP(e.getKey());
+                synchronized (schedule.getLessons()) {
+                    schedule.updateEntries();
+                    this.scheduleManager.updatePP(e.getKey());
+                }
             }
             this.scheduleManager.getRoomSchedule().updateEntries();
             LOGGER.info("Schedule updated");

@@ -36,6 +36,7 @@ public class Bot {
      * @throws LoginException throw login exception
      */
     public static void main(String[] args) throws LoginException {
+
         ConnectionSingleton.getInstance();
         ArrayList<GatewayIntent> intents = new ArrayList<>();
         intents.add(GatewayIntent.GUILD_MESSAGES);
@@ -45,6 +46,7 @@ public class Bot {
                 .addEventListeners(new Listener())
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
                 .build();
+
     }
 
 }

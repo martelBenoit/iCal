@@ -90,6 +90,7 @@ public class Listener extends ListenerAdapter {
         }
 
         if(raw.startsWith(prefix)){
+            LOGGER.info(event.getAuthor().getName()+" ("+event.getAuthor().getId()+") : "+event.getMessage().getContentRaw());
             guildCommandManager.handle(event);
         }
     }
@@ -116,6 +117,7 @@ public class Listener extends ListenerAdapter {
         }
 
         if(raw.startsWith(prefix)){
+            LOGGER.info(event.getAuthor().getName()+" ("+event.getAuthor().getId()+") : "+event.getMessage().getContentRaw());
             privateCommandManager.handle(event);
         }
     }

@@ -14,7 +14,7 @@ class ScheduleTest {
     void verifyWatchUp() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, 10);
-        Lesson lesson = new Lesson("0","Test",calendar.getTime(),null,"description",null,null);
+        Lesson lesson = new Lesson("0", "Test", calendar.getTime(), null, "description", null, null);
         assertTrue(Tools.verifyWatchUp(lesson));
     }
 }

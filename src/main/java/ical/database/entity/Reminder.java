@@ -1,5 +1,6 @@
 package ical.database.entity;
 
+import ical.util.Tools;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
@@ -25,10 +26,6 @@ public class Reminder extends Entity implements Comparable<Reminder>{
     private String recipient;
 
     private OGuild guild;
-
-    public Reminder(){
-
-    }
 
     public Reminder(String name, Date date, String author, String recipient, OGuild guild) {
         this.name = name;
@@ -108,7 +105,6 @@ public class Reminder extends Entity implements Comparable<Reminder>{
 
     @Override
     public String toString() {
-
         return id+' '+name+' '+date+ ' '+created_at+' '+author+' '+' '+recipient+' '+guild;
     }
 
